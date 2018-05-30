@@ -28,51 +28,49 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ******************************************************************************
 
-library spine_core;
+part of spine_core;
 
-import 'dart:convert';
-import 'dart:math' as math;
-import 'dart:typed_data';
+class AtlasAttachmentLoader implements AttachmentLoader {
+  TextureAtlas atlas;
 
-part 'src/animation_state_data.dart';
-part 'src/animation_state.dart';
-part 'src/animation.dart';
-part 'src/atlas_attachment_loader.dart';
-part 'src/blend_mode.dart';
-part 'src/bone_data.dart';
-part 'src/bone.dart';
-part 'src/constraint.dart';
-part 'src/event.dart';
-part 'src/event_data.dart';
-part 'src/ik_constraint_data.dart';
-part 'src/ik_constraint.dart';
-part 'src/path_constraint_data.dart';
-part 'src/path_constraint.dart';
-part 'src/skeleton_bounds.dart';
-part 'src/skeleton_clipping.dart';
-part 'src/skeleton_data.dart';
-part 'src/skeleton_json.dart';
-part 'src/skeleton.dart';
-part 'src/skin.dart';
-part 'src/slot_data.dart';
-part 'src/slot.dart';
-part 'src/texture_atlas.dart';
-part 'src/texture.dart';
-part 'src/transform_constraint_data.dart';
-part 'src/transform_constraint.dart';
-part 'src/triangulator.dart';
-part 'src/updatable.dart';
-part 'src/utils.dart';
-part 'src/vertex_effect.dart';
+  AtlasAttachmentLoader(this.atlas);
 
-part 'src/attachments/attachment_loader.dart';
-part 'src/attachments/attachment_type.dart';
-part 'src/attachments/attachment.dart';
-part 'src/attachments/bounding_box_attachment.dart';
-part 'src/attachments/clipping_attachment.dart';
-part 'src/attachments/mesh_attachment.dart';
-part 'src/attachments/path_attachment.dart';
-part 'src/attachments/point_attachment.dart';
-part 'src/attachments/region_attachment.dart';
-part 'src/vertexeffects/jitter_effect.dart';
-part 'src/vertexeffects/swirl_effect.dart';
+  @override
+  RegionAttachment newRegionAttachment(Skin skin, String name, String path) {
+    final TextureAtlasRegion region = atlas.findRegion(path);
+    if (region == null)
+      throw new StateError(
+          'Region not found in atlas: $path (region attachment: $name)');
+    region.renderObject = region;
+    final RegionAttachment attachment = new RegionAttachment(name)
+      ..setRegion(region);
+    return attachment;
+  }
+
+  @override
+  MeshAttachment newMeshAttachment(Skin skin, String name, String path) {
+    final TextureAtlasRegion region = atlas.findRegion(path);
+    if (region == null)
+      throw new StateError(
+          'Region not found in atlas: $path (mesh attachment: $name)');
+    region.renderObject = region;
+    final MeshAttachment attachment = new MeshAttachment(name)..region = region;
+    return attachment;
+  }
+
+  @override
+  BoundingBoxAttachment newBoundingBoxAttachment(Skin skin, String name) =>
+      new BoundingBoxAttachment(name);
+
+  @override
+  PathAttachment newPathAttachment(Skin skin, String name) =>
+      new PathAttachment(name);
+
+  @override
+  PointAttachment newPointAttachment(Skin skin, String name) =>
+      new PointAttachment(name);
+
+  @override
+  ClippingAttachment newClippingAttachment(Skin skin, String name) =>
+      new ClippingAttachment(name);
+}

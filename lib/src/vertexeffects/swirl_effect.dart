@@ -28,51 +28,42 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ******************************************************************************
 
-library spine_core;
+part of spine_core;
 
-import 'dart:convert';
-import 'dart:math' as math;
-import 'dart:typed_data';
+class SwirlEffect implements VertexEffect {
+  static final PowOut interpolation = new PowOut(2.0);
+  double centerX = 0.0;
+  double centerY = 0.0;
+  double radius = 0.0;
+  double angle = 0.0;
+  double worldX = 0.0;
+  double worldY = 0.0;
 
-part 'src/animation_state_data.dart';
-part 'src/animation_state.dart';
-part 'src/animation.dart';
-part 'src/atlas_attachment_loader.dart';
-part 'src/blend_mode.dart';
-part 'src/bone_data.dart';
-part 'src/bone.dart';
-part 'src/constraint.dart';
-part 'src/event.dart';
-part 'src/event_data.dart';
-part 'src/ik_constraint_data.dart';
-part 'src/ik_constraint.dart';
-part 'src/path_constraint_data.dart';
-part 'src/path_constraint.dart';
-part 'src/skeleton_bounds.dart';
-part 'src/skeleton_clipping.dart';
-part 'src/skeleton_data.dart';
-part 'src/skeleton_json.dart';
-part 'src/skeleton.dart';
-part 'src/skin.dart';
-part 'src/slot_data.dart';
-part 'src/slot.dart';
-part 'src/texture_atlas.dart';
-part 'src/texture.dart';
-part 'src/transform_constraint_data.dart';
-part 'src/transform_constraint.dart';
-part 'src/triangulator.dart';
-part 'src/updatable.dart';
-part 'src/utils.dart';
-part 'src/vertex_effect.dart';
+  SwirlEffect(this.radius);
 
-part 'src/attachments/attachment_loader.dart';
-part 'src/attachments/attachment_type.dart';
-part 'src/attachments/attachment.dart';
-part 'src/attachments/bounding_box_attachment.dart';
-part 'src/attachments/clipping_attachment.dart';
-part 'src/attachments/mesh_attachment.dart';
-part 'src/attachments/path_attachment.dart';
-part 'src/attachments/point_attachment.dart';
-part 'src/attachments/region_attachment.dart';
-part 'src/vertexeffects/jitter_effect.dart';
-part 'src/vertexeffects/swirl_effect.dart';
+  @override
+  void begin(Skeleton skeleton) {
+    worldX = skeleton.x + centerX;
+    worldY = skeleton.y + centerY;
+  }
+
+  @override
+  void transform(Vector2 position, Vector2 uv, Color light, Color dark) {
+    final double radAngle = angle * MathUtils.degreesToRadians;
+    final double x = position.x - worldX;
+    final double y = position.y - worldY;
+    final double dist = math.sqrt(x * x + y * y);
+    if (dist < radius) {
+      final double theta =
+          interpolation.apply(0.0, radAngle, (radius - dist) / radius);
+      final double cos = math.cos(theta);
+      final double sin = math.sin(theta);
+      position
+        ..x = cos * x - sin * y + worldX
+        ..y = sin * x + cos * y + worldY;
+    }
+  }
+
+  @override
+  void end() {}
+}
