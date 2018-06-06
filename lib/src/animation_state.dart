@@ -40,7 +40,13 @@ class AnimationState {
       new Animation('<empty>', <Timeline>[], 0.0);
   final List<TrackEntry> tracks = <TrackEntry>[];
   final List<Event> events = <Event>[];
-  final List<AnimationStateListener> listeners = <AnimationStateListener>[];
+  final List<TrackEntryCallback> onStartCallbacks = <TrackEntryCallback>[];
+  final List<TrackEntryCallback> onInterruptCallbacks = <TrackEntryCallback>[];
+  final List<TrackEntryCallback> onEndCallbacks = <TrackEntryCallback>[];
+  final List<TrackEntryCallback> onDisposeCallbacks = <TrackEntryCallback>[];
+  final List<TrackEntryCallback> onCompleteCallbacks = <TrackEntryCallback>[];
+  final List<TrackEntryEventCallback> onEventCallbacks =
+      <TrackEntryEventCallback>[];
   final List<TrackEntry> mixingTo = <TrackEntry>[];
   final Set<int> propertyIDs = new Set<int>();
   final Pool<TrackEntry> trackEntryPool =
@@ -631,19 +637,89 @@ class AnimationState {
     return tracks[trackIndex];
   }
 
-  void addListener(AnimationStateListener listener) {
-    if (listener == null) throw new ArgumentError('listener cannot be null.');
-    listeners.add(listener);
+  void addOnStartCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    onStartCallbacks.add(callback);
   }
 
-  void removeListener(AnimationStateListener listener) {
-    final int index = listeners.indexOf(listener);
-    if (index >= 0) listeners.removeAt(index);
+  void removeOnStartCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    final int index = onStartCallbacks.indexOf(callback);
+    if (index >= 0) onStartCallbacks.removeAt(index);
   }
 
-  void clearListeners() {
-    listeners.length = 0;
+  void clearOnStartCallbacks(TrackEntryCallback callback) =>
+      onStartCallbacks.length = 0;
+
+  void addOnInterruptCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    onInterruptCallbacks.add(callback);
   }
+
+  void removeOnInterruptCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    final int index = onInterruptCallbacks.indexOf(callback);
+    if (index >= 0) onInterruptCallbacks.removeAt(index);
+  }
+
+  void clearOnInterruptCallbacks(TrackEntryCallback callback) =>
+      onInterruptCallbacks.length = 0;
+
+  void addOnEndCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    onEndCallbacks.add(callback);
+  }
+
+  void removeOnEndCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    final int index = onEndCallbacks.indexOf(callback);
+    if (index >= 0) onEndCallbacks.removeAt(index);
+  }
+
+  void clearonEndCallbacks(TrackEntryCallback callback) =>
+      onEndCallbacks.length = 0;
+
+  void addOnDisposeCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    onDisposeCallbacks.add(callback);
+  }
+
+  void removeOnDisposeCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    final int index = onDisposeCallbacks.indexOf(callback);
+    if (index >= 0) onDisposeCallbacks.removeAt(index);
+  }
+
+  void clearOnDisposeCallbacks(TrackEntryCallback callback) =>
+      onDisposeCallbacks.length = 0;
+
+  void addOnCompleteCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    onCompleteCallbacks.add(callback);
+  }
+
+  void removeOnCompleteCallback(TrackEntryCallback callback) {
+    if (callback == null) return;
+    final int index = onCompleteCallbacks.indexOf(callback);
+    if (index >= 0) onCompleteCallbacks.removeAt(index);
+  }
+
+  void clearOnCompleteCallbacks(TrackEntryCallback callback) =>
+      onCompleteCallbacks.length = 0;
+
+  void addOnEventCallback(TrackEntryEventCallback callback) {
+    if (callback == null) return;
+    onEventCallbacks.add(callback);
+  }
+
+  void removeOnEventCallback(TrackEntryEventCallback callback) {
+    if (callback == null) return;
+    final int index = onEventCallbacks.indexOf(callback);
+    if (index >= 0) onEventCallbacks.removeAt(index);
+  }
+
+  void clearOnEventCallbacks(TrackEntryEventCallback callback) =>
+      onEventCallbacks.length = 0;
 
   void clearListenerNotifications() {
     queue.clear();
@@ -657,7 +733,12 @@ class TrackEntry implements Poolable {
 
   Animation animation;
   TrackEntry next, mixingFrom;
-  AnimationStateListener listener;
+  TrackEntryCallback onStartCallback;
+  TrackEntryCallback onInterruptCallback;
+  TrackEntryCallback onEndCallback;
+  TrackEntryCallback onDisposeCallback;
+  TrackEntryCallback onCompleteCallback;
+  TrackEntryEventCallback onEventCallback;
   int trackIndex;
   bool loop;
   double eventThreshold, attachmentThreshold, drawOrderThreshold;
@@ -670,7 +751,12 @@ class TrackEntry implements Poolable {
     next = null;
     mixingFrom = null;
     animation = null;
-    listener = null;
+    onStartCallback = null;
+    onInterruptCallback = null;
+    onEndCallback = null;
+    onDisposeCallback = null;
+    onCompleteCallback = null;
+    onEventCallback = null;
     timelineData.length = 0;
     timelineDipMix.length = 0;
     timelinesRotation.length = 0;
@@ -785,44 +871,57 @@ class EventQueue {
     drainDisabled = true;
 
     final List<dynamic> objects = this.objects;
-    final List<AnimationStateListener> listeners = animState.listeners;
+    final List<TrackEntryCallback> onStartCallbacks =
+        animState.onStartCallbacks;
+    final List<TrackEntryCallback> onInterruptCallbacks =
+        animState.onInterruptCallbacks;
+    final List<TrackEntryCallback> onEndCallbacks = animState.onEndCallbacks;
+    final List<TrackEntryCallback> onDisposeCallbacks =
+        animState.onDisposeCallbacks;
+    final List<TrackEntryCallback> onCompleteCallbacks =
+        animState.onCompleteCallbacks;
+    final List<TrackEntryEventCallback> onEventCallbacks =
+        animState.onEventCallbacks;
 
     for (int i = 0; i < objects.length; i += 2) {
       final EventType type = objects[i] as EventType;
       final TrackEntry entry = objects[i + 1] as TrackEntry;
       switch (type) {
         case EventType.Start:
-          if (entry.listener != null) entry.listener.start(entry);
-          for (int ii = 0; ii < listeners.length; ii++)
-            listeners[ii].start(entry);
+          if (entry.onStartCallback != null) entry.onStartCallback(entry);
+          onStartCallbacks
+              .forEach((TrackEntryCallback callback) => callback(entry));
           break;
         case EventType.Interrupt:
-          if (entry.listener != null) entry.listener.interrupt(entry);
-          for (int ii = 0; ii < listeners.length; ii++)
-            listeners[ii].interrupt(entry);
+          if (entry.onInterruptCallback != null)
+            entry.onInterruptCallback(entry);
+          onInterruptCallbacks
+              .forEach((TrackEntryCallback callback) => callback(entry));
           break;
         case EventType.End:
         case EventType.Dispose:
           if (type == EventType.End) {
-            if (entry.listener != null) entry.listener.end(entry);
-            for (int ii = 0; ii < listeners.length; ii++)
-              listeners[ii].end(entry);
+            if (entry.onEndCallback != null) entry.onEndCallback(entry);
+            onEndCallbacks
+                .forEach((TrackEntryCallback callback) => callback(entry));
           }
-          if (entry.listener != null) entry.listener.dispose(entry);
-          for (int ii = 0; ii < listeners.length; ii++)
-            listeners[ii].dispose(entry);
+          if (entry.onDisposeCallback != null) entry.onDisposeCallback(entry);
+          onDisposeCallbacks
+              .forEach((TrackEntryCallback callback) => callback(entry));
           animState.trackEntryPool.free(entry);
           break;
         case EventType.Complete:
-          if (entry.listener != null) entry.listener.complete(entry);
-          for (int ii = 0; ii < listeners.length; ii++)
-            listeners[ii].complete(entry);
+          if (entry.onCompleteCallback != null) entry.onCompleteCallback(entry);
+          onCompleteCallbacks
+              .forEach((TrackEntryCallback callback) => callback(entry));
           break;
         case EventType.Event:
           final Event event = objects[i++ + 2] as Event;
-          if (entry.listener != null) entry.listener.event(entry, event);
-          for (int ii = 0; ii < listeners.length; ii++)
-            listeners[ii].event(entry, event);
+
+          if (entry.onEventCallback != null)
+            entry.onEventCallback(entry, event);
+          onEventCallbacks.forEach(
+              (TrackEntryEventCallback callback) => callback(entry, event));
           break;
       }
     }
@@ -838,36 +937,5 @@ class EventQueue {
 
 enum EventType { Start, Interrupt, End, Dispose, Complete, Event }
 
-abstract class AnimationStateListener {
-  void start(TrackEntry entry);
-
-  void interrupt(TrackEntry entry);
-
-  void end(TrackEntry entry);
-
-  void dispose(TrackEntry entry);
-
-  void complete(TrackEntry entry);
-
-  void event(TrackEntry entry, Event event);
-}
-
-class AnimationStateAdapter implements AnimationStateListener {
-  @override
-  void start(TrackEntry entry) {}
-
-  @override
-  void interrupt(TrackEntry entry) {}
-
-  @override
-  void end(TrackEntry entry) {}
-
-  @override
-  void dispose(TrackEntry entry) {}
-
-  @override
-  void complete(TrackEntry entry) {}
-
-  @override
-  void event(TrackEntry entry, Event event) {}
-}
+typedef void TrackEntryCallback(TrackEntry entry);
+typedef void TrackEntryEventCallback(TrackEntry entry, Event event);
