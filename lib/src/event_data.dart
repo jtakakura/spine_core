@@ -37,6 +37,6 @@ class EventData {
   String stringValue;
 
   EventData(this.name) {
-    if (name == null) throw new ArgumentError('name cannot be null.');
+    if (name == null) throw ArgumentError('name cannot be null.');
   }
 }

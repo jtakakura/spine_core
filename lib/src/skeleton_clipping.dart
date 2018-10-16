@@ -31,7 +31,7 @@
 part of spine_core;
 
 class SkeletonClipping {
-  final Triangulator triangulator = new Triangulator();
+  final Triangulator triangulator = Triangulator();
   final List<double> clippingPolygon = <double>[];
   final List<double> clipOutput = <double>[];
   final List<double> clippedVertices = <double>[];

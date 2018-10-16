@@ -51,7 +51,7 @@ class SkeletonData {
   String imagesPath;
 
   BoneData findBone(String boneName) {
-    if (boneName == null) throw new ArgumentError('boneName cannot be null.');
+    if (boneName == null) throw ArgumentError('boneName cannot be null.');
     final List<BoneData> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) if (bones[i].name == boneName) return bones[i];
@@ -59,7 +59,7 @@ class SkeletonData {
   }
 
   int findBoneIndex(String boneName) {
-    if (boneName == null) throw new ArgumentError('boneName cannot be null.');
+    if (boneName == null) throw ArgumentError('boneName cannot be null.');
     final List<BoneData> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) if (bones[i].name == boneName) return i;
@@ -67,7 +67,7 @@ class SkeletonData {
   }
 
   SlotData findSlot(String slotName) {
-    if (slotName == null) throw new ArgumentError('slotName cannot be null.');
+    if (slotName == null) throw ArgumentError('slotName cannot be null.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) if (slots[i].name == slotName) return slots[i];
@@ -75,7 +75,7 @@ class SkeletonData {
   }
 
   int findSlotIndex(String slotName) {
-    if (slotName == null) throw new ArgumentError('slotName cannot be null.');
+    if (slotName == null) throw ArgumentError('slotName cannot be null.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) if (slots[i].name == slotName) return i;
@@ -83,7 +83,7 @@ class SkeletonData {
   }
 
   Skin findSkin(String skinName) {
-    if (skinName == null) throw new ArgumentError('skinName cannot be null.');
+    if (skinName == null) throw ArgumentError('skinName cannot be null.');
     final List<Skin> skins = this.skins;
     final int n = skins.length;
     for (int i = 0; i < n; i++) if (skins[i].name == skinName) return skins[i];
@@ -92,7 +92,7 @@ class SkeletonData {
 
   EventData findEvent(String eventDataName) {
     if (eventDataName == null)
-      throw new ArgumentError('eventDataName cannot be null.');
+      throw ArgumentError('eventDataName cannot be null.');
     final List<EventData> events = this.events;
     final int n = events.length;
     for (int i = 0; i < n; i++)
@@ -102,7 +102,7 @@ class SkeletonData {
 
   Animation findAnimation(String animationName) {
     if (animationName == null)
-      throw new ArgumentError('animationName cannot be null.');
+      throw ArgumentError('animationName cannot be null.');
     final List<Animation> animations = this.animations;
     final int n = animations.length;
     for (int i = 0; i < n; i++)
@@ -112,7 +112,7 @@ class SkeletonData {
 
   IkConstraintData findIkConstraint(String constraintName) {
     if (constraintName == null)
-      throw new ArgumentError('constraintName cannot be null.');
+      throw ArgumentError('constraintName cannot be null.');
     final List<IkConstraintData> ikConstraints = this.ikConstraints;
     final int n = ikConstraints.length;
     for (int i = 0; i < n; i++)
@@ -122,7 +122,7 @@ class SkeletonData {
 
   TransformConstraintData findTransformConstraint(String constraintName) {
     if (constraintName == null)
-      throw new ArgumentError('constraintName cannot be null.');
+      throw ArgumentError('constraintName cannot be null.');
     final List<TransformConstraintData> transformConstraints =
         this.transformConstraints;
     final int n = transformConstraints.length;
@@ -134,7 +134,7 @@ class SkeletonData {
 
   PathConstraintData findPathConstraint(String constraintName) {
     if (constraintName == null)
-      throw new ArgumentError('constraintName cannot be null.');
+      throw ArgumentError('constraintName cannot be null.');
     final List<PathConstraintData> pathConstraints = this.pathConstraints;
     final int n = pathConstraints.length;
     for (int i = 0; i < n; i++)
@@ -144,7 +144,7 @@ class SkeletonData {
 
   int findPathConstraintIndex(String pathConstraintName) {
     if (pathConstraintName == null)
-      throw new ArgumentError('pathConstraintName cannot be null.');
+      throw ArgumentError('pathConstraintName cannot be null.');
     final List<PathConstraintData> pathConstraints = this.pathConstraints;
     final int n = pathConstraints.length;
     for (int i = 0; i < n; i++)

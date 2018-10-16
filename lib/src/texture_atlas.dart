@@ -42,9 +42,9 @@ class TextureAtlas implements Disposable {
 
   void _load(String atlasText, TextureLoader textureLoader) {
     if (textureLoader == null)
-      throw new ArgumentError('textureLoader cannot be null.');
+      throw ArgumentError('textureLoader cannot be null.');
 
-    final TextureAtlasReader reader = new TextureAtlasReader(atlasText);
+    final TextureAtlasReader reader = TextureAtlasReader(atlasText);
     final List<String> tuple = <String>[];
     TextureAtlasPage page;
     for (;;) {
@@ -54,7 +54,7 @@ class TextureAtlas implements Disposable {
       if (line.isEmpty)
         page = null;
       else if (page == null) {
-        page = new TextureAtlasPage()..name = line;
+        page = TextureAtlasPage()..name = line;
 
         if (reader.readTuple(tuple) == 2) {
           // size is only optional for an atlas packed with an old TexturePacker.
@@ -87,7 +87,7 @@ class TextureAtlas implements Disposable {
           ..height = page.texture.image.height;
         pages.add(page);
       } else {
-        final TextureAtlasRegion region = new TextureAtlasRegion()
+        final TextureAtlasRegion region = TextureAtlasRegion()
           ..name = line
           ..page = page
           ..rotate = reader.readValue() == 'true';
@@ -162,7 +162,7 @@ class TextureAtlasReader {
   int index = 0;
 
   TextureAtlasReader(String text) {
-    lines = text.split(new RegExp(r'\r\n|\r|\n'));
+    lines = text.split(RegExp(r'\r\n|\r|\n'));
   }
 
   String readLine() {
@@ -173,14 +173,14 @@ class TextureAtlasReader {
   String readValue() {
     final String line = readLine();
     final int colon = line.indexOf(':');
-    if (colon == -1) throw new StateError('Invalid line: $line');
+    if (colon == -1) throw StateError('Invalid line: $line');
     return line.substring(colon + 1).trim();
   }
 
   int readTuple(List<String> tuple) {
     final String line = readLine();
     final int colon = line.indexOf(':');
-    if (colon == -1) throw new StateError('Invalid line: $line');
+    if (colon == -1) throw StateError('Invalid line: $line');
     int i = 0, lastMatch = colon + 1;
     for (; i < 3; i++) {
       final int comma = line.indexOf(',', lastMatch);

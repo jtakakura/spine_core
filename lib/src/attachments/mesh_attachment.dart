@@ -31,8 +31,8 @@
 part of spine_core;
 
 class MeshAttachment extends VertexAttachment {
-  final Color color = new Color(1.0, 1.0, 1.0, 1.0);
-  final Color tempColor = new Color(0.0, 0.0, 0.0, 0.0);
+  final Color color = Color(1.0, 1.0, 1.0, 1.0);
+  final Color tempColor = Color(0.0, 0.0, 0.0, 0.0);
 
   TextureRegion region;
   String path;
@@ -57,7 +57,7 @@ class MeshAttachment extends VertexAttachment {
     }
     final Float32List regionUVs = this.regionUVs;
     if (this.uvs == null || this.uvs.length != regionUVs.length)
-      this.uvs = new Float32List(regionUVs.length);
+      this.uvs = Float32List(regionUVs.length);
     final Float32List uvs = this.uvs;
     if (region.rotate) {
       final int n = uvs.length;

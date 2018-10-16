@@ -1,7 +1,9 @@
 analyzer:
-  strong-mode: true
   language:
-    enablePreviewDart2: true
+    enableSuperMixins: true
+  errors:
+      missing_required_param: warning
+      todo: ignore
   exclude:
     # ignore vscode .history files
     - .history/**
@@ -84,7 +86,7 @@ linter:
 #    - public_member_api_docs
     - recursive_getters
     - slash_for_doc_comments
-    - sort_constructors_first
+#    - sort_constructors_first
 #    - sort_unnamed_constructors_first
     - super_goes_last
     - test_types_in_equals
@@ -93,8 +95,10 @@ linter:
     - type_init_formals
     - unawaited_futures
     - unnecessary_brace_in_string_interps
+    - unnecessary_const
     - unnecessary_getters_setters
     - unnecessary_lambdas
+    - unnecessary_new
     - unnecessary_null_aware_assignments
     - unnecessary_null_in_if_null_operators
     - unnecessary_overrides

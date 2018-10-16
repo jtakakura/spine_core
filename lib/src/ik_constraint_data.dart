@@ -39,6 +39,6 @@ class IkConstraintData {
   double mix = 1.0;
 
   IkConstraintData(this.name) {
-    if (name == null) throw new ArgumentError('name cannot be null.');
+    if (name == null) throw ArgumentError('name cannot be null.');
   }
 }

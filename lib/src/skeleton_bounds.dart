@@ -34,12 +34,12 @@ class SkeletonBounds {
   final List<BoundingBoxAttachment> boundingBoxes = <BoundingBoxAttachment>[];
   final List<Float32List> polygons = <Float32List>[];
   final Pool<Float32List> polygonPool =
-      new Pool<Float32List>(() => new Float32List(16));
+      Pool<Float32List>(() => Float32List(16));
 
   double minX = 0.0, minY = 0.0, maxX = 0.0, maxY = 0.0;
 
   void update(Skeleton skeleton, bool updateAabb) {
-    if (skeleton == null) throw new ArgumentError('skeleton cannot be null.');
+    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     final List<BoundingBoxAttachment> boundingBoxes = this.boundingBoxes;
     final List<Float32List> polygons = this.polygons;
     final Pool<Float32List> polygonPool = this.polygonPool;
@@ -58,7 +58,7 @@ class SkeletonBounds {
 
         Float32List polygon = polygonPool.obtain();
         if (polygon.length != attachment.worldVerticesLength) {
-          polygon = new Float32List(attachment.worldVerticesLength);
+          polygon = Float32List(attachment.worldVerticesLength);
         }
         polygons.add(polygon);
         attachment.computeWorldVertices(
@@ -199,8 +199,7 @@ class SkeletonBounds {
   }
 
   Float32List AnimationStateData(BoundingBoxAttachment boundingBox) {
-    if (boundingBox == null)
-      throw new ArgumentError('boundingBox cannot be null.');
+    if (boundingBox == null) throw ArgumentError('boundingBox cannot be null.');
     final int index = boundingBoxes.indexOf(boundingBox);
     return index == -1 ? null : polygons[index];
   }

@@ -33,13 +33,13 @@ part of spine_core;
 class TransformConstraint extends Constraint {
   final TransformConstraintData data;
   final List<Bone> bones = <Bone>[];
-  final Vector2 temp = new Vector2();
+  final Vector2 temp = Vector2();
   Bone target;
   double rotateMix = 0.0, translateMix = 0.0, scaleMix = 0.0, shearMix = 0.0;
 
   TransformConstraint(this.data, Skeleton skeleton) {
-    if (data == null) throw new ArgumentError('data cannot be null.');
-    if (skeleton == null) throw new ArgumentError('skeleton cannot be null.');
+    if (data == null) throw ArgumentError('data cannot be null.');
+    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     rotateMix = data.rotateMix;
     translateMix = data.translateMix;
     scaleMix = data.scaleMix;

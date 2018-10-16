@@ -31,7 +31,7 @@
 part of spine_core;
 
 class PointAttachment extends VertexAttachment {
-  final Color color = new Color(0.38, 0.94, 0.0, 1.0);
+  final Color color = Color(0.38, 0.94, 0.0, 1.0);
   double x, y, rotation;
 
   PointAttachment(String name) : super(name);

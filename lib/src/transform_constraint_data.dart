@@ -46,6 +46,6 @@ class TransformConstraintData {
   bool local = false;
 
   TransformConstraintData(this.name) {
-    if (name == null) throw new ArgumentError('name cannot be null.');
+    if (name == null) throw ArgumentError('name cannot be null.');
   }
 }

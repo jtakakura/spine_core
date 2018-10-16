@@ -38,8 +38,8 @@ class IkConstraint extends Constraint {
   int bendDirection = 0;
 
   IkConstraint(this.data, Skeleton skeleton) {
-    if (data == null) throw new ArgumentError('data cannot be null.');
-    if (skeleton == null) throw new ArgumentError('skeleton cannot be null.');
+    if (data == null) throw ArgumentError('data cannot be null.');
+    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     mix = data.mix;
     bendDirection = data.bendDirection;
 

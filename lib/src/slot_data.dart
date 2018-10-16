@@ -34,14 +34,14 @@ class SlotData {
   final int index;
   final String name;
   final BoneData boneData;
-  Color color = new Color(1.0, 1.0, 1.0, 1.0);
+  Color color = Color(1.0, 1.0, 1.0, 1.0);
   Color darkColor;
   String attachmentName;
   BlendMode blendMode;
 
   SlotData(this.index, this.name, this.boneData) {
-    if (index < 0) throw new ArgumentError('index must be >= 0.');
-    if (name == null) throw new ArgumentError('name cannot be null.');
-    if (boneData == null) throw new ArgumentError('boneData cannot be null.');
+    if (index < 0) throw ArgumentError('index must be >= 0.');
+    if (name == null) throw ArgumentError('name cannot be null.');
+    if (boneData == null) throw ArgumentError('boneData cannot be null.');
   }
 }

@@ -76,11 +76,11 @@ class RegionAttachment extends VertexAttachment {
   static const int u4 = 30;
   static const int v4 = 31;
 
-  final Color color = new Color(1.0, 1.0, 1.0, 1.0);
-  final Color tempColor = new Color(1.0, 1.0, 1.0, 1.0);
+  final Color color = Color(1.0, 1.0, 1.0, 1.0);
+  final Color tempColor = Color(1.0, 1.0, 1.0, 1.0);
 
-  final Float32List offset = new Float32List(8);
-  final Float32List uvs = new Float32List(8);
+  final Float32List offset = Float32List(8);
+  final Float32List uvs = Float32List(8);
 
   double x = 0.0,
       y = 0.0,

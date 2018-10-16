@@ -35,12 +35,11 @@ class Skin {
   final List<Map<String, Attachment>> attachments = <Map<String, Attachment>>[];
 
   Skin(this.name) {
-    if (name == null) throw new ArgumentError('name cannot be null.');
+    if (name == null) throw ArgumentError('name cannot be null.');
   }
 
   void addAttachment(int slotIndex, String name, Attachment attachment) {
-    if (attachment == null)
-      throw new ArgumentError('attachment cannot be null.');
+    if (attachment == null) throw ArgumentError('attachment cannot be null.');
     if (slotIndex >= attachments.length) attachments.length = slotIndex + 1;
     if (attachments[slotIndex] == null)
       attachments[slotIndex] = <String, Attachment>{};

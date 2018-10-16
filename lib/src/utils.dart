@@ -51,11 +51,11 @@ abstract class Enum<T> {
 }
 
 class Color {
-  static final Color WHITE = new Color(1.0, 1.0, 1.0, 1.0);
-  static final Color RED = new Color(1.0, 0.0, 0.0, 1.0);
-  static final Color GREEN = new Color(0.0, 1.0, 0.0, 1.0);
-  static final Color BLUE = new Color(0.0, 0.0, 1.0, 1.0);
-  static final Color MAGENTA = new Color(1.0, 0.0, 1.0, 1.0);
+  static final Color WHITE = Color(1.0, 1.0, 1.0, 1.0);
+  static final Color RED = Color(1.0, 0.0, 0.0, 1.0);
+  static final Color GREEN = Color(0.0, 1.0, 0.0, 1.0);
+  static final Color BLUE = Color(0.0, 0.0, 1.0, 1.0);
+  static final Color MAGENTA = Color(1.0, 0.0, 1.0, 1.0);
 
   double r, g, b, a;
 
@@ -142,7 +142,7 @@ class MathUtils {
       MathUtils.randomTriangularWith(min, max, (min + max) * 0.5);
 
   static double randomTriangularWith(double min, double max, double mode) {
-    final double u = (new math.Random()).nextDouble();
+    final double u = (math.Random()).nextDouble();
     final double d = max - min;
     if (u <= (mode - min) / d) return min + math.sqrt(u * d * (mode - min));
     return max - math.sqrt((1 - u) * d * (max - mode));

@@ -38,9 +38,8 @@ class Triangulator {
   final List<bool> isConcaveArray = <bool>[];
   final List<int> triangles = <int>[];
 
-  final Pool<List<double>> polygonPool =
-      new Pool<List<double>>(() => <double>[]);
-  final Pool<List<int>> polygonIndicesPool = new Pool<List<int>>(() => <int>[]);
+  final Pool<List<double>> polygonPool = Pool<List<double>>(() => <double>[]);
+  final Pool<List<int>> polygonIndicesPool = Pool<List<int>>(() => <int>[]);
 
   Int16List triangulate(Float32List verticesArray) {
     final Float32List vertices = verticesArray;

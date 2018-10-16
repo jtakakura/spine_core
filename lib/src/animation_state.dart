@@ -37,7 +37,7 @@ class AnimationState {
   static const int dipMix = 3;
 
   static final Animation emptyAnimation =
-      new Animation('<empty>', <Timeline>[], 0.0);
+      Animation('<empty>', <Timeline>[], 0.0);
   final List<TrackEntry> tracks = <TrackEntry>[];
   final List<Event> events = <Event>[];
   final List<TrackEntryCallback> onStartCallbacks = <TrackEntryCallback>[];
@@ -48,9 +48,8 @@ class AnimationState {
   final List<TrackEntryEventCallback> onEventCallbacks =
       <TrackEntryEventCallback>[];
   final List<TrackEntry> mixingTo = <TrackEntry>[];
-  final Set<int> propertyIDs = new Set<int>();
-  final Pool<TrackEntry> trackEntryPool =
-      new Pool<TrackEntry>(() => new TrackEntry());
+  final Set<int> propertyIDs = Set<int>();
+  final Pool<TrackEntry> trackEntryPool = Pool<TrackEntry>(() => TrackEntry());
 
   AnimationStateData data;
   EventQueue queue;
@@ -58,7 +57,7 @@ class AnimationState {
   double timeScale = 1.0;
 
   AnimationState(this.data) {
-    queue = new EventQueue(this);
+    queue = EventQueue(this);
   }
 
   void update(double delta) {
@@ -149,7 +148,7 @@ class AnimationState {
   }
 
   bool apply(Skeleton skeleton) {
-    if (skeleton == null) throw new ArgumentError('skeleton cannot be null.');
+    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     if (animationsChanged) _animationsChanged();
 
     final List<Event> events = this.events;
@@ -476,12 +475,12 @@ class AnimationState {
   TrackEntry setAnimation(int trackIndex, String animationName, bool loop) {
     final Animation animation = data.skeletonData.findAnimation(animationName);
     if (animation == null)
-      throw new StateError('Animation not found: $animationName');
+      throw StateError('Animation not found: $animationName');
     return setAnimationWith(trackIndex, animation, loop);
   }
 
   TrackEntry setAnimationWith(int trackIndex, Animation animation, bool loop) {
-    if (animation == null) throw new ArgumentError('animation cannot be null.');
+    if (animation == null) throw ArgumentError('animation cannot be null.');
     bool interrupt = true;
     TrackEntry current = expandToIndex(trackIndex);
     if (current != null) {
@@ -507,13 +506,13 @@ class AnimationState {
       int trackIndex, String animationName, bool loop, double delay) {
     final Animation animation = data.skeletonData.findAnimation(animationName);
     if (animation == null)
-      throw new ArgumentError('Animation not found: $animationName');
+      throw ArgumentError('Animation not found: $animationName');
     return addAnimationWith(trackIndex, animation, loop, delay);
   }
 
   TrackEntry addAnimationWith(
       int trackIndex, Animation animation, bool loop, double delay) {
-    if (animation == null) throw new ArgumentError('animation cannot be null.');
+    if (animation == null) throw ArgumentError('animation cannot be null.');
 
     TrackEntry last = expandToIndex(trackIndex);
     if (last != null) {

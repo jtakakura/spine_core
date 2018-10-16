@@ -31,7 +31,7 @@
 part of spine_core;
 
 class SwirlEffect implements VertexEffect {
-  static final PowOut interpolation = new PowOut(2.0);
+  static final PowOut interpolation = PowOut(2.0);
   double centerX = 0.0;
   double centerY = 0.0;
   double radius = 0.0;

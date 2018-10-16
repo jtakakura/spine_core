@@ -56,7 +56,7 @@ abstract class Texture {
       case 'mipmaplinearlinear':
         return TextureFilter.MipMapLinearLinear;
       default:
-        throw new ArgumentError('Unknown texture filter $text');
+        throw ArgumentError('Unknown texture filter $text');
     }
   }
 
@@ -69,7 +69,7 @@ abstract class Texture {
       case 'repeat':
         return TextureWrap.Repeat;
       default:
-        throw new ArgumentError('Unknown texture wrap $text');
+        throw ArgumentError('Unknown texture wrap $text');
     }
   }
 }
@@ -77,21 +77,21 @@ abstract class Texture {
 class TextureFilter extends Enum<int> {
   const TextureFilter(int value) : super(value);
 
-  static const TextureFilter Nearest = const TextureFilter(9728);
-  static const TextureFilter Linear = const TextureFilter(9729);
-  static const TextureFilter MipMap = const TextureFilter(9987);
-  static const TextureFilter MipMapNearestNearest = const TextureFilter(9984);
-  static const TextureFilter MipMapLinearNearest = const TextureFilter(9985);
-  static const TextureFilter MipMapNearestLinear = const TextureFilter(9986);
-  static const TextureFilter MipMapLinearLinear = const TextureFilter(9987);
+  static const TextureFilter Nearest = TextureFilter(9728);
+  static const TextureFilter Linear = TextureFilter(9729);
+  static const TextureFilter MipMap = TextureFilter(9987);
+  static const TextureFilter MipMapNearestNearest = TextureFilter(9984);
+  static const TextureFilter MipMapLinearNearest = TextureFilter(9985);
+  static const TextureFilter MipMapNearestLinear = TextureFilter(9986);
+  static const TextureFilter MipMapLinearLinear = TextureFilter(9987);
 }
 
 class TextureWrap extends Enum<int> {
   const TextureWrap(int value) : super(value);
 
-  static const TextureWrap MirroredRepeat = const TextureWrap(33648);
-  static const TextureWrap ClampToEdge = const TextureWrap(33071);
-  static const TextureWrap Repeat = const TextureWrap(10497);
+  static const TextureWrap MirroredRepeat = TextureWrap(33648);
+  static const TextureWrap ClampToEdge = TextureWrap(33071);
+  static const TextureWrap Repeat = TextureWrap(10497);
 }
 
 class TextureRegion {
@@ -105,7 +105,7 @@ class TextureRegion {
 }
 
 class FakeTexture extends Texture {
-  FakeTexture({dynamic image}) : super(image);
+  FakeTexture([dynamic image]) : super(image);
   @override
   void setFilters(TextureFilter minFilter, TextureFilter magFilter) {}
   @override

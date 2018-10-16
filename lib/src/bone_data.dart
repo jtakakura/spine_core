@@ -45,8 +45,8 @@ class BoneData {
   TransformMode transformMode = TransformMode.Normal;
 
   BoneData(this.index, this.name, this.parent) {
-    if (index < 0) throw new ArgumentError('index must be >= 0.');
-    if (name == null) throw new ArgumentError('name cannot be null.');
+    if (index < 0) throw ArgumentError('index must be >= 0.');
+    if (name == null) throw ArgumentError('name cannot be null.');
   }
 }
 

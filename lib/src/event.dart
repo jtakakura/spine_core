@@ -38,6 +38,6 @@ class Event {
   double time;
 
   Event(this.time, this.data) {
-    if (data == null) throw new ArgumentError('data cannot be null.');
+    if (data == null) throw ArgumentError('data cannot be null.');
   }
 }

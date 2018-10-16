@@ -32,7 +32,7 @@ part of spine_core;
 
 class ClippingAttachment extends VertexAttachment {
   // Nonessential.
-  final Color color = new Color(0.2275, 0.2275, 0.8078, 1.0); // ce3a3aff
+  final Color color = Color(0.2275, 0.2275, 0.8078, 1.0); // ce3a3aff
 
   SlotData endSlot;
 

@@ -36,13 +36,13 @@ class Animation {
   double duration;
 
   Animation(this.name, this.timelines, this.duration) {
-    if (name == null) throw new ArgumentError('name cannot be null.');
-    if (timelines == null) throw new ArgumentError('timelines cannot be null.');
+    if (name == null) throw ArgumentError('name cannot be null.');
+    if (timelines == null) throw ArgumentError('timelines cannot be null.');
   }
 
   void apply(Skeleton skeleton, double lastTime, double time, bool loop,
       List<Event> events, double alpha, MixPose pose, MixDirection direction) {
-    if (skeleton == null) throw new ArgumentError('skeleton cannot be null.');
+    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
 
     if (loop && duration != 0) {
       time %= duration;
@@ -112,9 +112,9 @@ abstract class CurveTimeline implements Timeline {
   final Float32List curves;
 
   CurveTimeline(int frameCount)
-      : curves = new Float32List((frameCount - 1) * CurveTimeline.bezierSize) {
+      : curves = Float32List((frameCount - 1) * CurveTimeline.bezierSize) {
     if (frameCount <= 0)
-      throw new ArgumentError('frameCount must be > 0: $frameCount');
+      throw ArgumentError('frameCount must be > 0: $frameCount');
   }
 
   int getFrameCount() => curves.length ~/ CurveTimeline.bezierSize + 1;
@@ -200,7 +200,7 @@ class RotateTimeline extends CurveTimeline {
   final Float32List frames; // time, degrees, ...
 
   RotateTimeline(int frameCount)
-      : frames = new Float32List(frameCount << 1),
+      : frames = Float32List(frameCount << 1),
         super(frameCount);
 
   @override
@@ -277,7 +277,7 @@ class TranslateTimeline extends CurveTimeline {
   int boneIndex;
 
   TranslateTimeline(int frameCount)
-      : frames = new Float32List(frameCount * TranslateTimeline.entries),
+      : frames = Float32List(frameCount * TranslateTimeline.entries),
         super(frameCount);
 
   @override
@@ -486,7 +486,7 @@ class ColorTimeline extends CurveTimeline {
   int slotIndex;
 
   ColorTimeline(int frameCount)
-      : frames = new Float32List(frameCount * ColorTimeline.entries),
+      : frames = Float32List(frameCount * ColorTimeline.entries),
         super(frameCount);
 
   @override
@@ -571,7 +571,7 @@ class TwoColorTimeline extends CurveTimeline {
   final Float32List frames;
 
   TwoColorTimeline(int frameCount)
-      : frames = new Float32List(frameCount * TwoColorTimeline.entries),
+      : frames = Float32List(frameCount * TwoColorTimeline.entries),
         super(frameCount);
 
   @override
@@ -675,8 +675,8 @@ class AttachmentTimeline implements Timeline {
   int slotIndex;
 
   AttachmentTimeline(int frameCount)
-      : frames = new Float32List(frameCount),
-        attachmentNames = new List<String>(frameCount);
+      : frames = Float32List(frameCount),
+        attachmentNames = List<String>(frameCount);
 
   @override
   int getPropertyId() => (TimelineType.Attachment.index << 24) + slotIndex;
@@ -731,8 +731,8 @@ class DeformTimeline extends CurveTimeline {
   VertexAttachment attachment;
 
   DeformTimeline(int frameCount)
-      : frames = new Float32List(frameCount),
-        frameVertices = new List<Float32List>(frameCount),
+      : frames = Float32List(frameCount),
+        frameVertices = List<Float32List>(frameCount),
         super(frameCount);
 
   @override
@@ -771,8 +771,8 @@ class DeformTimeline extends CurveTimeline {
           verticesArray.length = 0;
           return;
         }
-        final Float32List vertices = Float32List
-            .fromList(ArrayUtils.setArraySize(verticesArray, vertexCount, 0.0));
+        final Float32List vertices = Float32List.fromList(
+            ArrayUtils.setArraySize(verticesArray, vertexCount, 0.0));
         if (vertexAttachment.bones == null) {
           // Unweighted vertex positions.
           final Float32List setupVertices = vertexAttachment.vertices;
@@ -787,8 +787,8 @@ class DeformTimeline extends CurveTimeline {
       return;
     }
 
-    final Float32List vertices = Float32List
-        .fromList(ArrayUtils.setArraySize(verticesArray, vertexCount, 0.0));
+    final Float32List vertices = Float32List.fromList(
+        ArrayUtils.setArraySize(verticesArray, vertexCount, 0.0));
     if (time >= frames[frames.length - 1]) {
       // Time is after last frame.
       final Float32List lastVertices = frameVertices[frames.length - 1];
@@ -859,8 +859,8 @@ class EventTimeline extends Timeline {
   final List<Event> events;
 
   EventTimeline(int frameCount)
-      : frames = new Float32List(frameCount),
-        events = new List<Event>(frameCount);
+      : frames = Float32List(frameCount),
+        events = List<Event>(frameCount);
 
   @override
   int getPropertyId() => TimelineType.Event.index << 24;
@@ -916,8 +916,8 @@ class DrawOrderTimeline implements Timeline {
   final List<Int32List> drawOrders;
 
   DrawOrderTimeline(int frameCount)
-      : frames = new Float32List(frameCount),
-        drawOrders = new List<Int32List>(frameCount);
+      : frames = Float32List(frameCount),
+        drawOrders = List<Int32List>(frameCount);
 
   @override
   int getPropertyId() => TimelineType.DrawOrder.index << 24;
@@ -980,7 +980,7 @@ class IkConstraintTimeline extends CurveTimeline {
   int ikConstraintIndex;
 
   IkConstraintTimeline(int frameCount)
-      : frames = new Float32List(frameCount * IkConstraintTimeline.entries),
+      : frames = Float32List(frameCount * IkConstraintTimeline.entries),
         super(frameCount);
 
   @override
@@ -1089,8 +1089,7 @@ class TransformConstraintTimeline extends CurveTimeline {
   int transformConstraintIndex;
 
   TransformConstraintTimeline(int frameCount)
-      : frames =
-            new Float32List(frameCount * TransformConstraintTimeline.entries),
+      : frames = Float32List(frameCount * TransformConstraintTimeline.entries),
         super(frameCount);
 
   @override
@@ -1201,8 +1200,8 @@ class PathConstraintPositionTimeline extends CurveTimeline {
   int pathConstraintIndex;
 
   PathConstraintPositionTimeline(int frameCount)
-      : frames = new Float32List(
-            frameCount * PathConstraintPositionTimeline.entries),
+      : frames =
+            Float32List(frameCount * PathConstraintPositionTimeline.entries),
         super(frameCount);
 
   @override
@@ -1334,8 +1333,7 @@ class PathConstraintMixTimeline extends CurveTimeline {
   int pathConstraintIndex;
 
   PathConstraintMixTimeline(int frameCount)
-      : frames =
-            new Float32List(frameCount * PathConstraintMixTimeline.entries),
+      : frames = Float32List(frameCount * PathConstraintMixTimeline.entries),
         super(frameCount);
 
   @override

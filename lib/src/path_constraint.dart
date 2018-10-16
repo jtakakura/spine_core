@@ -39,15 +39,15 @@ class PathConstraint extends Constraint {
   Slot target;
   double position = 0.0, spacing = 0.0, rotateMix = 0.0, translateMix = 0.0;
 
-  Float32List spaces = new Float32List(0), positions = new Float32List(0);
-  Float32List world = new Float32List(0),
-      curves = new Float32List(0),
-      lengths = new Float32List(0);
-  Float32List segments = new Float32List(10);
+  Float32List spaces = Float32List(0), positions = Float32List(0);
+  Float32List world = Float32List(0),
+      curves = Float32List(0),
+      lengths = Float32List(0);
+  Float32List segments = Float32List(10);
 
   PathConstraint(this.data, Skeleton skeleton) {
-    if (data == null) throw new ArgumentError('data cannot be null.');
-    if (skeleton == null) throw new ArgumentError('skeleton cannot be null.');
+    if (data == null) throw ArgumentError('data cannot be null.');
+    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     final int n = data.bones.length;
     for (int i = 0; i < n; i++)
       bones.add(skeleton.findBone(data.bones[i].name));

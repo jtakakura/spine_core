@@ -37,20 +37,20 @@ class AnimationStateData {
 
   AnimationStateData(this.skeletonData) {
     if (skeletonData == null)
-      throw new ArgumentError('skeletonData cannot be null.');
+      throw ArgumentError('skeletonData cannot be null.');
   }
 
   void setMix(String fromName, String toName, double duration) {
     final Animation from = skeletonData.findAnimation(fromName);
-    if (from == null) throw new StateError('Animation not found: $fromName');
+    if (from == null) throw StateError('Animation not found: $fromName');
     final Animation to = skeletonData.findAnimation(toName);
-    if (to == null) throw new StateError('Animation not found: $toName');
+    if (to == null) throw StateError('Animation not found: $toName');
     setMixWith(from, to, duration);
   }
 
   void setMixWith(Animation from, Animation to, double duration) {
-    if (from == null) throw new ArgumentError('from cannot be null.');
-    if (to == null) throw new ArgumentError('to cannot be null.');
+    if (from == null) throw ArgumentError('from cannot be null.');
+    if (to == null) throw ArgumentError('to cannot be null.');
     final String key = from.name + '.' + to.name;
     animationToMixTime[key] = duration;
   }
