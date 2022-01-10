@@ -41,9 +41,9 @@ class AnimationStateData {
   }
 
   void setMix(String fromName, String toName, double duration) {
-    final Animation from = skeletonData.findAnimation(fromName);
+    final Animation? from = skeletonData.findAnimation(fromName);
     if (from == null) throw StateError('Animation not found: $fromName');
-    final Animation to = skeletonData.findAnimation(toName);
+    final Animation? to = skeletonData.findAnimation(toName);
     if (to == null) throw StateError('Animation not found: $toName');
     setMixWith(from, to, duration);
   }
@@ -57,7 +57,7 @@ class AnimationStateData {
 
   double getMix(Animation from, Animation to) {
     final String key = from.name + '.' + to.name;
-    final double value = animationToMixTime[key];
+    final double? value = animationToMixTime[key];
     return value == null ? defaultMix : value;
   }
 }

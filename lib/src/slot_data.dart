@@ -32,12 +32,12 @@ part of spine_core;
 
 class SlotData {
   final int index;
-  final String name;
+  final String? name;
   final BoneData boneData;
   Color color = Color(1.0, 1.0, 1.0, 1.0);
-  Color darkColor;
-  String attachmentName;
-  BlendMode blendMode;
+  Color? darkColor;
+  String? attachmentName;
+  BlendMode? blendMode;
 
   SlotData(this.index, this.name, this.boneData) {
     if (index < 0) throw ArgumentError('index must be >= 0.');

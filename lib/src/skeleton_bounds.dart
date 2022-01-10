@@ -52,7 +52,7 @@ class SkeletonBounds {
 
     for (int i = 0; i < slotCount; i++) {
       final Slot slot = slots[i];
-      final Attachment attachment = slot.getAttachment();
+      final Attachment? attachment = slot.getAttachment();
       if (attachment is BoundingBoxAttachment) {
         boundingBoxes.add(attachment);
 
@@ -132,7 +132,7 @@ class SkeletonBounds {
       minY < bounds.maxY &&
       maxY > bounds.minY;
 
-  BoundingBoxAttachment containsPoint(double x, double y) {
+  BoundingBoxAttachment? containsPoint(double x, double y) {
     final List<Float32List> polygons = this.polygons;
     final int n = polygons.length;
     for (int i = 0; i < n; i++)
@@ -162,7 +162,7 @@ class SkeletonBounds {
     return inside;
   }
 
-  BoundingBoxAttachment intersectsSegment(
+  BoundingBoxAttachment? intersectsSegment(
       double x1, double y1, double x2, double y2) {
     final List<Float32List> polygons = this.polygons;
     final int n = polygons.length;
@@ -198,7 +198,7 @@ class SkeletonBounds {
     return false;
   }
 
-  Float32List AnimationStateData(BoundingBoxAttachment boundingBox) {
+  Float32List? AnimationStateData(BoundingBoxAttachment boundingBox) {
     if (boundingBox == null) throw ArgumentError('boundingBox cannot be null.');
     final int index = boundingBoxes.indexOf(boundingBox);
     return index == -1 ? null : polygons[index];

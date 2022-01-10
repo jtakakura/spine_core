@@ -31,7 +31,7 @@
 part of spine_core;
 
 abstract class Attachment {
-  final String name;
+  final String? name;
 
   Attachment(this.name) {
     if (name == null) throw ArgumentError('name cannot be null.');
@@ -42,19 +42,19 @@ abstract class VertexAttachment extends Attachment {
   static int _nextID = 0;
 
   final int id = (_nextID++ & 65535) << 11;
-  Int32List bones;
-  Float32List vertices;
+  Int32List? bones;
+  Float32List? vertices;
   int worldVerticesLength = 0;
 
-  VertexAttachment(String name) : super(name);
+  VertexAttachment(String? name) : super(name);
 
   void computeWorldVertices(Slot slot, int start, int count,
       Float32List worldVertices, int offset, int stride) {
     count = offset + (count >> 1) * stride;
     final Skeleton skeleton = slot.bone.skeleton;
     final Float32List deformArray = slot.attachmentVertices;
-    Float32List vertices = this.vertices;
-    final Int32List bones = this.bones;
+    Float32List? vertices = this.vertices;
+    final Int32List? bones = this.bones;
     if (bones == null) {
       if (deformArray.isNotEmpty) vertices = deformArray;
       final Bone bone = slot.bone;
@@ -62,7 +62,7 @@ abstract class VertexAttachment extends Attachment {
       final double y = bone.worldY;
       final double a = bone.a, b = bone.b, c = bone.c, d = bone.d;
       for (int v = start, w = offset; w < count; v += 2, w += stride) {
-        final double vx = vertices[v], vy = vertices[v + 1];
+        final double vx = vertices![v], vy = vertices[v + 1];
         worldVertices[w] = vx * a + vy * b + x;
         worldVertices[w + 1] = vx * c + vy * d + y;
       }
@@ -82,7 +82,7 @@ abstract class VertexAttachment extends Attachment {
         n += v;
         for (; v < n; v++, b += 3) {
           final Bone bone = skeletonBones[bones[v]];
-          final double vx = vertices[b],
+          final double vx = vertices![b],
               vy = vertices[b + 1],
               weight = vertices[b + 2];
           wx += (vx * bone.a + vy * bone.b + bone.worldX) * weight;
@@ -101,7 +101,7 @@ abstract class VertexAttachment extends Attachment {
         n += v;
         for (; v < n; v++, b += 3, f += 2) {
           final Bone bone = skeletonBones[bones[v]];
-          final double vx = vertices[b] + deform[f],
+          final double vx = vertices![b] + deform[f],
               vy = vertices[b + 1] + deform[f + 1],
               weight = vertices[b + 2];
           wx += (vx * bone.a + vy * bone.b + bone.worldX) * weight;
@@ -113,6 +113,6 @@ abstract class VertexAttachment extends Attachment {
     }
   }
 
-  bool applyDeform(VertexAttachment sourceAttachment) =>
+  bool applyDeform(VertexAttachment? sourceAttachment) =>
       this == sourceAttachment;
 }

@@ -134,7 +134,7 @@ class MathUtils {
   static int toInt(double x) => x > 0 ? x.floor() : x.ceil();
 
   static double cbrt(double x) {
-    final double y = math.pow(x.abs(), 1 / 3);
+    final double y = math.pow(x.abs(), 1 / 3) as double;
     return x < 0 ? -y : y;
   }
 
@@ -176,12 +176,12 @@ class PowOut extends Pow {
 }
 
 class ArrayUtils {
-  static void arrayCopy<T>(List<T> source, int sourceStart, List<T> dest,
-      int destStart, int numElements) {
-    for (int i = sourceStart, j = destStart;
-        i < sourceStart + numElements;
+  static void arrayCopy<T>(List<T>? source, int sourceStart, List<T> dest,
+      int? destStart, int numElements) {
+    for (int? i = sourceStart, j = destStart;
+        i! < sourceStart + numElements;
         i++, j++) {
-      setArrayValue(dest, j, source[i]);
+      setArrayValue(dest, j!, source![i]);
     }
   }
 
@@ -237,26 +237,26 @@ class Pool<T> {
 }
 
 class Vector2 {
-  double x, y;
+  double? x, y;
 
   Vector2([this.x = 0.0, this.y = 0.0]);
 
-  void set(double x, double y) {
+  void set(double? x, double? y) {
     this.x = x;
     this.y = y;
   }
 
   double length() {
-    final double x = this.x;
-    final double y = this.y;
+    final double x = this.x!;
+    final double y = this.y!;
     return math.sqrt(x * x + y * y);
   }
 
   void normalize() {
     final double len = length();
     if (len != 0) {
-      x /= len;
-      y /= len;
+      x = x! / len;
+      y = y! / len;
     }
   }
 }

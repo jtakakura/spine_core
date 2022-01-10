@@ -31,25 +31,25 @@
 part of spine_core;
 
 class IkConstraint extends Constraint {
-  final IkConstraintData data;
-  final List<Bone> bones = <Bone>[];
-  Bone target;
-  double mix = 1.0;
+  final IkConstraintData? data;
+  final List<Bone?> bones = <Bone?>[];
+  Bone? target;
+  double? mix = 1.0;
   int bendDirection = 0;
 
   IkConstraint(this.data, Skeleton skeleton) {
     if (data == null) throw ArgumentError('data cannot be null.');
     if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
-    mix = data.mix;
-    bendDirection = data.bendDirection;
+    mix = data!.mix;
+    bendDirection = data!.bendDirection;
 
-    for (int i = 0; i < data.bones.length; i++)
-      bones.add(skeleton.findBone(data.bones[i].name));
-    target = skeleton.findBone(data.target.name);
+    for (int i = 0; i < data!.bones.length; i++)
+      bones.add(skeleton.findBone(data!.bones[i].name));
+    target = skeleton.findBone(data!.target!.name);
   }
 
   @override
-  int getOrder() => data.order;
+  int? getOrder() => data!.order;
 
   void apply() {
     update();
@@ -57,14 +57,14 @@ class IkConstraint extends Constraint {
 
   @override
   void update() {
-    final Bone target = this.target;
-    final List<Bone> bones = this.bones;
+    final Bone? target = this.target;
+    final List<Bone?> bones = this.bones;
     switch (bones.length) {
       case 1:
-        apply1(bones[0], target.worldX, target.worldY, mix);
+        apply1(bones[0]!, target!.worldX, target.worldY, mix!);
         break;
       case 2:
-        apply2(bones[0], bones[1], target.worldX, target.worldY, bendDirection,
+        apply2(bones[0], bones[1], target!.worldX, target.worldY, bendDirection,
             mix);
         break;
     }
@@ -72,39 +72,39 @@ class IkConstraint extends Constraint {
 
   void apply1(Bone bone, double targetX, double targetY, double alpha) {
     if (!bone.appliedValid) bone.updateAppliedTransform();
-    final Bone p = bone.parent;
+    final Bone p = bone.parent!;
     final double id = 1 / (p.a * p.d - p.b * p.c);
     final double x = targetX - p.worldX, y = targetY - p.worldY;
-    final double tx = (x * p.d - y * p.b) * id - bone.ax,
-        ty = (y * p.a - x * p.c) * id - bone.ay;
+    final double tx = (x * p.d - y * p.b) * id - bone.ax!,
+        ty = (y * p.a - x * p.c) * id - bone.ay!;
     double rotationIK =
-        math.atan2(ty, tx) * MathUtils.radDeg - bone.ashearX - bone.arotation;
-    if (bone.ascaleX < 0) rotationIK += 180;
+        math.atan2(ty, tx) * MathUtils.radDeg - bone.ashearX! - bone.arotation!;
+    if (bone.ascaleX! < 0) rotationIK += 180;
     if (rotationIK > 180)
       rotationIK -= 360;
     else if (rotationIK < -180) rotationIK += 360;
     bone.updateWorldTransformWith(
         bone.ax,
         bone.ay,
-        bone.arotation + rotationIK * alpha,
+        bone.arotation! + rotationIK * alpha,
         bone.ascaleX,
         bone.ascaleY,
         bone.ashearX,
         bone.ashearY);
   }
 
-  void apply2(Bone parent, Bone child, double targetX, double targetY,
-      int bendDir, double alpha) {
+  void apply2(Bone? parent, Bone? child, double targetX, double targetY,
+      int bendDir, double? alpha) {
     if (alpha == 0) {
-      child.updateWorldTransform();
+      child!.updateWorldTransform();
       return;
     }
-    if (!parent.appliedValid) parent.updateAppliedTransform();
-    if (!child.appliedValid) child.updateAppliedTransform();
-    final double px = parent.ax, py = parent.ay;
-    double psx = parent.ascaleX, psy = parent.ascaleY, csx = child.ascaleX;
+    if (!parent!.appliedValid) parent.updateAppliedTransform();
+    if (!child!.appliedValid) child.updateAppliedTransform();
+    final double? px = parent.ax, py = parent.ay;
+    double? psx = parent.ascaleX, psy = parent.ascaleY, csx = child.ascaleX;
     int os1 = 0, os2 = 0, s2 = 0;
-    if (psx < 0) {
+    if (psx! < 0) {
       psx = -psx;
       os1 = 180;
       s2 = -1;
@@ -112,17 +112,17 @@ class IkConstraint extends Constraint {
       os1 = 0;
       s2 = 1;
     }
-    if (psy < 0) {
+    if (psy! < 0) {
       psy = -psy;
       s2 = -s2;
     }
-    if (csx < 0) {
+    if (csx! < 0) {
       csx = -csx;
       os2 = 180;
     } else
       os2 = 0;
-    final double cx = child.ax;
-    double cy = 0.0,
+    final double? cx = child.ax;
+    double? cy = 0.0,
         cwx = 0.0,
         cwy = 0.0,
         a = parent.a,
@@ -132,21 +132,21 @@ class IkConstraint extends Constraint {
     final bool u = (psx - psy).abs() <= 0.0001;
     if (!u) {
       cy = 0.0;
-      cwx = a * cx + parent.worldX;
+      cwx = a * cx! + parent.worldX;
       cwy = c * cx + parent.worldY;
     } else {
       cy = child.ay;
-      cwx = a * cx + b * cy + parent.worldX;
+      cwx = a * cx! + b * cy! + parent.worldX;
       cwy = c * cx + d * cy + parent.worldY;
     }
-    final Bone pp = parent.parent;
+    final Bone pp = parent.parent!;
     a = pp.a;
     b = pp.b;
     c = pp.c;
     d = pp.d;
     final double id = 1 / (a * d - b * c);
     double x = targetX - pp.worldX, y = targetY - pp.worldY;
-    final double tx = (x * d - y * b) * id - px, ty = (y * a - x * c) * id - py;
+    final double tx = (x * d - y * b) * id - px!, ty = (y * a - x * c) * id - py!;
     x = cwx - pp.worldX;
     y = cwy - pp.worldY;
     final double dx = (x * d - y * b) * id - px, dy = (y * a - x * c) * id - py;
@@ -219,15 +219,15 @@ class IkConstraint extends Constraint {
       }
     }
     final double os = math.atan2(cy, cx) * s2;
-    double rotation = parent.arotation;
+    double rotation = parent.arotation!;
     a1 = (a1 - os) * MathUtils.radDeg + os1 - rotation;
     if (a1 > 180)
       a1 -= 360;
     else if (a1 < -180) a1 += 360;
-    parent.updateWorldTransformWith(px, py, rotation + a1 * alpha,
+    parent.updateWorldTransformWith(px, py, rotation + a1 * alpha!,
         parent.ascaleX, parent.ascaleY, 0.0, 0.0);
-    rotation = child.arotation;
-    a2 = ((a2 + os) * MathUtils.radDeg - child.ashearX) * s2 + os2 - rotation;
+    rotation = child.arotation!;
+    a2 = ((a2 + os) * MathUtils.radDeg - child.ashearX!) * s2 + os2 - rotation;
     if (a2 > 180)
       a2 -= 360;
     else if (a2 < -180) a2 += 360;

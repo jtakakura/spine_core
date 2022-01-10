@@ -50,8 +50,8 @@ class SwirlEffect implements VertexEffect {
   @override
   void transform(Vector2 position, Vector2 uv, Color light, Color dark) {
     final double radAngle = angle * MathUtils.degreesToRadians;
-    final double x = position.x - worldX;
-    final double y = position.y - worldY;
+    final double x = position.x! - worldX;
+    final double y = position.y! - worldY;
     final double dist = math.sqrt(x * x + y * y);
     if (dist < radius) {
       final double theta =

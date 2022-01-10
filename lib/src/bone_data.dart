@@ -32,10 +32,10 @@ part of spine_core;
 
 class BoneData {
   final int index;
-  final String name;
-  BoneData parent;
-  double length;
-  double x = 0.0,
+  final String? name;
+  BoneData? parent;
+  late double length;
+  double? x = 0.0,
       y = 0.0,
       rotation = 0.0,
       scaleX = 1.0,

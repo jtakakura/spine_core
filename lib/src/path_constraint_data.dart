@@ -31,15 +31,15 @@
 part of spine_core;
 
 class PathConstraintData {
-  final String name;
+  final String? name;
   final List<BoneData> bones = <BoneData>[];
-  int order = 0;
-  SlotData target;
-  PositionMode positionMode;
-  SpacingMode spacingMode;
-  RotateMode rotateMode;
-  double offsetRotation;
-  double position, spacing, rotateMix, translateMix;
+  int? order = 0;
+  SlotData? target;
+  PositionMode? positionMode;
+  SpacingMode? spacingMode;
+  RotateMode? rotateMode;
+  double? offsetRotation;
+  double? position, spacing, rotateMix, translateMix;
 
   PathConstraintData(this.name) {
     if (name == null) throw ArgumentError('name cannot be null.');

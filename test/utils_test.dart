@@ -60,7 +60,7 @@ void main() {
       final List<int> array = <int>[];
       ArrayUtils.setArrayValue(array, 2, 1);
 
-      expect(array, <int>[null, null, 1]);
+      expect(array, <int?>[null, null, 1]);
     });
 
     test('setArraySize Test1', () {

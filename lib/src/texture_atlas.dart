@@ -30,7 +30,7 @@
 
 part of spine_core;
 
-typedef Texture TextureLoader(String path);
+typedef Texture TextureLoader(String? path);
 
 class TextureAtlas implements Disposable {
   List<TextureAtlasPage> pages = <TextureAtlasPage>[];
@@ -46,9 +46,9 @@ class TextureAtlas implements Disposable {
 
     final TextureAtlasReader reader = TextureAtlasReader(atlasText);
     final List<String> tuple = <String>[];
-    TextureAtlasPage page;
+    TextureAtlasPage? page;
     for (;;) {
-      String line = reader.readLine();
+      String? line = reader.readLine();
       if (line == null) break;
       line = line.trim();
       if (line.isEmpty)
@@ -81,10 +81,10 @@ class TextureAtlas implements Disposable {
 
         page
           ..texture = textureLoader(line)
-          ..texture.setFilters(page.minFilter, page.magFilter)
-          ..texture.setWraps(page.uWrap, page.vWrap)
-          ..width = page.texture.image.width
-          ..height = page.texture.image.height;
+          ..texture!.setFilters(page.minFilter, page.magFilter)
+          ..texture!.setWraps(page.uWrap, page.vWrap)
+          ..width = page.texture!.image.width
+          ..height = page.texture!.image.height;
         pages.add(page);
       } else {
         final TextureAtlasRegion region = TextureAtlasRegion()
@@ -101,16 +101,16 @@ class TextureAtlas implements Disposable {
         final int height = int.parse(tuple[1]);
 
         region
-          ..u = x / page.width
-          ..v = y / page.height;
+          ..u = x / page.width!
+          ..v = y / page.height!;
         if (region.rotate) {
           region
-            ..u2 = (x + height) / page.width
-            ..v2 = (y + width) / page.height;
+            ..u2 = (x + height) / page.width!
+            ..v2 = (y + width) / page.height!;
         } else {
           region
-            ..u2 = (x + width) / page.width
-            ..v2 = (y + height) / page.height;
+            ..u2 = (x + width) / page.width!
+            ..v2 = (y + height) / page.height!;
         }
         region
           ..x = x
@@ -140,7 +140,7 @@ class TextureAtlas implements Disposable {
     }
   }
 
-  TextureAtlasRegion findRegion(String name) {
+  TextureAtlasRegion? findRegion(String? name) {
     for (int i = 0; i < regions.length; i++) {
       if (regions[i].name == name) {
         return regions[i];
@@ -152,33 +152,33 @@ class TextureAtlas implements Disposable {
   @override
   void dispose() {
     for (int i = 0; i < pages.length; i++) {
-      pages[i].texture.dispose();
+      pages[i].texture!.dispose();
     }
   }
 }
 
 class TextureAtlasReader {
-  List<String> lines;
+  late List<String> lines;
   int index = 0;
 
   TextureAtlasReader(String text) {
     lines = text.split(RegExp(r'\r\n|\r|\n'));
   }
 
-  String readLine() {
+  String? readLine() {
     if (index >= lines.length) return null;
     return lines[index++];
   }
 
   String readValue() {
-    final String line = readLine();
+    final String line = readLine()!;
     final int colon = line.indexOf(':');
     if (colon == -1) throw StateError('Invalid line: $line');
     return line.substring(colon + 1).trim();
   }
 
   int readTuple(List<String> tuple) {
-    final String line = readLine();
+    final String line = readLine()!;
     final int colon = line.indexOf(':');
     if (colon == -1) throw StateError('Invalid line: $line');
     int i = 0, lastMatch = colon + 1;
@@ -197,21 +197,21 @@ class TextureAtlasReader {
 }
 
 class TextureAtlasPage {
-  String name;
-  TextureFilter minFilter;
-  TextureFilter magFilter;
-  TextureWrap uWrap;
-  TextureWrap vWrap;
-  Texture texture;
-  int width;
-  int height;
+  String? name;
+  TextureFilter? minFilter;
+  TextureFilter? magFilter;
+  TextureWrap? uWrap;
+  TextureWrap? vWrap;
+  Texture? texture;
+  int? width;
+  int? height;
 }
 
 class TextureAtlasRegion extends TextureRegion {
-  TextureAtlasPage page;
-  String name;
-  int x;
-  int y;
-  int index;
-  Texture texture;
+  TextureAtlasPage? page;
+  String? name;
+  int? x;
+  int? y;
+  int? index;
+  Texture? texture;
 }

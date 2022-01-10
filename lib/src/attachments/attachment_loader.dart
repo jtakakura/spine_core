@@ -31,15 +31,15 @@
 part of spine_core;
 
 abstract class AttachmentLoader {
-  RegionAttachment newRegionAttachment(Skin skin, String name, String path);
+  RegionAttachment newRegionAttachment(Skin skin, String? name, String? path);
 
-  MeshAttachment newMeshAttachment(Skin skin, String name, String path);
+  MeshAttachment newMeshAttachment(Skin skin, String? name, String? path);
 
-  BoundingBoxAttachment newBoundingBoxAttachment(Skin skin, String name);
+  BoundingBoxAttachment newBoundingBoxAttachment(Skin skin, String? name);
 
-  PathAttachment newPathAttachment(Skin skin, String name);
+  PathAttachment newPathAttachment(Skin skin, String? name);
 
-  PointAttachment newPointAttachment(Skin skin, String name);
+  PointAttachment newPointAttachment(Skin skin, String? name);
 
-  ClippingAttachment newClippingAttachment(Skin skin, String name);
+  ClippingAttachment newClippingAttachment(Skin skin, String? name);
 }

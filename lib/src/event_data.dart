@@ -32,9 +32,9 @@ part of spine_core;
 
 class EventData {
   final String name;
-  int intValue;
-  double floatValue;
-  String stringValue;
+  int? intValue;
+  double? floatValue;
+  String? stringValue;
 
   EventData(this.name) {
     if (name == null) throw ArgumentError('name cannot be null.');

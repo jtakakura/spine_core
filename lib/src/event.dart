@@ -32,10 +32,10 @@ part of spine_core;
 
 class Event {
   final EventData data;
-  int intValue;
-  double floatValue;
-  String stringValue;
-  double time;
+  int? intValue;
+  double? floatValue;
+  String? stringValue;
+  double? time;
 
   Event(this.time, this.data) {
     if (data == null) throw ArgumentError('data cannot be null.');

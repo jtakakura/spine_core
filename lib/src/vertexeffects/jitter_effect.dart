@@ -41,9 +41,8 @@ class JitterEffect implements VertexEffect {
 
   @override
   void transform(Vector2 position, Vector2 uv, Color light, Color dark) {
-    position
-      ..x += MathUtils.randomTriangular(-jitterX, jitterY)
-      ..y += MathUtils.randomTriangular(-jitterX, jitterY);
+    position.x = position.x! + MathUtils.randomTriangular(-jitterX, jitterY);
+    position.y = position.y! + MathUtils.randomTriangular(-jitterX, jitterY);
   }
 
   @override
