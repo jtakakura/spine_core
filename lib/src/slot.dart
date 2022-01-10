@@ -33,7 +33,8 @@ part of spine_core;
 class Slot {
   final SlotData data;
   final Bone bone;
-  final Color? color = Color(), darkColor;
+  final Color color = Color();
+  final Color? darkColor;
   Float32List attachmentVertices = Float32List(0);
   Attachment? attachment;
   late double attachmentTime;
@@ -59,7 +60,7 @@ class Slot {
   double getAttachmentTime() => bone.skeleton.time - attachmentTime;
 
   void setToSetupPose() {
-    color!.setFromColor(data.color);
+    color.setFromColor(data.color);
     if (darkColor != null) darkColor!.setFromColor(data.darkColor!);
     if (data.attachmentName == null)
       attachment = null;

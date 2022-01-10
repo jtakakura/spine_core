@@ -34,7 +34,8 @@ class PathAttachment extends VertexAttachment {
   final Color color = Color(1.0, 1.0, 1.0, 1.0);
 
   late Float32List lengths;
-  bool? closed = false, constantSpeed = false;
+  bool closed = false;
+  bool constantSpeed = false;
 
-  PathAttachment(String? name) : super(name);
+  PathAttachment(String name) : super(name);
 }

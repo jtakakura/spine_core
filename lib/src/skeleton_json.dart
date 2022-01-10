@@ -143,7 +143,7 @@ class SkeletonJson {
 
         data
           ..bendDirection =
-              _getBool(constraintMap, 'bendPositive', true)! ? 1 : -1
+              _getBool(constraintMap, 'bendPositive', true) ? 1 : -1
           ..mix = _getDouble(constraintMap, 'mix', 1.0);
 
         skeletonData.ikConstraints.add(data);
@@ -294,16 +294,16 @@ class SkeletonJson {
   }
 
   Attachment? readAttachment(Map<String, dynamic> map, Skin skin, int slotIndex,
-      String? name, SkeletonData skeletonData) {
+      String name, SkeletonData skeletonData) {
     final double scale = this.scale;
-    name = _getString(map, 'name', name);
+    name = _getString(map, 'name', name)!;
 
-    final String? type = _getString(map, 'type', 'region');
+    final String type = _getString(map, 'type', 'region')!;
 
     switch (type) {
       case 'region':
         {
-          final String? path = _getString(map, 'path', name);
+          final String path = _getString(map, 'path', name)!;
           final RegionAttachment region =
               attachmentLoader.newRegionAttachment(skin, name, path);
           region
@@ -334,7 +334,7 @@ class SkeletonJson {
       case 'mesh':
       case 'linkedmesh':
         {
-          final String? path = _getString(map, 'path', name);
+          final String path = _getString(map, 'path', name)!;
           final MeshAttachment mesh =
               attachmentLoader.newMeshAttachment(skin, name, path);
           mesh.path = path;
@@ -601,7 +601,7 @@ class SkeletonJson {
               frameIndex,
               _getDouble(valueMap, 'time')!,
               _getDouble(valueMap, 'mix', 1.0)!,
-              _getBool(valueMap, 'bendPositive', true)! ? 1 : -1);
+              _getBool(valueMap, 'bendPositive', true) ? 1 : -1);
           readCurve(valueMap, timeline, frameIndex);
           frameIndex++;
         }
@@ -889,8 +889,8 @@ class SkeletonJson {
           [int? defaultValue]) =>
       map[name] is num ? map[name].toInt() : defaultValue;
 
-  static bool? _getBool(Map<String, dynamic> map, String name,
-          [bool? defaultValue]) =>
+  static bool _getBool(Map<String, dynamic> map, String name,
+          [bool defaultValue = false]) =>
       map[name] is bool ? map[name] : defaultValue;
 
   static BlendMode blendModeFromString(String str) {
