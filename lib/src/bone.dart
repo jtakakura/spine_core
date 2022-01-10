@@ -40,8 +40,8 @@ class Bone implements Updatable {
   double x = 0.0,
       y = 0.0,
       rotation = 0.0,
-      scaleX = 0.0,
-      scaleY = 0.0,
+      scaleX = 1.0,
+      scaleY = 1.0,
       shearX = 0.0,
       shearY = 0.0;
   double ax = 0.0,

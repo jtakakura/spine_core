@@ -32,9 +32,9 @@ part of spine_core;
 
 class EventData {
   final String name;
-  int? intValue;
-  double? floatValue;
-  String? stringValue;
+  int intValue = 0;
+  double floatValue = 0.0;
+  String stringValue = '';
 
   EventData(this.name);
 }
