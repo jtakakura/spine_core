@@ -47,11 +47,10 @@ class SkeletonData {
   String? version, hash;
 
   // Nonessential
-  double? fps = 0.0;
+  double fps = 0.0;
   String? imagesPath;
 
-  BoneData? findBone(String? boneName) {
-    if (boneName == null) throw ArgumentError('boneName cannot be null.');
+  BoneData? findBone(String boneName) {
     final List<BoneData> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) if (bones[i].name == boneName) return bones[i];

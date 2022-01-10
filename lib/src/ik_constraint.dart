@@ -62,7 +62,7 @@ class IkConstraint extends Constraint {
         apply1(bones[0]!, target!.worldX, target.worldY, mix);
         break;
       case 2:
-        apply2(bones[0], bones[1], target!.worldX, target.worldY, bendDirection,
+        apply2(bones[0]!, bones[1]!, target!.worldX, target.worldY, bendDirection,
             mix);
         break;
     }
@@ -91,14 +91,14 @@ class IkConstraint extends Constraint {
         bone.ashearY);
   }
 
-  void apply2(Bone? parent, Bone? child, double targetX, double targetY,
-      int bendDir, double? alpha) {
+  void apply2(Bone parent, Bone child, double targetX, double targetY,
+      int bendDir, double alpha) {
     if (alpha == 0) {
-      child!.updateWorldTransform();
+      child.updateWorldTransform();
       return;
     }
-    if (!parent!.appliedValid) parent.updateAppliedTransform();
-    if (!child!.appliedValid) child.updateAppliedTransform();
+    if (!parent.appliedValid) parent.updateAppliedTransform();
+    if (!child.appliedValid) child.updateAppliedTransform();
     final double px = parent.ax, py = parent.ay;
     double psx = parent.ascaleX, psy = parent.ascaleY, csx = child.ascaleX;
     int os1 = 0, os2 = 0, s2 = 0;
@@ -119,8 +119,8 @@ class IkConstraint extends Constraint {
       os2 = 180;
     } else
       os2 = 0;
-    final double? cx = child.ax;
-    double? cy = 0.0,
+    final double cx = child.ax;
+    double cy = 0.0,
         cwx = 0.0,
         cwy = 0.0,
         a = parent.a,
@@ -130,11 +130,11 @@ class IkConstraint extends Constraint {
     final bool u = (psx - psy).abs() <= 0.0001;
     if (!u) {
       cy = 0.0;
-      cwx = a * cx! + parent.worldX;
+      cwx = a * cx + parent.worldX;
       cwy = c * cx + parent.worldY;
     } else {
       cy = child.ay;
-      cwx = a * cx! + b * cy + parent.worldX;
+      cwx = a * cx + b * cy + parent.worldX;
       cwy = c * cx + d * cy + parent.worldY;
     }
     final Bone pp = parent.parent!;
@@ -222,7 +222,7 @@ class IkConstraint extends Constraint {
     if (a1 > 180)
       a1 -= 360;
     else if (a1 < -180) a1 += 360;
-    parent.updateWorldTransformWith(px, py, rotation + a1 * alpha!,
+    parent.updateWorldTransformWith(px, py, rotation + a1 * alpha,
         parent.ascaleX, parent.ascaleY, 0.0, 0.0);
     rotation = child.arotation;
     a2 = ((a2 + os) * MathUtils.radDeg - child.ashearX) * s2 + os2 - rotation;

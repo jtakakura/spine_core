@@ -59,7 +59,7 @@ class SkeletonJson {
         ..version = _getString(skeletonMap, 'spine')
         ..width = _getDouble(skeletonMap, 'width')
         ..height = _getDouble(skeletonMap, 'height')
-        ..fps = _getDouble(skeletonMap, 'fps')
+        ..fps = _getDouble(skeletonMap, 'fps') ?? 0.0
         ..imagesPath = _getString(skeletonMap, 'images');
     }
 
@@ -96,13 +96,13 @@ class SkeletonJson {
     if (root.containsKey('slots')) {
       for (int i = 0; i < root['slots'].length; i++) {
         final dynamic slotMap = root['slots'][i];
-        final String? slotName = _getString(slotMap, 'name');
-        final String? boneName = _getString(slotMap, 'bone');
+        final String slotName = _getString(slotMap, 'name')!;
+        final String boneName = _getString(slotMap, 'bone')!;
         final BoneData? boneData = skeletonData.findBone(boneName);
         if (boneData == null)
-          throw StateError('Slot bone not found: ' + boneName!);
+          throw StateError('Slot bone not found: ' + boneName);
         final SlotData data =
-            SlotData(skeletonData.slots.length, slotName!, boneData);
+            SlotData(skeletonData.slots.length, slotName, boneData);
 
         final String? color = _getString(slotMap, 'color');
         if (color != null) data.color.setFromString(color);
@@ -130,16 +130,16 @@ class SkeletonJson {
               ..order = _getInt(constraintMap, 'order', 0)!;
 
         for (int j = 0; j < constraintMap['bones'].length; j++) {
-          final String? boneName = constraintMap['bones'][j];
+          final String boneName = constraintMap['bones'][j];
           final BoneData? bone = skeletonData.findBone(boneName);
-          if (bone == null) throw StateError('IK bone not found: ' + boneName!);
+          if (bone == null) throw StateError('IK bone not found: ' + boneName);
           data.bones.add(bone);
         }
 
-        final String? targetName = _getString(constraintMap, 'target');
+        final String targetName = _getString(constraintMap, 'target')!;
         data.target = skeletonData.findBone(targetName);
         if (data.target == null)
-          throw StateError('IK target bone not found: ' + targetName!);
+          throw StateError('IK target bone not found: ' + targetName);
 
         data
           ..bendDirection =
@@ -159,14 +159,14 @@ class SkeletonJson {
               ..order = _getInt(constraintMap, 'order', 0)!;
 
         for (int j = 0; j < constraintMap['bones'].length; j++) {
-          final String? boneName = constraintMap['bones'][j];
+          final String boneName = constraintMap['bones'][j]!;
           final BoneData? bone = skeletonData.findBone(boneName);
           if (bone == null)
             throw StateError('Transform constraint bone not found: $boneName');
           data.bones.add(bone);
         }
 
-        final String? targetName = _getString(constraintMap, 'target');
+        final String targetName = _getString(constraintMap, 'target')!;
         data.target = skeletonData.findBone(targetName);
         if (data.target == null)
           throw StateError(
@@ -199,7 +199,7 @@ class SkeletonJson {
               ..order = _getInt(constraintMap, 'order', 0)!;
 
         for (int j = 0; j < constraintMap['bones'].length; j++) {
-          final String? boneName = constraintMap['bones'][j];
+          final String boneName = constraintMap['bones'][j]!;
           final BoneData? bone = skeletonData.findBone(boneName);
           if (bone == null)
             throw StateError('Transform constraint bone not found: $boneName');
