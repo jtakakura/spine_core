@@ -76,15 +76,15 @@ class SkeletonJson {
             throw StateError('Parent bone not found: $parentName');
         }
         final BoneData data = BoneData(
-            skeletonData.bones.length, _getString(boneMap, 'name'), parent)
+            skeletonData.bones.length, _getString(boneMap, 'name')!, parent)
           ..length = _getDouble(boneMap, 'length', 0.0)! * scale
           ..x = _getDouble(boneMap, 'x', 0.0)! * scale
           ..y = _getDouble(boneMap, 'y', 0.0)! * scale
-          ..rotation = _getDouble(boneMap, 'rotation', 0.0)
-          ..scaleX = _getDouble(boneMap, 'scaleX', 1.0)
-          ..scaleY = _getDouble(boneMap, 'scaleY', 1.0)
-          ..shearX = _getDouble(boneMap, 'shearX', 0.0)
-          ..shearY = _getDouble(boneMap, 'shearY', 0.0)
+          ..rotation = _getDouble(boneMap, 'rotation', 0.0)!
+          ..scaleX = _getDouble(boneMap, 'scaleX', 1.0)!
+          ..scaleY = _getDouble(boneMap, 'scaleY', 1.0)!
+          ..shearX = _getDouble(boneMap, 'shearX', 0.0)!
+          ..shearY = _getDouble(boneMap, 'shearY', 0.0)!
           ..transformMode = SkeletonJson.transformModeFromString(
               _getString(boneMap, 'transform', 'normal')!);
 

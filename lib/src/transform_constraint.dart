@@ -236,34 +236,34 @@ class TransformConstraint extends Constraint {
 
       double? rotation = bone.arotation;
       if (rotateMix != 0) {
-        double r = target.arotation! - rotation! + data!.offsetRotation!;
+        double r = target.arotation - rotation + data!.offsetRotation!;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
         rotation += r * rotateMix!;
       }
 
       double? x = bone.ax, y = bone.ay;
       if (translateMix != 0) {
-        x = x! + (target.ax! - x + data!.offsetX!) * translateMix!;
-        y = y! + (target.ay! - y + data!.offsetY!) * translateMix;
+        x = x + (target.ax - x + data!.offsetX!) * translateMix!;
+        y = y + (target.ay - y + data!.offsetY!) * translateMix;
       }
 
-      double? scaleX = bone.ascaleX, scaleY = bone.ascaleY;
+      double scaleX = bone.ascaleX, scaleY = bone.ascaleY;
       if (scaleMix! > 0) {
-        if (scaleX! > 0.00001)
+        if (scaleX > 0.00001)
           scaleX = (scaleX +
-                  (target.ascaleX! - scaleX + data!.offsetScaleX!) * scaleMix) /
+                  (target.ascaleX - scaleX + data!.offsetScaleX!) * scaleMix) /
               scaleX;
-        if (scaleY! > 0.00001)
+        if (scaleY > 0.00001)
           scaleY = (scaleY +
-                  (target.ascaleY! - scaleY + data!.offsetScaleY!) * scaleMix) /
+                  (target.ascaleY - scaleY + data!.offsetScaleY!) * scaleMix) /
               scaleY;
       }
 
-      final double? shearY = bone.ashearY;
+      final double shearY = bone.ashearY;
       if (shearMix! > 0) {
-        double r = target.ashearY! - shearY! + data!.offsetShearY!;
+        double r = target.ashearY - shearY + data!.offsetShearY!;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-        bone.shearY = bone.shearY! + r * shearMix;
+        bone.shearY = bone.shearY + r * shearMix;
       }
 
       bone.updateWorldTransformWith(
@@ -284,27 +284,27 @@ class TransformConstraint extends Constraint {
       final Bone bone = bones[i]!;
       if (!bone.appliedValid) bone.updateAppliedTransform();
 
-      double? rotation = bone.arotation;
+      double rotation = bone.arotation;
       if (rotateMix != 0)
-        rotation = rotation! + (target.arotation! + data!.offsetRotation!) * rotateMix!;
+        rotation = rotation + (target.arotation + data!.offsetRotation!) * rotateMix!;
 
-      double? x = bone.ax, y = bone.ay;
+      double x = bone.ax, y = bone.ay;
       if (translateMix != 0) {
-        x = x! + (target.ax! + data!.offsetX!) * translateMix!;
-        y = y! + (target.ay! + data!.offsetY!) * translateMix;
+        x = x + (target.ax + data!.offsetX!) * translateMix!;
+        y = y + (target.ay + data!.offsetY!) * translateMix;
       }
 
-      double? scaleX = bone.ascaleX, scaleY = bone.ascaleY;
+      double scaleX = bone.ascaleX, scaleY = bone.ascaleY;
       if (scaleMix! > 0) {
-        if (scaleX! > 0.00001)
-          scaleX *= ((target.ascaleX! - 1 + data!.offsetScaleX!) * scaleMix) + 1;
-        if (scaleY! > 0.00001)
-          scaleY *= ((target.ascaleY! - 1 + data!.offsetScaleY!) * scaleMix) + 1;
+        if (scaleX > 0.00001)
+          scaleX *= ((target.ascaleX - 1 + data!.offsetScaleX!) * scaleMix) + 1;
+        if (scaleY > 0.00001)
+          scaleY *= ((target.ascaleY - 1 + data!.offsetScaleY!) * scaleMix) + 1;
       }
 
-      double? shearY = bone.ashearY;
+      double shearY = bone.ashearY;
       if (shearMix! > 0)
-        shearY = shearY! + (target.ashearY! + data!.offsetShearY!) * shearMix;
+        shearY = shearY + (target.ashearY + data!.offsetShearY!) * shearMix;
 
       bone.updateWorldTransformWith(
           x, y, rotation, scaleX, scaleY, bone.ashearX, shearY);
