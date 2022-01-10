@@ -163,15 +163,15 @@ class AnimationState {
           i == 0 ? MixPose.Current : MixPose.CurrentLayered;
 
       // Apply mixing from entries first.
-      double? mix = current.alpha;
+      double mix = current.alpha!;
       if (current.mixingFrom != null)
-        mix = mix! * applyMixingFrom(current, skeleton, currentPose);
+        mix *= applyMixingFrom(current, skeleton, currentPose);
       else if (current.trackTime! >= current.trackEnd! && current.next == null)
         mix = 0.0;
 
       // Apply current entry.
-      final double? animationLast = current.animationLast,
-          animationTime = current.getAnimationTime();
+      final double animationLast = current.animationLast!,
+          animationTime = current.getAnimationTime()!;
       final int timelineCount = current.animation!.timelines.length;
       final List<Timeline> timelines = current.animation!.timelines;
       if (mix == 1) {
@@ -228,11 +228,11 @@ class AnimationState {
       if (mix > 1) mix = 1.0;
     }
 
-    final List<Event?>? events = mix < from.eventThreshold! ? this.events : null;
+    final List<Event?> events = mix < from.eventThreshold! ? this.events : <Event?>[];
     final bool attachments = mix < from.attachmentThreshold!,
         drawOrder = mix < from.drawOrderThreshold!;
-    final double? animationLast = from.animationLast,
-        animationTime = from.getAnimationTime();
+    final double animationLast = from.animationLast!,
+        animationTime = from.getAnimationTime()!;
     final int timelineCount = from.animation!.timelines.length;
     final List<Timeline> timelines = from.animation!.timelines;
     final Int32List timelineData = Int32List.fromList(from.timelineData);
@@ -296,8 +296,8 @@ class AnimationState {
   void applyRotateTimeline(
       Timeline timeline,
       Skeleton skeleton,
-      double? time,
-      double? alpha,
+      double time,
+      double alpha,
       MixPose pose,
       List<double> timelinesRotation,
       int i,
@@ -305,14 +305,14 @@ class AnimationState {
     if (firstFrame) timelinesRotation[i] = 0.0;
 
     if (alpha == 1) {
-      timeline.apply(skeleton, 0.0, time, null, 1.0, pose, MixDirection.In);
+      timeline.apply(skeleton, 0.0, time, <Event?>[], 1.0, pose, MixDirection.In);
       return;
     }
 
     final RotateTimeline rotateTimeline = timeline as RotateTimeline;
     final Float32List frames = rotateTimeline.frames;
     final Bone bone = skeleton.bones[rotateTimeline.boneIndex];
-    if (time! < frames[0]) {
+    if (time < frames[0]) {
       if (pose == MixPose.Setup) bone.rotation = bone.data.rotation;
       return;
     }
@@ -374,7 +374,7 @@ class AnimationState {
       timelinesRotation[i] = total;
     }
     timelinesRotation[i + 1] = diff;
-    r1 += total * alpha!;
+    r1 += total * alpha;
     bone.rotation =
         r1 - (16384 - (16384.499999999996 - r1 / 360).toInt()) * 360;
   }
@@ -870,6 +870,7 @@ class EventQueue {
       final EventType? type = objects[i] as EventType?;
       final TrackEntry? entry = objects[i + 1] as TrackEntry?;
       switch (type) {
+        case null:
         case EventType.Start:
           if (entry!.onStartCallback != null) entry.onStartCallback!(entry);
           onStartCallbacks

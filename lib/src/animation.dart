@@ -74,8 +74,8 @@ class Animation {
 }
 
 abstract class Timeline {
-  void apply(Skeleton skeleton, double? lastTime, double? time,
-      List<Event?>? events, double? alpha, MixPose pose, MixDirection direction);
+  void apply(Skeleton skeleton, double lastTime, double time,
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction);
   int getPropertyId();
 }
 
