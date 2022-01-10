@@ -31,14 +31,12 @@
 part of spine_core;
 
 class IkConstraintData {
-  final String? name;
+  final String name;
   final List<BoneData> bones = <BoneData>[];
-  int? order = 0;
+  int order = 0;
   BoneData? target;
   int bendDirection = 1;
-  double? mix = 1.0;
+  double mix = 1.0;
 
-  IkConstraintData(this.name) {
-    if (name == null) throw ArgumentError('name cannot be null.');
-  }
+  IkConstraintData(this.name);
 }

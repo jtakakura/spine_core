@@ -31,5 +31,5 @@
 part of spine_core;
 
 abstract class Constraint implements Updatable {
-  int? getOrder();
+  int getOrder();
 }

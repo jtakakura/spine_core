@@ -321,7 +321,7 @@ class AnimationState {
     if (time >=
         frames[frames.length -
             RotateTimeline.entries]) // Time is after last frame.
-      r2 = bone.data.rotation! +
+      r2 = bone.data.rotation +
           frames[frames.length + RotateTimeline.prevRotation];
     else {
       // Interpolate between the previous frame and the current frame.
@@ -337,12 +337,12 @@ class AnimationState {
 
       r2 = frames[frame + RotateTimeline.rotation] - prevRotation;
       r2 -= (16384 - (16384.499999999996 - r2 / 360).toInt()) * 360;
-      r2 = prevRotation + r2 * percent + bone.data.rotation!;
+      r2 = prevRotation + r2 * percent + bone.data.rotation;
       r2 -= (16384 - (16384.499999999996 - r2 / 360).toInt()) * 360;
     }
 
     // Mix between rotations using the direction of the shortest route on the first frame while detecting crosses.
-    double r1 = pose == MixPose.Setup ? bone.data.rotation! : bone.rotation!;
+    double r1 = pose == MixPose.Setup ? bone.data.rotation : bone.rotation;
     double total = 0.0, diff = r2 - r1;
     if (diff == 0) {
       total = timelinesRotation[i];

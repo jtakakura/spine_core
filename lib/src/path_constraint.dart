@@ -191,7 +191,7 @@ class PathConstraint extends Constraint {
         curveCount = verticesLength ~/ 6,
         prevCurve = PathConstraint.none;
 
-    if (!path.constantSpeed!) {
+    if (!path.constantSpeed) {
       final Float32List lengths = path.lengths;
       curveCount -= closed! ? 1 : 2;
       final double pathLength = lengths[curveCount];
@@ -480,5 +480,5 @@ class PathConstraint extends Constraint {
   }
 
   @override
-  int? getOrder() => data.order;
+  int getOrder() => data.order;
 }

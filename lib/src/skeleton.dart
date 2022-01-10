@@ -71,7 +71,9 @@ class Skeleton {
 
     for (int i = 0; i < data.ikConstraints.length; i++) {
       final IkConstraintData? ikConstraintData = data.ikConstraints[i];
-      ikConstraints.add(IkConstraint(ikConstraintData, this));
+      if (ikConstraintData != null) {
+        ikConstraints.add(IkConstraint(ikConstraintData, this));
+      }
     }
 
     for (int i = 0; i < data.transformConstraints.length; i++) {
@@ -112,7 +114,7 @@ class Skeleton {
     for (int i = 0; i < constraintCount; i++) {
       for (int ii = 0; ii < ikCount; ii++) {
         final IkConstraint constraint = ikConstraints[ii];
-        if (constraint.data!.order == i) {
+        if (constraint.data.order == i) {
           sortIkConstraint(constraint);
           continue outer;
         }
@@ -186,7 +188,7 @@ class Skeleton {
 
     final List<Bone?> constrained = constraint.bones;
     final int boneCount = constrained.length;
-    if (constraint.data!.local!) {
+    if (constraint.data!.local) {
       for (int i = 0; i < boneCount; i++) {
         final Bone child = constrained[i]!;
         sortBone(child.parent!);
@@ -283,8 +285,8 @@ class Skeleton {
     for (int i = 0; i < nn; i++) {
       final IkConstraint constraint = ikConstraints[i];
       constraint
-        ..bendDirection = constraint.data!.bendDirection
-        ..mix = constraint.data!.mix;
+        ..bendDirection = constraint.data.bendDirection
+        ..mix = constraint.data.mix;
     }
 
     final List<TransformConstraint> transformConstraints =
@@ -425,7 +427,7 @@ class Skeleton {
     final int n = ikConstraints.length;
     for (int i = 0; i < n; i++) {
       final IkConstraint ikConstraint = ikConstraints[i];
-      if (ikConstraint.data!.name == constraintName) return ikConstraint;
+      if (ikConstraint.data.name == constraintName) return ikConstraint;
     }
     return null;
   }

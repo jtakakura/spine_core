@@ -33,7 +33,7 @@ part of spine_core;
 class PathConstraintData {
   final String? name;
   final List<BoneData> bones = <BoneData>[];
-  int? order = 0;
+  int order = 0;
   SlotData? target;
   PositionMode? positionMode;
   SpacingMode? spacingMode;

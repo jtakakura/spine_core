@@ -31,21 +31,19 @@
 part of spine_core;
 
 class TransformConstraintData {
-  final String? name;
+  final String name;
   final List<BoneData> bones = <BoneData>[];
-  int? order = 0;
+  int order = 0;
   BoneData? target;
-  double? rotateMix = 0.0, translateMix = 0.0, scaleMix = 0.0, shearMix = 0.0;
-  double? offsetRotation = 0.0,
+  double rotateMix = 0.0, translateMix = 0.0, scaleMix = 0.0, shearMix = 0.0;
+  double offsetRotation = 0.0,
       offsetX = 0.0,
       offsetY = 0.0,
       offsetScaleX = 0.0,
       offsetScaleY = 0.0,
       offsetShearY = 0.0;
-  bool? relative = false;
-  bool? local = false;
+  bool relative = false;
+  bool local = false;
 
-  TransformConstraintData(this.name) {
-    if (name == null) throw ArgumentError('name cannot be null.');
-  }
+  TransformConstraintData(this.name);
 }

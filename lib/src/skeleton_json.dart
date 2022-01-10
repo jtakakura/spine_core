@@ -126,8 +126,8 @@ class SkeletonJson {
       for (int i = 0; i < root['ik'].length; i++) {
         final dynamic constraintMap = root['ik'][i];
         final IkConstraintData data =
-            IkConstraintData(_getString(constraintMap, 'name'))
-              ..order = _getInt(constraintMap, 'order', 0);
+            IkConstraintData(_getString(constraintMap, 'name')!)
+              ..order = _getInt(constraintMap, 'order', 0)!;
 
         for (int j = 0; j < constraintMap['bones'].length; j++) {
           final String? boneName = constraintMap['bones'][j];
@@ -144,7 +144,7 @@ class SkeletonJson {
         data
           ..bendDirection =
               _getBool(constraintMap, 'bendPositive', true) ? 1 : -1
-          ..mix = _getDouble(constraintMap, 'mix', 1.0);
+          ..mix = _getDouble(constraintMap, 'mix', 1.0)!;
 
         skeletonData.ikConstraints.add(data);
       }
@@ -155,8 +155,8 @@ class SkeletonJson {
       for (int i = 0; i < root['transform'].length; i++) {
         final dynamic constraintMap = root['transform'][i];
         final TransformConstraintData data =
-            TransformConstraintData(_getString(constraintMap, 'name'))
-              ..order = _getInt(constraintMap, 'order', 0);
+            TransformConstraintData(_getString(constraintMap, 'name')!)
+              ..order = _getInt(constraintMap, 'order', 0)!;
 
         for (int j = 0; j < constraintMap['bones'].length; j++) {
           final String? boneName = constraintMap['bones'][j];
@@ -175,16 +175,16 @@ class SkeletonJson {
         data
           ..local = _getBool(constraintMap, 'local', false)
           ..relative = _getBool(constraintMap, 'relative', false)
-          ..offsetRotation = _getDouble(constraintMap, 'rotation', 0.0)
+          ..offsetRotation = _getDouble(constraintMap, 'rotation', 0.0)!
           ..offsetX = _getDouble(constraintMap, 'x', 0.0)! * scale
           ..offsetY = _getDouble(constraintMap, 'y', 0.0)! * scale
-          ..offsetScaleX = _getDouble(constraintMap, 'scaleX', 0.0)
-          ..offsetScaleY = _getDouble(constraintMap, 'scaleY', 0.0)
-          ..offsetShearY = _getDouble(constraintMap, 'shearY', 0.0)
-          ..rotateMix = _getDouble(constraintMap, 'rotateMix', 1.0)
-          ..translateMix = _getDouble(constraintMap, 'translateMix', 1.0)
-          ..scaleMix = _getDouble(constraintMap, 'scaleMix', 1.0)
-          ..shearMix = _getDouble(constraintMap, 'shearMix', 1.0);
+          ..offsetScaleX = _getDouble(constraintMap, 'scaleX', 0.0)!
+          ..offsetScaleY = _getDouble(constraintMap, 'scaleY', 0.0)!
+          ..offsetShearY = _getDouble(constraintMap, 'shearY', 0.0)!
+          ..rotateMix = _getDouble(constraintMap, 'rotateMix', 1.0)!
+          ..translateMix = _getDouble(constraintMap, 'translateMix', 1.0)!
+          ..scaleMix = _getDouble(constraintMap, 'scaleMix', 1.0)!
+          ..shearMix = _getDouble(constraintMap, 'shearMix', 1.0)!;
 
         skeletonData.transformConstraints.add(data);
       }
@@ -196,7 +196,7 @@ class SkeletonJson {
         final dynamic constraintMap = root['path'][i];
         final PathConstraintData data =
             PathConstraintData(_getString(constraintMap, 'name'))
-              ..order = _getInt(constraintMap, 'order', 0);
+              ..order = _getInt(constraintMap, 'order', 0)!;
 
         for (int j = 0; j < constraintMap['bones'].length; j++) {
           final String? boneName = constraintMap['bones'][j];

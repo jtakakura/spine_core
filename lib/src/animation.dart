@@ -217,9 +217,9 @@ class RotateTimeline extends CurveTimeline {
       if (pose == MixPose.Setup) {
         bone.rotation = bone.data.rotation;
       } else if (pose == MixPose.Current) {
-        double r = bone.data.rotation! - bone.rotation!;
+        double r = bone.data.rotation - bone.rotation;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-        bone.rotation = bone.rotation! + r * alpha!;
+        bone.rotation = bone.rotation + r * alpha!;
       }
       return;
     }
@@ -227,14 +227,14 @@ class RotateTimeline extends CurveTimeline {
     if (time >= frames[frames.length - RotateTimeline.entries]) {
       // Time is after last frame.
       if (pose == MixPose.Setup) {
-        bone.rotation = bone.data.rotation! +
+        bone.rotation = bone.data.rotation +
             frames[frames.length + RotateTimeline.prevRotation] * alpha!;
       } else {
-        double r = bone.data.rotation! +
+        double r = bone.data.rotation +
             frames[frames.length + RotateTimeline.prevRotation] -
-            bone.rotation!;
+            bone.rotation;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-        bone.rotation = bone.rotation! + r * alpha!;
+        bone.rotation = bone.rotation + r * alpha!;
       }
       return;
     }
@@ -255,11 +255,11 @@ class RotateTimeline extends CurveTimeline {
     r = prevRotation + r * percent;
     if (pose == MixPose.Setup) {
       r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-      bone.rotation = bone.data.rotation! + r * alpha!;
+      bone.rotation = bone.data.rotation + r * alpha!;
     } else {
-      r = bone.data.rotation! + r - bone.rotation!;
+      r = bone.data.rotation + r - bone.rotation;
       r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-      bone.rotation = bone.rotation! + r * alpha!;
+      bone.rotation = bone.rotation + r * alpha!;
     }
   }
 }
@@ -297,8 +297,8 @@ class TranslateTimeline extends CurveTimeline {
           ..x = bone.data.x
           ..y = bone.data.y;
       } else if (pose == MixPose.Current) {
-        bone.x = bone.x! + (bone.data.x! - bone.x!) * alpha!;
-        bone.y = bone.y! + (bone.data.y! - bone.y!) * alpha;
+        bone.x = bone.x + (bone.data.x - bone.x) * alpha!;
+        bone.y = bone.y + (bone.data.y - bone.y) * alpha;
       }
       return;
     }
@@ -326,11 +326,11 @@ class TranslateTimeline extends CurveTimeline {
     }
     if (pose == MixPose.Setup) {
       bone
-        ..x = bone.data.x! + x * alpha!
-        ..y = bone.data.y! + y * alpha;
+        ..x = bone.data.x + x * alpha!
+        ..y = bone.data.y + y * alpha;
     } else {
-      bone.x = bone.x! + (bone.data.x! + x - bone.x!) * alpha!;
-      bone.y = bone.y! + (bone.data.y! + y - bone.y!) * alpha;
+      bone.x = bone.x + (bone.data.x + x - bone.x) * alpha!;
+      bone.y = bone.y + (bone.data.y + y - bone.y) * alpha;
     }
   }
 }
@@ -352,8 +352,8 @@ class ScaleTimeline extends TranslateTimeline {
           ..scaleX = bone.data.scaleX
           ..scaleY = bone.data.scaleY;
       } else if (pose == MixPose.Current) {
-        bone.scaleX = bone.scaleX! + (bone.data.scaleX! - bone.scaleX!) * alpha!;
-        bone.scaleY = bone.scaleY! + (bone.data.scaleY! - bone.scaleY!) * alpha;
+        bone.scaleX = bone.scaleX + (bone.data.scaleX - bone.scaleX) * alpha!;
+        bone.scaleY = bone.scaleY + (bone.data.scaleY - bone.scaleY) * alpha;
       }
       return;
     }
@@ -361,8 +361,8 @@ class ScaleTimeline extends TranslateTimeline {
     double x = 0.0, y = 0.0;
     if (time >= frames[frames.length - TranslateTimeline.entries]) {
       // Time is after last frame.
-      x = frames[frames.length + TranslateTimeline.prevX] * bone.data.scaleX!;
-      y = frames[frames.length + TranslateTimeline.prevY] * bone.data.scaleY!;
+      x = frames[frames.length + TranslateTimeline.prevX] * bone.data.scaleX;
+      y = frames[frames.length + TranslateTimeline.prevY] * bone.data.scaleY;
     } else {
       // Interpolate between the previous frame and the current frame.
       final int frame =
@@ -377,9 +377,9 @@ class ScaleTimeline extends TranslateTimeline {
                   (frames[frame + TranslateTimeline.prevTime] - frameTime));
 
       x = (x + (frames[frame + TranslateTimeline.x] - x) * percent) *
-          bone.data.scaleX!;
+          bone.data.scaleX;
       y = (y + (frames[frame + TranslateTimeline.y] - y) * percent) *
-          bone.data.scaleY!;
+          bone.data.scaleY;
     }
     if (alpha == 1) {
       bone
@@ -396,11 +396,11 @@ class ScaleTimeline extends TranslateTimeline {
       }
       // Mixing out uses sign of setup or current pose, else use sign of key.
       if (direction == MixDirection.Out) {
-        x = x.abs() * MathUtils.signum(bx!);
-        y = y.abs() * MathUtils.signum(by!);
+        x = x.abs() * MathUtils.signum(bx);
+        y = y.abs() * MathUtils.signum(by);
       } else {
-        bx = bx!.abs() * MathUtils.signum(x);
-        by = by!.abs() * MathUtils.signum(y);
+        bx = bx.abs() * MathUtils.signum(x);
+        by = by.abs() * MathUtils.signum(y);
       }
       bone
         ..scaleX = bx + (x - bx) * alpha!
@@ -426,8 +426,8 @@ class ShearTimeline extends TranslateTimeline {
           ..shearX = bone.data.shearX
           ..shearY = bone.data.shearY;
       } else if (pose == MixPose.Current) {
-        bone.shearX = bone.shearX! + (bone.data.shearX! - bone.shearX!) * alpha!;
-        bone.shearY = bone.shearY! + (bone.data.shearY! - bone.shearY!) * alpha;
+        bone.shearX = bone.shearX + (bone.data.shearX - bone.shearX) * alpha!;
+        bone.shearY = bone.shearY + (bone.data.shearY - bone.shearY) * alpha;
       }
       return;
     }
@@ -455,11 +455,11 @@ class ShearTimeline extends TranslateTimeline {
     }
     if (pose == MixPose.Setup) {
       bone
-        ..shearX = bone.data.shearX! + x * alpha!
-        ..shearY = bone.data.shearY! + y * alpha;
+        ..shearX = bone.data.shearX + x * alpha!
+        ..shearY = bone.data.shearY + y * alpha;
     } else {
-      bone.shearX = bone.shearX! + (bone.data.shearX! + x - bone.shearX!) * alpha!;
-      bone.shearY = bone.shearY! + (bone.data.shearY! + y - bone.shearY!) * alpha;
+      bone.shearX = bone.shearX + (bone.data.shearX + x - bone.shearX) * alpha!;
+      bone.shearY = bone.shearY + (bone.data.shearY + y - bone.shearY) * alpha;
     }
   }
 }
@@ -500,7 +500,7 @@ class ColorTimeline extends CurveTimeline {
     final Float32List frames = this.frames;
     if (time! < frames[0]) {
       if (pose == MixPose.Setup) {
-        slot.color!.setFromColor(slot.data.color);
+        slot.color.setFromColor(slot.data.color);
       } else if (pose == MixPose.Current) {
         final Color? color = slot.color, setup = slot.data.color;
         color!.add((setup!.r - color.r) * alpha!, (setup.g - color.g) * alpha,
@@ -538,9 +538,9 @@ class ColorTimeline extends CurveTimeline {
       a += (frames[frame + ColorTimeline.a] - a) * percent;
     }
     if (alpha == 1)
-      slot.color!.set(r, g, b, a);
+      slot.color.set(r, g, b, a);
     else {
-      final Color color = slot.color!;
+      final Color color = slot.color;
       if (pose == MixPose.Setup) color.setFromColor(slot.data.color);
       color.add((r - color.r) * alpha!, (g - color.g) * alpha,
           (b - color.b) * alpha, (a - color.a) * alpha);
@@ -588,7 +588,7 @@ class TwoColorTimeline extends CurveTimeline {
     final Float32List frames = this.frames;
     if (time! < frames[0]) {
       if (pose == MixPose.Setup) {
-        slot.color!.setFromColor(slot.data.color);
+        slot.color.setFromColor(slot.data.color);
         slot.darkColor!.setFromColor(slot.data.darkColor!);
       } else if (pose == MixPose.Current) {
         final Color? light = slot.color,
@@ -644,7 +644,7 @@ class TwoColorTimeline extends CurveTimeline {
       b2 += (frames[frame + TwoColorTimeline.b2] - b2) * percent;
     }
     if (alpha == 1) {
-      slot.color!.set(r, g, b, a);
+      slot.color.set(r, g, b, a);
       slot.darkColor!.set(r2, g2, b2, 1.0);
     } else {
       final Color? light = slot.color, dark = slot.darkColor;
@@ -1000,11 +1000,11 @@ class IkConstraintTimeline extends CurveTimeline {
     if (time! < frames[0]) {
       if (pose == MixPose.Setup) {
         constraint
-          ..mix = constraint.data!.mix
-          ..bendDirection = constraint.data!.bendDirection;
+          ..mix = constraint.data.mix
+          ..bendDirection = constraint.data.bendDirection;
       } else if (pose == MixPose.Current) {
-        constraint.mix = constraint.mix! + (constraint.data!.mix! - constraint.mix!) * alpha!;
-        constraint.bendDirection = constraint.data!.bendDirection;
+        constraint.mix = constraint.mix + (constraint.data.mix - constraint.mix) * alpha!;
+        constraint.bendDirection = constraint.data.bendDirection;
       }
       return;
     }
@@ -1013,17 +1013,17 @@ class IkConstraintTimeline extends CurveTimeline {
       // Time is after last frame.
       if (pose == MixPose.Setup) {
         constraint
-          ..mix = constraint.data!.mix! +
+          ..mix = constraint.data.mix +
               (frames[frames.length + IkConstraintTimeline.prevMix] -
-                      constraint.data!.mix!) *
+                      constraint.data.mix) *
                   alpha!
           ..bendDirection = direction == MixDirection.Out
-              ? constraint.data!.bendDirection
+              ? constraint.data.bendDirection
               : frames[frames.length + IkConstraintTimeline.prevBendDirection] as int;
       } else {
-        constraint.mix = constraint.mix! +
+        constraint.mix = constraint.mix +
             (frames[frames.length + IkConstraintTimeline.prevMix] -
-                    constraint.mix!) *
+                    constraint.mix) *
                 alpha!;
         if (direction == MixDirection.In)
           constraint.bendDirection =
@@ -1046,18 +1046,18 @@ class IkConstraintTimeline extends CurveTimeline {
 
     if (pose == MixPose.Setup) {
       constraint
-        ..mix = constraint.data!.mix! +
+        ..mix = constraint.data.mix +
             (mix +
                     (frames[frame + IkConstraintTimeline.mix] - mix) * percent -
-                    constraint.data!.mix!) *
+                    constraint.data.mix) *
                 alpha!
         ..bendDirection = direction == MixDirection.Out
-            ? constraint.data!.bendDirection
+            ? constraint.data.bendDirection
             : frames[frame + IkConstraintTimeline.prevBendDirection] as int;
     } else {
-      constraint.mix = constraint.mix! + (mix +
+      constraint.mix = constraint.mix + (mix +
               (frames[frame + IkConstraintTimeline.mix] - mix) * percent -
-              constraint.mix!) *
+              constraint.mix) *
           alpha!;
       if (direction == MixDirection.In)
         constraint.bendDirection =
@@ -1119,11 +1119,11 @@ class TransformConstraintTimeline extends CurveTimeline {
           ..scaleMix = data.scaleMix
           ..shearMix = data.shearMix;
       } else if (pose == MixPose.Current) {
-        constraint.rotateMix = constraint.rotateMix! + (data!.rotateMix! - constraint.rotateMix!) * alpha!;
+        constraint.rotateMix = constraint.rotateMix! + (data!.rotateMix - constraint.rotateMix!) * alpha!;
         constraint.translateMix = constraint.translateMix! +
-              (data.translateMix! - constraint.translateMix!) * alpha;
-        constraint.scaleMix = constraint.scaleMix! + (data.scaleMix! - constraint.scaleMix!) * alpha;
-        constraint.shearMix = constraint.shearMix! + (data.shearMix! - constraint.shearMix!) * alpha;
+              (data.translateMix - constraint.translateMix!) * alpha;
+        constraint.scaleMix = constraint.scaleMix! + (data.scaleMix - constraint.scaleMix!) * alpha;
+        constraint.shearMix = constraint.shearMix! + (data.shearMix - constraint.shearMix!) * alpha;
       }
       return;
     }
@@ -1165,11 +1165,11 @@ class TransformConstraintTimeline extends CurveTimeline {
     if (pose == MixPose.Setup) {
       final TransformConstraintData data = constraint.data!;
       constraint
-        ..rotateMix = data.rotateMix! + (rotate - data.rotateMix!) * alpha!
+        ..rotateMix = data.rotateMix + (rotate - data.rotateMix) * alpha!
         ..translateMix =
-            data.translateMix! + (translate - data.translateMix!) * alpha
-        ..scaleMix = data.scaleMix! + (scale - data.scaleMix!) * alpha
-        ..shearMix = data.shearMix! + (shear - data.shearMix!) * alpha;
+            data.translateMix + (translate - data.translateMix) * alpha
+        ..scaleMix = data.scaleMix + (scale - data.scaleMix) * alpha
+        ..shearMix = data.shearMix + (shear - data.shearMix) * alpha;
     } else {
       constraint.rotateMix = constraint.rotateMix! + (rotate - constraint.rotateMix!) * alpha!;
       constraint.translateMix = constraint.translateMix! + (translate - constraint.translateMix!) * alpha;

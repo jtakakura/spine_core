@@ -54,13 +54,13 @@ class TransformConstraint extends Constraint {
 
   @override
   void update() {
-    if (data!.local!) {
-      if (data!.relative!)
+    if (data!.local) {
+      if (data!.relative)
         applyRelativeLocal();
       else
         applyAbsoluteLocal();
     } else {
-      if (data!.relative!)
+      if (data!.relative)
         applyRelativeWorld();
       else
         applyAbsoluteWorld();
@@ -76,8 +76,8 @@ class TransformConstraint extends Constraint {
     final double ta = target.a, tb = target.b, tc = target.c, td = target.d;
     final double degRadReflect =
         ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
-    final double offsetRotation = data!.offsetRotation! * degRadReflect;
-    final double offsetShearY = data!.offsetShearY! * degRadReflect;
+    final double offsetRotation = data!.offsetRotation * degRadReflect;
+    final double offsetShearY = data!.offsetShearY * degRadReflect;
     final List<Bone?> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) {
@@ -112,13 +112,13 @@ class TransformConstraint extends Constraint {
       if (scaleMix! > 0) {
         double s = math.sqrt(bone!.a * bone.a + bone.c * bone.c);
         double ts = math.sqrt(ta * ta + tc * tc);
-        if (s > 0.00001) s = (s + (ts - s + data!.offsetScaleX!) * scaleMix) / s;
+        if (s > 0.00001) s = (s + (ts - s + data!.offsetScaleX) * scaleMix) / s;
         bone
           ..a *= s
           ..c *= s;
         s = math.sqrt(bone.b * bone.b + bone.d * bone.d);
         ts = math.sqrt(tb * tb + td * td);
-        if (s > 0.00001) s = (s + (ts - s + data!.offsetScaleY!) * scaleMix) / s;
+        if (s > 0.00001) s = (s + (ts - s + data!.offsetScaleY) * scaleMix) / s;
         bone
           ..b *= s
           ..d *= s;
@@ -155,8 +155,8 @@ class TransformConstraint extends Constraint {
     final double ta = target.a, tb = target.b, tc = target.c, td = target.d;
     final double degRadReflect =
         ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
-    final double offsetRotation = data!.offsetRotation! * degRadReflect,
-        offsetShearY = data!.offsetShearY! * degRadReflect;
+    final double offsetRotation = data!.offsetRotation * degRadReflect,
+        offsetShearY = data!.offsetShearY * degRadReflect;
     final List<Bone?> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) {
@@ -190,12 +190,12 @@ class TransformConstraint extends Constraint {
 
       if (scaleMix! > 0) {
         double s =
-            (math.sqrt(ta * ta + tc * tc) - 1 + data!.offsetScaleX!) * scaleMix +
+            (math.sqrt(ta * ta + tc * tc) - 1 + data!.offsetScaleX) * scaleMix +
                 1;
         bone
           ?..a *= s
           ..c *= s;
-        s = (math.sqrt(tb * tb + td * td) - 1 + data!.offsetScaleY!) * scaleMix +
+        s = (math.sqrt(tb * tb + td * td) - 1 + data!.offsetScaleY) * scaleMix +
             1;
         bone
           ?..b *= s
@@ -236,32 +236,32 @@ class TransformConstraint extends Constraint {
 
       double? rotation = bone.arotation;
       if (rotateMix != 0) {
-        double r = target.arotation - rotation + data!.offsetRotation!;
+        double r = target.arotation - rotation + data!.offsetRotation;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
         rotation += r * rotateMix!;
       }
 
       double? x = bone.ax, y = bone.ay;
       if (translateMix != 0) {
-        x = x + (target.ax - x + data!.offsetX!) * translateMix!;
-        y = y + (target.ay - y + data!.offsetY!) * translateMix;
+        x = x + (target.ax - x + data!.offsetX) * translateMix!;
+        y = y + (target.ay - y + data!.offsetY) * translateMix;
       }
 
       double scaleX = bone.ascaleX, scaleY = bone.ascaleY;
       if (scaleMix! > 0) {
         if (scaleX > 0.00001)
           scaleX = (scaleX +
-                  (target.ascaleX - scaleX + data!.offsetScaleX!) * scaleMix) /
+                  (target.ascaleX - scaleX + data!.offsetScaleX) * scaleMix) /
               scaleX;
         if (scaleY > 0.00001)
           scaleY = (scaleY +
-                  (target.ascaleY - scaleY + data!.offsetScaleY!) * scaleMix) /
+                  (target.ascaleY - scaleY + data!.offsetScaleY) * scaleMix) /
               scaleY;
       }
 
       final double shearY = bone.ashearY;
       if (shearMix! > 0) {
-        double r = target.ashearY - shearY + data!.offsetShearY!;
+        double r = target.ashearY - shearY + data!.offsetShearY;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
         bone.shearY = bone.shearY + r * shearMix;
       }
@@ -286,25 +286,25 @@ class TransformConstraint extends Constraint {
 
       double rotation = bone.arotation;
       if (rotateMix != 0)
-        rotation = rotation + (target.arotation + data!.offsetRotation!) * rotateMix!;
+        rotation = rotation + (target.arotation + data!.offsetRotation) * rotateMix!;
 
       double x = bone.ax, y = bone.ay;
       if (translateMix != 0) {
-        x = x + (target.ax + data!.offsetX!) * translateMix!;
-        y = y + (target.ay + data!.offsetY!) * translateMix;
+        x = x + (target.ax + data!.offsetX) * translateMix!;
+        y = y + (target.ay + data!.offsetY) * translateMix;
       }
 
       double scaleX = bone.ascaleX, scaleY = bone.ascaleY;
       if (scaleMix! > 0) {
         if (scaleX > 0.00001)
-          scaleX *= ((target.ascaleX - 1 + data!.offsetScaleX!) * scaleMix) + 1;
+          scaleX *= ((target.ascaleX - 1 + data!.offsetScaleX) * scaleMix) + 1;
         if (scaleY > 0.00001)
-          scaleY *= ((target.ascaleY - 1 + data!.offsetScaleY!) * scaleMix) + 1;
+          scaleY *= ((target.ascaleY - 1 + data!.offsetScaleY) * scaleMix) + 1;
       }
 
       double shearY = bone.ashearY;
       if (shearMix! > 0)
-        shearY = shearY + (target.ashearY + data!.offsetShearY!) * shearMix;
+        shearY = shearY + (target.ashearY + data!.offsetShearY) * shearMix;
 
       bone.updateWorldTransformWith(
           x, y, rotation, scaleX, scaleY, bone.ashearX, shearY);
@@ -312,5 +312,5 @@ class TransformConstraint extends Constraint {
   }
 
   @override
-  int? getOrder() => data!.order;
+  int getOrder() => data!.order;
 }
