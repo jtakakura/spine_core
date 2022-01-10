@@ -39,7 +39,6 @@ class TransformConstraint extends Constraint {
 
   TransformConstraint(this.data, Skeleton skeleton) {
     if (data == null) throw ArgumentError('data cannot be null.');
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     rotateMix = data!.rotateMix;
     translateMix = data!.translateMix;
     scaleMix = data!.scaleMix;

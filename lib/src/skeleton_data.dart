@@ -59,7 +59,6 @@ class SkeletonData {
   }
 
   int findBoneIndex(String boneName) {
-    if (boneName == null) throw ArgumentError('boneName cannot be null.');
     final List<BoneData> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) if (bones[i].name == boneName) return i;
@@ -101,8 +100,6 @@ class SkeletonData {
   }
 
   Animation? findAnimation(String animationName) {
-    if (animationName == null)
-      throw ArgumentError('animationName cannot be null.');
     final List<Animation> animations = this.animations;
     final int n = animations.length;
     for (int i = 0; i < n; i++)
@@ -111,8 +108,6 @@ class SkeletonData {
   }
 
   IkConstraintData? findIkConstraint(String constraintName) {
-    if (constraintName == null)
-      throw ArgumentError('constraintName cannot be null.');
     final List<IkConstraintData?> ikConstraints = this.ikConstraints;
     final int n = ikConstraints.length;
     for (int i = 0; i < n; i++)
@@ -121,8 +116,6 @@ class SkeletonData {
   }
 
   TransformConstraintData? findTransformConstraint(String constraintName) {
-    if (constraintName == null)
-      throw ArgumentError('constraintName cannot be null.');
     final List<TransformConstraintData?> transformConstraints =
         this.transformConstraints;
     final int n = transformConstraints.length;
@@ -133,8 +126,6 @@ class SkeletonData {
   }
 
   PathConstraintData? findPathConstraint(String constraintName) {
-    if (constraintName == null)
-      throw ArgumentError('constraintName cannot be null.');
     final List<PathConstraintData> pathConstraints = this.pathConstraints;
     final int n = pathConstraints.length;
     for (int i = 0; i < n; i++)
@@ -143,8 +134,6 @@ class SkeletonData {
   }
 
   int findPathConstraintIndex(String pathConstraintName) {
-    if (pathConstraintName == null)
-      throw ArgumentError('pathConstraintName cannot be null.');
     final List<PathConstraintData> pathConstraints = this.pathConstraints;
     final int n = pathConstraints.length;
     for (int i = 0; i < n; i++)

@@ -41,9 +41,6 @@ class TextureAtlas implements Disposable {
   }
 
   void _load(String atlasText, TextureLoader textureLoader) {
-    if (textureLoader == null)
-      throw ArgumentError('textureLoader cannot be null.');
-
     final TextureAtlasReader reader = TextureAtlasReader(atlasText);
     final List<String> tuple = <String>[];
     TextureAtlasPage? page;

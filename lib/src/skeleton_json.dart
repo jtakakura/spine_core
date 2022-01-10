@@ -43,9 +43,7 @@ class SkeletonJson {
 
     dynamic root;
 
-    if (object == null) {
-      throw ArgumentError('object cannot be null.');
-    } else if (object is String) {
+    if (object is String) {
       root = json.decode(object);
     } else if (object is Map) {
       root = object;
@@ -104,7 +102,7 @@ class SkeletonJson {
         if (boneData == null)
           throw StateError('Slot bone not found: ' + boneName!);
         final SlotData data =
-            SlotData(skeletonData.slots.length, slotName, boneData);
+            SlotData(skeletonData.slots.length, slotName!, boneData);
 
         final String? color = _getString(slotMap, 'color');
         if (color != null) data.color.setFromString(color);
@@ -308,7 +306,6 @@ class SkeletonJson {
           final String? path = _getString(map, 'path', name);
           final RegionAttachment region =
               attachmentLoader.newRegionAttachment(skin, name, path);
-          if (region == null) return null;
           region
             ..path = path
             ..x = _getDouble(map, 'x', 0.0)! * scale
@@ -329,7 +326,6 @@ class SkeletonJson {
         {
           final BoundingBoxAttachment box =
               attachmentLoader.newBoundingBoxAttachment(skin, name);
-          if (box == null) return null;
           readVertices(map, box, _getInt(map, 'vertexCount')! << 1);
           final String? color = _getString(map, 'color');
           if (color != null) box.color.setFromString(color);
@@ -341,7 +337,6 @@ class SkeletonJson {
           final String? path = _getString(map, 'path', name);
           final MeshAttachment mesh =
               attachmentLoader.newMeshAttachment(skin, name, path);
-          if (mesh == null) return null;
           mesh.path = path;
 
           final String? color = _getString(map, 'color');
@@ -368,7 +363,6 @@ class SkeletonJson {
         {
           final PathAttachment path =
               attachmentLoader.newPathAttachment(skin, name);
-          if (path == null) return null;
           path
             ..closed = _getBool(map, 'closed', false)
             ..constantSpeed = _getBool(map, 'constantSpeed', true);
@@ -387,7 +381,6 @@ class SkeletonJson {
         {
           final PointAttachment point =
               attachmentLoader.newPointAttachment(skin, name);
-          if (point == null) return null;
           point
             ..x = _getDouble(map, 'x', 0.0)! * scale
             ..y = _getDouble(map, 'y', 0.0)! * scale
@@ -401,7 +394,6 @@ class SkeletonJson {
         {
           final ClippingAttachment clip =
               attachmentLoader.newClippingAttachment(skin, name);
-          if (clip == null) return null;
 
           final String? end = _getString(map, 'end');
           if (end != null) {

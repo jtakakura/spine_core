@@ -46,8 +46,6 @@ class PathConstraint extends Constraint {
   Float32List segments = Float32List(10);
 
   PathConstraint(this.data, Skeleton skeleton) {
-    if (data == null) throw ArgumentError('data cannot be null.');
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     final int n = data.bones.length;
     for (int i = 0; i < n; i++)
       bones.add(skeleton.findBone(data.bones[i].name));

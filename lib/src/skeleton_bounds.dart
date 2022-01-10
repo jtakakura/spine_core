@@ -39,7 +39,6 @@ class SkeletonBounds {
   double minX = 0.0, minY = 0.0, maxX = 0.0, maxY = 0.0;
 
   void update(Skeleton skeleton, bool updateAabb) {
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     final List<BoundingBoxAttachment> boundingBoxes = this.boundingBoxes;
     final List<Float32List> polygons = this.polygons;
     final Pool<Float32List> polygonPool = this.polygonPool;
@@ -199,7 +198,6 @@ class SkeletonBounds {
   }
 
   Float32List? AnimationStateData(BoundingBoxAttachment boundingBox) {
-    if (boundingBox == null) throw ArgumentError('boundingBox cannot be null.');
     final int index = boundingBoxes.indexOf(boundingBox);
     return index == -1 ? null : polygons[index];
   }

@@ -148,7 +148,6 @@ class AnimationState {
   }
 
   bool apply(Skeleton skeleton) {
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     if (animationsChanged) _animationsChanged();
 
     final List<Event?> events = this.events;
@@ -480,7 +479,6 @@ class AnimationState {
   }
 
   TrackEntry? setAnimationWith(int trackIndex, Animation animation, bool loop) {
-    if (animation == null) throw ArgumentError('animation cannot be null.');
     bool interrupt = true;
     TrackEntry? current = expandToIndex(trackIndex);
     if (current != null) {
@@ -512,8 +510,6 @@ class AnimationState {
 
   TrackEntry addAnimationWith(
       int trackIndex, Animation animation, bool loop, double delay) {
-    if (animation == null) throw ArgumentError('animation cannot be null.');
-
     TrackEntry? last = expandToIndex(trackIndex);
     if (last != null) {
       while (last!.next != null) last = last.next;
@@ -637,12 +633,10 @@ class AnimationState {
   }
 
   void addOnStartCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onStartCallbacks.add(callback);
   }
 
   void removeOnStartCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onStartCallbacks.indexOf(callback);
     if (index >= 0) onStartCallbacks.removeAt(index);
   }
@@ -651,12 +645,10 @@ class AnimationState {
       onStartCallbacks.length = 0;
 
   void addOnInterruptCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onInterruptCallbacks.add(callback);
   }
 
   void removeOnInterruptCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onInterruptCallbacks.indexOf(callback);
     if (index >= 0) onInterruptCallbacks.removeAt(index);
   }
@@ -665,12 +657,10 @@ class AnimationState {
       onInterruptCallbacks.length = 0;
 
   void addOnEndCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onEndCallbacks.add(callback);
   }
 
   void removeOnEndCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onEndCallbacks.indexOf(callback);
     if (index >= 0) onEndCallbacks.removeAt(index);
   }
@@ -679,12 +669,10 @@ class AnimationState {
       onEndCallbacks.length = 0;
 
   void addOnDisposeCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onDisposeCallbacks.add(callback);
   }
 
   void removeOnDisposeCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onDisposeCallbacks.indexOf(callback);
     if (index >= 0) onDisposeCallbacks.removeAt(index);
   }
@@ -693,12 +681,10 @@ class AnimationState {
       onDisposeCallbacks.length = 0;
 
   void addOnCompleteCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onCompleteCallbacks.add(callback);
   }
 
   void removeOnCompleteCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onCompleteCallbacks.indexOf(callback);
     if (index >= 0) onCompleteCallbacks.removeAt(index);
   }
@@ -707,12 +693,10 @@ class AnimationState {
       onCompleteCallbacks.length = 0;
 
   void addOnEventCallback(TrackEntryEventCallback callback) {
-    if (callback == null) return;
     onEventCallbacks.add(callback);
   }
 
   void removeOnEventCallback(TrackEntryEventCallback callback) {
-    if (callback == null) return;
     final int index = onEventCallbacks.indexOf(callback);
     if (index >= 0) onEventCallbacks.removeAt(index);
   }

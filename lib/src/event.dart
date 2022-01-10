@@ -37,7 +37,5 @@ class Event {
   String? stringValue;
   double? time;
 
-  Event(this.time, this.data) {
-    if (data == null) throw ArgumentError('data cannot be null.');
-  }
+  Event(this.time, this.data);
 }

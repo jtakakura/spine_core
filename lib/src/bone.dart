@@ -59,8 +59,6 @@ class Bone implements Updatable {
   bool sorted = false;
 
   Bone(this.data, this.skeleton, this.parent) {
-    if (data == null) throw ArgumentError('data cannot be null.');
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     setToSetupPose();
   }
 

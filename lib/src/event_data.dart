@@ -36,7 +36,5 @@ class EventData {
   double? floatValue;
   String? stringValue;
 
-  EventData(this.name) {
-    if (name == null) throw ArgumentError('name cannot be null.');
-  }
+  EventData(this.name);
 }

@@ -40,8 +40,6 @@ class Slot {
 
   Slot(this.data, this.bone)
       : darkColor = data.darkColor == null ? null : Color() {
-    if (data == null) throw ArgumentError('data cannot be null.');
-    if (bone == null) throw ArgumentError('bone cannot be null.');
     setToSetupPose();
   }
 

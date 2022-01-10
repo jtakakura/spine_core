@@ -48,8 +48,6 @@ class Skeleton {
   double x = 0.0, y = 0.0;
 
   Skeleton(this.data) {
-    if (data == null) throw ArgumentError('data cannot be null.');
-
     for (int i = 0; i < data.bones.length; i++) {
       final BoneData boneData = data.bones[i];
       Bone bone;
@@ -207,8 +205,7 @@ class Skeleton {
   }
 
   void sortPathConstraintAttachment(Skin skin, int slotIndex, Bone slotBone) {
-    final Map<String, Attachment> attachments = skin.attachments[slotIndex];
-    if (attachments == null) return;
+    final Map<String, Attachment> attachments = skin.attachments[slotIndex]!;
     attachments.forEach((String key, Attachment attachment) {
       sortPathConstraintAttachmentWith(attachment, slotBone);
     });
@@ -337,7 +334,6 @@ class Skeleton {
   }
 
   int findBoneIndex(String boneName) {
-    if (boneName == null) throw ArgumentError('boneName cannot be null.');
     final List<Bone> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) if (bones[i].data.name == boneName) return i;
@@ -356,7 +352,6 @@ class Skeleton {
   }
 
   int findSlotIndex(String slotName) {
-    if (slotName == null) throw ArgumentError('slotName cannot be null.');
     final List<Slot> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) if (slots[i].data.name == slotName) return i;
@@ -369,7 +364,7 @@ class Skeleton {
     setSkin(skin);
   }
 
-  void setSkin(Skin newSkin) {
+  void setSkin(Skin? newSkin) {
     if (newSkin != null) {
       if (skin != null)
         newSkin.attachAll(this, skin);
@@ -406,14 +401,13 @@ class Skeleton {
   }
 
   void setAttachment(String slotName, String attachmentName) {
-    if (slotName == null) throw ArgumentError('slotName cannot be null.');
     final List<Slot> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) {
       final Slot slot = slots[i];
       if (slot.data.name == slotName) {
         Attachment? attachment;
-        if (attachmentName != null) {
+        if (attachmentName.isNotEmpty) {
           attachment = getAttachment(i, attachmentName);
           if (attachment == null)
             throw StateError(
@@ -427,8 +421,6 @@ class Skeleton {
   }
 
   IkConstraint? findIkConstraint(String constraintName) {
-    if (constraintName == null)
-      throw ArgumentError('constraintName cannot be null.');
     final List<IkConstraint> ikConstraints = this.ikConstraints;
     final int n = ikConstraints.length;
     for (int i = 0; i < n; i++) {
@@ -439,8 +431,6 @@ class Skeleton {
   }
 
   TransformConstraint? findTransformConstraint(String constraintName) {
-    if (constraintName == null)
-      throw ArgumentError('constraintName cannot be null.');
     final List<TransformConstraint> transformConstraints =
         this.transformConstraints;
     final int n = transformConstraints.length;
@@ -452,8 +442,6 @@ class Skeleton {
   }
 
   PathConstraint? findPathConstraint(String constraintName) {
-    if (constraintName == null)
-      throw ArgumentError('constraintName cannot be null.');
     final List<PathConstraint> pathConstraints = this.pathConstraints;
     final int n = pathConstraints.length;
     for (int i = 0; i < n; i++) {
@@ -464,8 +452,6 @@ class Skeleton {
   }
 
   void getBounds(Vector2 offset, Vector2 size, List<double> temp) {
-    if (offset == null) throw ArgumentError('offset cannot be null.');
-    if (size == null) throw ArgumentError('size cannot be null.');
     final List<Slot> drawOrder = this.drawOrder;
     double minX = double.infinity,
         minY = double.infinity,

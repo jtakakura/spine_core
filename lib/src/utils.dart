@@ -265,7 +265,7 @@ class Bounds {
   final Vector2 offset;
   final Vector2 size;
 
-  Bounds(this.offset, this.size);
+  const Bounds(this.offset, this.size);
 }
 
 class TimeKeeper {

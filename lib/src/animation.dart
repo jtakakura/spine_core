@@ -35,14 +35,10 @@ class Animation {
   final List<Timeline> timelines;
   double duration;
 
-  Animation(this.name, this.timelines, this.duration) {
-    if (name == null) throw ArgumentError('name cannot be null.');
-    if (timelines == null) throw ArgumentError('timelines cannot be null.');
-  }
+  Animation(this.name, this.timelines, this.duration);
 
   void apply(Skeleton skeleton, double lastTime, double time, bool loop,
       List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
 
     if (loop && duration != 0) {
       time %= duration;
