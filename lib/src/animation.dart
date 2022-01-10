@@ -1111,19 +1111,19 @@ class TransformConstraintTimeline extends CurveTimeline {
         skeleton.transformConstraints[transformConstraintIndex];
 
     if (time! < frames[0]) {
-      final TransformConstraintData? data = constraint.data;
+      final TransformConstraintData data = constraint.data;
       if (pose == MixPose.Setup) {
         constraint
-          ..rotateMix = data!.rotateMix
+          ..rotateMix = data.rotateMix
           ..translateMix = data.translateMix
           ..scaleMix = data.scaleMix
           ..shearMix = data.shearMix;
       } else if (pose == MixPose.Current) {
-        constraint.rotateMix = constraint.rotateMix! + (data!.rotateMix - constraint.rotateMix!) * alpha!;
-        constraint.translateMix = constraint.translateMix! +
-              (data.translateMix - constraint.translateMix!) * alpha;
-        constraint.scaleMix = constraint.scaleMix! + (data.scaleMix - constraint.scaleMix!) * alpha;
-        constraint.shearMix = constraint.shearMix! + (data.shearMix - constraint.shearMix!) * alpha;
+        constraint.rotateMix = constraint.rotateMix + (data.rotateMix - constraint.rotateMix) * alpha!;
+        constraint.translateMix = constraint.translateMix +
+              (data.translateMix - constraint.translateMix) * alpha;
+        constraint.scaleMix = constraint.scaleMix + (data.scaleMix - constraint.scaleMix) * alpha;
+        constraint.shearMix = constraint.shearMix + (data.shearMix - constraint.shearMix) * alpha;
       }
       return;
     }
@@ -1163,7 +1163,7 @@ class TransformConstraintTimeline extends CurveTimeline {
           (frames[frame + TransformConstraintTimeline.shear] - shear) * percent;
     }
     if (pose == MixPose.Setup) {
-      final TransformConstraintData data = constraint.data!;
+      final TransformConstraintData data = constraint.data;
       constraint
         ..rotateMix = data.rotateMix + (rotate - data.rotateMix) * alpha!
         ..translateMix =
@@ -1171,10 +1171,10 @@ class TransformConstraintTimeline extends CurveTimeline {
         ..scaleMix = data.scaleMix + (scale - data.scaleMix) * alpha
         ..shearMix = data.shearMix + (shear - data.shearMix) * alpha;
     } else {
-      constraint.rotateMix = constraint.rotateMix! + (rotate - constraint.rotateMix!) * alpha!;
-      constraint.translateMix = constraint.translateMix! + (translate - constraint.translateMix!) * alpha;
-      constraint.scaleMix = constraint.scaleMix! + (scale - constraint.scaleMix!) * alpha;
-      constraint.shearMix = constraint.shearMix! + (shear - constraint.shearMix!) * alpha;
+      constraint.rotateMix = constraint.rotateMix + (rotate - constraint.rotateMix) * alpha!;
+      constraint.translateMix = constraint.translateMix + (translate - constraint.translateMix) * alpha;
+      constraint.scaleMix = constraint.scaleMix + (scale - constraint.scaleMix) * alpha;
+      constraint.shearMix = constraint.shearMix + (shear - constraint.shearMix) * alpha;
     }
   }
 }
@@ -1218,8 +1218,8 @@ class PathConstraintPositionTimeline extends CurveTimeline {
       if (pose == MixPose.Setup) {
         constraint.position = constraint.data.position;
       } else if (pose == MixPose.Current) {
-        constraint.position = constraint.position! +
-            (constraint.data.position! - constraint.position!) * alpha!;
+        constraint.position = constraint.position +
+            (constraint.data.position - constraint.position) * alpha!;
       }
       return;
     }
@@ -1246,10 +1246,10 @@ class PathConstraintPositionTimeline extends CurveTimeline {
               percent;
     }
     if (pose == MixPose.Setup)
-      constraint.position = constraint.data.position! +
-          (position - constraint.data.position!) * alpha!;
+      constraint.position = constraint.data.position +
+          (position - constraint.data.position) * alpha!;
     else
-      constraint.position = constraint.position! + (position - constraint.position!) * alpha!;
+      constraint.position = constraint.position + (position - constraint.position) * alpha!;
   }
 }
 
@@ -1276,8 +1276,8 @@ class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
       if (pose == MixPose.Setup) {
         constraint.spacing = constraint.data.spacing;
       } else if (pose == MixPose.Current) {
-        constraint.spacing = constraint.spacing! +
-            (constraint.data.spacing! - constraint.spacing!) * alpha!;
+        constraint.spacing = constraint.spacing +
+            (constraint.data.spacing - constraint.spacing) * alpha!;
       }
       return;
     }
@@ -1306,9 +1306,9 @@ class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
 
     if (pose == MixPose.Setup)
       constraint.spacing =
-          constraint.data.spacing! + (spacing - constraint.data.spacing!) * alpha!;
+          constraint.data.spacing + (spacing - constraint.data.spacing) * alpha!;
     else
-      constraint.spacing = constraint.spacing! + (spacing - constraint.spacing!) * alpha!;
+      constraint.spacing = constraint.spacing + (spacing - constraint.spacing) * alpha!;
   }
 }
 
@@ -1355,10 +1355,10 @@ class PathConstraintMixTimeline extends CurveTimeline {
           ..rotateMix = constraint.data.rotateMix
           ..translateMix = constraint.data.translateMix;
       } else if (pose == MixPose.Current) {
-        constraint.rotateMix = constraint.rotateMix! +
-              (constraint.data.rotateMix! - constraint.rotateMix!) * alpha!;
-        constraint.translateMix = constraint.translateMix! +
-              (constraint.data.translateMix! - constraint.translateMix!) * alpha;
+        constraint.rotateMix = constraint.rotateMix +
+              (constraint.data.rotateMix - constraint.rotateMix) * alpha!;
+        constraint.translateMix = constraint.translateMix +
+              (constraint.data.translateMix - constraint.translateMix) * alpha;
       }
       return;
     }
@@ -1392,13 +1392,13 @@ class PathConstraintMixTimeline extends CurveTimeline {
 
     if (pose == MixPose.Setup) {
       constraint
-        ..rotateMix = constraint.data.rotateMix! +
-            (rotate - constraint.data.rotateMix!) * alpha!
-        ..translateMix = constraint.data.translateMix! +
-            (translate - constraint.data.translateMix!) * alpha;
+        ..rotateMix = constraint.data.rotateMix +
+            (rotate - constraint.data.rotateMix) * alpha!
+        ..translateMix = constraint.data.translateMix +
+            (translate - constraint.data.translateMix) * alpha;
     } else {
-      constraint.rotateMix = constraint.rotateMix! + (rotate - constraint.rotateMix!) * alpha!;
-      constraint.translateMix = constraint.translateMix! + (translate - constraint.translateMix!) * alpha;
+      constraint.rotateMix = constraint.rotateMix + (rotate - constraint.rotateMix) * alpha!;
+      constraint.translateMix = constraint.translateMix + (translate - constraint.translateMix) * alpha;
     }
   }
 }

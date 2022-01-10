@@ -218,15 +218,15 @@ class SkeletonJson {
               _getString(constraintMap, 'spacingMode', 'length')!)
           ..rotateMode = SkeletonJson.rotateModeFromString(
               _getString(constraintMap, 'rotateMode', 'tangent')!)
-          ..offsetRotation = _getDouble(constraintMap, 'rotation', 0.0)
-          ..position = _getDouble(constraintMap, 'position', 0.0);
-        if (data.positionMode == PositionMode.Fixed) data.position = data.position! * scale;
-        data.spacing = _getDouble(constraintMap, 'spacing', 0.0);
+          ..offsetRotation = _getDouble(constraintMap, 'rotation', 0.0)!
+          ..position = _getDouble(constraintMap, 'position', 0.0)!;
+        if (data.positionMode == PositionMode.Fixed) data.position = data.position * scale;
+        data.spacing = _getDouble(constraintMap, 'spacing', 0.0)!;
         if (data.spacingMode == SpacingMode.Length ||
-            data.spacingMode == SpacingMode.Fixed) data.spacing = data.spacing! * scale;
+            data.spacingMode == SpacingMode.Fixed) data.spacing = data.spacing * scale;
         data
-          ..rotateMix = _getDouble(constraintMap, 'rotateMix', 1.0)
-          ..translateMix = _getDouble(constraintMap, 'translateMix', 1.0);
+          ..rotateMix = _getDouble(constraintMap, 'rotateMix', 1.0)!
+          ..translateMix = _getDouble(constraintMap, 'translateMix', 1.0)!;
 
         skeletonData.pathConstraints.add(data);
       }

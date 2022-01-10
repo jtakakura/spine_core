@@ -79,8 +79,10 @@ class Skeleton {
     for (int i = 0; i < data.transformConstraints.length; i++) {
       final TransformConstraintData? transformConstraintData =
           data.transformConstraints[i];
-      transformConstraints
-          .add(TransformConstraint(transformConstraintData, this));
+      if (transformConstraintData != null) {
+        transformConstraints
+            .add(TransformConstraint(transformConstraintData, this));
+      }
     }
 
     for (int i = 0; i < data.pathConstraints.length; i++) {
@@ -121,7 +123,7 @@ class Skeleton {
       }
       for (int ii = 0; ii < transformCount; ii++) {
         final TransformConstraint constraint = transformConstraints[ii];
-        if (constraint.data!.order == i) {
+        if (constraint.data.order == i) {
           sortTransformConstraint(constraint);
           continue outer;
         }
@@ -188,7 +190,7 @@ class Skeleton {
 
     final List<Bone?> constrained = constraint.bones;
     final int boneCount = constrained.length;
-    if (constraint.data!.local) {
+    if (constraint.data.local) {
       for (int i = 0; i < boneCount; i++) {
         final Bone child = constrained[i]!;
         sortBone(child.parent!);
@@ -294,7 +296,7 @@ class Skeleton {
     final int nnn = transformConstraints.length;
     for (int i = 0; i < nnn; i++) {
       final TransformConstraint constraint = transformConstraints[i];
-      final TransformConstraintData data = constraint.data!;
+      final TransformConstraintData data = constraint.data;
       constraint
         ..rotateMix = data.rotateMix
         ..translateMix = data.translateMix
@@ -438,7 +440,7 @@ class Skeleton {
     final int n = transformConstraints.length;
     for (int i = 0; i < n; i++) {
       final TransformConstraint constraint = transformConstraints[i];
-      if (constraint.data!.name == constraintName) return constraint;
+      if (constraint.data.name == constraintName) return constraint;
     }
     return null;
   }

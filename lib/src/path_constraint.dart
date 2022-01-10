@@ -37,7 +37,7 @@ class PathConstraint extends Constraint {
   final PathConstraintData data;
   final List<Bone?> bones = <Bone?>[];
   Slot? target;
-  double? position = 0.0, spacing = 0.0, rotateMix = 0.0, translateMix = 0.0;
+  double position = 0.0, spacing = 0.0, rotateMix = 0.0, translateMix = 0.0;
 
   Float32List spaces = Float32List(0), positions = Float32List(0);
   Float32List world = Float32List(0),
@@ -120,7 +120,7 @@ class PathConstraint extends Constraint {
     else {
       tip = false;
       final Bone p = target!.bone;
-      offsetRotation = offsetRotation! *
+      offsetRotation = offsetRotation *
           (p.a * p.d - p.b * p.c > 0 ? MathUtils.degRad : -MathUtils.degRad);
     }
     for (int i = 0, p = 3; i < boneCount; i++, p += 3) {
@@ -161,7 +161,7 @@ class PathConstraint extends Constraint {
           boneX += (length * (cos * a - sin * c) - dx) * rotateMix;
           boneY += (length * (sin * a + cos * c) - dy) * rotateMix;
         } else {
-          r += offsetRotation!;
+          r += offsetRotation;
         }
         if (r > math.pi)
           r -= math.pi * 2;
@@ -195,7 +195,7 @@ class PathConstraint extends Constraint {
       final Float32List lengths = path.lengths;
       curveCount -= closed! ? 1 : 2;
       final double pathLength = lengths[curveCount];
-      if (percentPosition) position = position! * pathLength;
+      if (percentPosition) position = position * pathLength;
       if (percentSpacing) {
         for (int i = 0; i < spacesCount; i++) spaces[i] *= pathLength;
       }
@@ -331,7 +331,7 @@ class PathConstraint extends Constraint {
       x1 = x2;
       y1 = y2;
     }
-    if (percentPosition) position = position! * pathLength;
+    if (percentPosition) position = position * pathLength;
     if (percentSpacing) {
       for (int i = 0; i < spacesCount; i++) spaces[i] *= pathLength;
     }
