@@ -392,9 +392,9 @@ class Skeleton {
   Attachment? getAttachmentByName(String slotName, String attachmentName) =>
       getAttachment(data.findSlotIndex(slotName), attachmentName);
 
-  Attachment? getAttachment(int? slotIndex, String? attachmentName) {
-    if (attachmentName == null)
-      throw ArgumentError('attachmentName cannot be null.');
+  Attachment? getAttachment(int? slotIndex, String attachmentName) {
+    if (attachmentName.isEmpty)
+      throw ArgumentError('attachmentName cannot be empty.');
     if (skin != null) {
       final Attachment? attachment =
           skin!.getAttachment(slotIndex!, attachmentName);

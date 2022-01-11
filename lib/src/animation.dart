@@ -679,7 +679,7 @@ class AttachmentTimeline implements Timeline {
 
   int getFrameCount() => frames.length;
 
-  void setFrame(int frameIndex, double time, String? attachmentName) {
+  void setFrame(int frameIndex, double time, String attachmentName) {
     frames[frameIndex] = time;
     attachmentNames[frameIndex] = attachmentName;
   }
