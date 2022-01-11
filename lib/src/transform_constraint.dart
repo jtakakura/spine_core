@@ -103,8 +103,8 @@ class TransformConstraint extends Constraint {
         final Vector2 temp = this.temp..set(data.offsetX, data.offsetY);
         target.localToWorld(temp);
         bone
-          ?..worldX += (temp.x! - bone.worldX) * translateMix!
-          ..worldY += (temp.y! - bone.worldY) * translateMix;
+          ?..worldX += (temp.x - bone.worldX) * translateMix!
+          ..worldY += (temp.y - bone.worldY) * translateMix;
         modified = true;
       }
 
@@ -182,8 +182,8 @@ class TransformConstraint extends Constraint {
         final Vector2 temp = this.temp..set(data.offsetX, data.offsetY);
         target.localToWorld(temp);
         bone
-          ?..worldX += temp.x! * translateMix!
-          ..worldY += temp.y! * translateMix;
+          ?..worldX += temp.x * translateMix!
+          ..worldY += temp.y * translateMix;
         modified = true;
       }
 

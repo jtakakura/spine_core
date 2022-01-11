@@ -245,26 +245,26 @@ class Pool<T> {
 }
 
 class Vector2 {
-  double? x, y;
+  double x, y;
 
   Vector2([this.x = 0.0, this.y = 0.0]);
 
-  void set(double? x, double? y) {
+  void set(double x, double y) {
     this.x = x;
     this.y = y;
   }
 
   double length() {
-    final double x = this.x!;
-    final double y = this.y!;
+    final double x = this.x;
+    final double y = this.y;
     return math.sqrt(x * x + y * y);
   }
 
   void normalize() {
     final double len = length();
     if (len != 0) {
-      x = x! / len;
-      y = y! / len;
+      x = x / len;
+      y = y / len;
     }
   }
 }

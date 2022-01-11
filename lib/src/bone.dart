@@ -270,7 +270,7 @@ class Bone implements Updatable {
   Vector2 worldToLocal(Vector2 world) {
     final double a = this.a, b = this.b, c = this.c, d = this.d;
     final double invDet = 1 / (a * d - b * c);
-    final double x = world.x! - worldX, y = world.y! - worldY;
+    final double x = world.x - worldX, y = world.y - worldY;
     world
       ..x = (x * d * invDet - y * b * invDet)
       ..y = (y * a * invDet - x * c * invDet);
