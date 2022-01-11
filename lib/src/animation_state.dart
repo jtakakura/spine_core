@@ -141,8 +141,8 @@ class AnimationState {
 
     from
       ..animationLast = from.nextAnimationLast
-      ..trackLast = from.nextTrackLast;
-    from.trackTime = from.trackTime! + delta * from.timeScale!;
+      ..trackLast = from.nextTrackLast
+      ..trackTime = from.trackTime! + delta * from.timeScale!;
     to.mixTime = to.mixTime! + delta * to.timeScale!;
     return false;
   }

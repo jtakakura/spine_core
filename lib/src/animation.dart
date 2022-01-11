@@ -297,8 +297,9 @@ class TranslateTimeline extends CurveTimeline {
           ..x = bone.data.x
           ..y = bone.data.y;
       } else if (pose == MixPose.Current) {
-        bone.x = bone.x + (bone.data.x - bone.x) * alpha;
-        bone.y = bone.y + (bone.data.y - bone.y) * alpha;
+        bone
+          ..x += (bone.data.x - bone.x) * alpha
+          ..y += (bone.data.y - bone.y) * alpha;
       }
       return;
     }
@@ -329,8 +330,9 @@ class TranslateTimeline extends CurveTimeline {
         ..x = bone.data.x + x * alpha
         ..y = bone.data.y + y * alpha;
     } else {
-      bone.x = bone.x + (bone.data.x + x - bone.x) * alpha;
-      bone.y = bone.y + (bone.data.y + y - bone.y) * alpha;
+      bone
+        ..x += (bone.data.x + x - bone.x) * alpha
+        ..y += (bone.data.y + y - bone.y) * alpha;
     }
   }
 }
@@ -352,8 +354,9 @@ class ScaleTimeline extends TranslateTimeline {
           ..scaleX = bone.data.scaleX
           ..scaleY = bone.data.scaleY;
       } else if (pose == MixPose.Current) {
-        bone.scaleX = bone.scaleX + (bone.data.scaleX - bone.scaleX) * alpha;
-        bone.scaleY = bone.scaleY + (bone.data.scaleY - bone.scaleY) * alpha;
+        bone
+          ..scaleX += (bone.data.scaleX - bone.scaleX) * alpha
+          ..scaleY += (bone.data.scaleY - bone.scaleY) * alpha;
       }
       return;
     }
@@ -426,8 +429,9 @@ class ShearTimeline extends TranslateTimeline {
           ..shearX = bone.data.shearX
           ..shearY = bone.data.shearY;
       } else if (pose == MixPose.Current) {
-        bone.shearX = bone.shearX + (bone.data.shearX - bone.shearX) * alpha;
-        bone.shearY = bone.shearY + (bone.data.shearY - bone.shearY) * alpha;
+        bone
+          ..shearX += (bone.data.shearX - bone.shearX) * alpha
+          ..shearY += (bone.data.shearY - bone.shearY) * alpha;
       }
       return;
     }
@@ -458,8 +462,9 @@ class ShearTimeline extends TranslateTimeline {
         ..shearX = bone.data.shearX + x * alpha
         ..shearY = bone.data.shearY + y * alpha;
     } else {
-      bone.shearX = bone.shearX + (bone.data.shearX + x - bone.shearX) * alpha;
-      bone.shearY = bone.shearY + (bone.data.shearY + y - bone.shearY) * alpha;
+      bone
+        ..shearX += (bone.data.shearX + x - bone.shearX) * alpha
+        ..shearY += (bone.data.shearY + y - bone.shearY) * alpha;
     }
   }
 }
@@ -1005,8 +1010,9 @@ class IkConstraintTimeline extends CurveTimeline {
           ..mix = constraint.data.mix
           ..bendDirection = constraint.data.bendDirection;
       } else if (pose == MixPose.Current) {
-        constraint.mix = constraint.mix + (constraint.data.mix - constraint.mix) * alpha;
-        constraint.bendDirection = constraint.data.bendDirection;
+        constraint
+          ..mix += (constraint.data.mix - constraint.mix) * alpha
+          ..bendDirection = constraint.data.bendDirection;
       }
       return;
     }
@@ -1121,11 +1127,12 @@ class TransformConstraintTimeline extends CurveTimeline {
           ..scaleMix = data.scaleMix
           ..shearMix = data.shearMix;
       } else if (pose == MixPose.Current) {
-        constraint.rotateMix = constraint.rotateMix + (data.rotateMix - constraint.rotateMix) * alpha;
-        constraint.translateMix = constraint.translateMix +
-              (data.translateMix - constraint.translateMix) * alpha;
-        constraint.scaleMix = constraint.scaleMix + (data.scaleMix - constraint.scaleMix) * alpha;
-        constraint.shearMix = constraint.shearMix + (data.shearMix - constraint.shearMix) * alpha;
+        constraint
+          ..rotateMix += (data.rotateMix - constraint.rotateMix) * alpha
+          ..translateMix +=
+              (data.translateMix - constraint.translateMix) * alpha
+          ..scaleMix += (data.scaleMix - constraint.scaleMix) * alpha
+          ..shearMix += (data.shearMix - constraint.shearMix) * alpha;
       }
       return;
     }
@@ -1173,10 +1180,11 @@ class TransformConstraintTimeline extends CurveTimeline {
         ..scaleMix = data.scaleMix + (scale - data.scaleMix) * alpha
         ..shearMix = data.shearMix + (shear - data.shearMix) * alpha;
     } else {
-      constraint.rotateMix = constraint.rotateMix + (rotate - constraint.rotateMix) * alpha;
-      constraint.translateMix = constraint.translateMix + (translate - constraint.translateMix) * alpha;
-      constraint.scaleMix = constraint.scaleMix + (scale - constraint.scaleMix) * alpha;
-      constraint.shearMix = constraint.shearMix + (shear - constraint.shearMix) * alpha;
+      constraint
+        ..rotateMix += (rotate - constraint.rotateMix) * alpha
+        ..translateMix += (translate - constraint.translateMix) * alpha
+        ..scaleMix += (scale - constraint.scaleMix) * alpha
+        ..shearMix += (shear - constraint.shearMix) * alpha;
     }
   }
 }
@@ -1357,9 +1365,10 @@ class PathConstraintMixTimeline extends CurveTimeline {
           ..rotateMix = constraint.data.rotateMix
           ..translateMix = constraint.data.translateMix;
       } else if (pose == MixPose.Current) {
-        constraint.rotateMix = constraint.rotateMix +
-              (constraint.data.rotateMix - constraint.rotateMix) * alpha;
-        constraint.translateMix = constraint.translateMix +
+        constraint
+          ..rotateMix +=
+              (constraint.data.rotateMix - constraint.rotateMix) * alpha
+          ..translateMix +=
               (constraint.data.translateMix - constraint.translateMix) * alpha;
       }
       return;
@@ -1399,8 +1408,9 @@ class PathConstraintMixTimeline extends CurveTimeline {
         ..translateMix = constraint.data.translateMix +
             (translate - constraint.data.translateMix) * alpha;
     } else {
-      constraint.rotateMix = constraint.rotateMix + (rotate - constraint.rotateMix) * alpha;
-      constraint.translateMix = constraint.translateMix + (translate - constraint.translateMix) * alpha;
+      constraint
+        ..rotateMix += (rotate - constraint.rotateMix) * alpha
+        ..translateMix += (translate - constraint.translateMix) * alpha;
     }
   }
 }

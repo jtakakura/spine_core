@@ -211,9 +211,8 @@ class Skeleton {
   }
 
   void sortPathConstraintAttachment(Skin skin, int slotIndex, Bone slotBone) {
-    final Map<String, Attachment> attachments = skin.attachments[slotIndex]!;
-    attachments.forEach((String key, Attachment attachment) {
-      sortPathConstraintAttachmentWith(attachment, slotBone);
+    (skin.attachments[slotIndex]!).forEach((String key, Attachment value) {
+      sortPathConstraintAttachmentWith(value, slotBone);
     });
   }
 

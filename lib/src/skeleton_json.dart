@@ -305,16 +305,15 @@ class SkeletonJson {
         {
           final String path = _getString(map, 'path', name);
           final RegionAttachment region =
-              attachmentLoader.newRegionAttachment(skin, name, path);
-          region
-            ..path = path
-            ..x = _getDouble(map, 'x', 0.0) * scale
-            ..y = _getDouble(map, 'y', 0.0) * scale
-            ..scaleX = _getDouble(map, 'scaleX', 1.0)
-            ..scaleY = _getDouble(map, 'scaleY', 1.0)
-            ..rotation = _getDouble(map, 'rotation', 0.0)
-            ..width = _getDouble(map, 'width') * scale
-            ..height = _getDouble(map, 'height') * scale;
+              attachmentLoader.newRegionAttachment(skin, name, path)
+                ..path = path
+                ..x = _getDouble(map, 'x', 0.0) * scale
+                ..y = _getDouble(map, 'y', 0.0) * scale
+                ..scaleX = _getDouble(map, 'scaleX', 1.0)
+                ..scaleY = _getDouble(map, 'scaleY', 1.0)
+                ..rotation = _getDouble(map, 'rotation', 0.0)
+                ..width = _getDouble(map, 'width') * scale
+                ..height = _getDouble(map, 'height') * scale;
 
           final String color = _getString(map, 'color');
           if (color.isNotEmpty) region.color.setFromString(color);
@@ -336,8 +335,7 @@ class SkeletonJson {
         {
           final String path = _getString(map, 'path', name);
           final MeshAttachment mesh =
-              attachmentLoader.newMeshAttachment(skin, name, path);
-          mesh.path = path;
+              attachmentLoader.newMeshAttachment(skin, name, path)..path = path;
 
           final String color = _getString(map, 'color');
           if (color.isNotEmpty) mesh.color.setFromString(color);
@@ -362,10 +360,9 @@ class SkeletonJson {
       case 'path':
         {
           final PathAttachment path =
-              attachmentLoader.newPathAttachment(skin, name);
-          path
-            ..closed = _getBool(map, 'closed', false)
-            ..constantSpeed = _getBool(map, 'constantSpeed', true);
+              attachmentLoader.newPathAttachment(skin, name)
+                ..closed = _getBool(map, 'closed', false)
+                ..constantSpeed = _getBool(map, 'constantSpeed', true);
 
           final int vertexCount = _getInt(map, 'vertexCount');
           readVertices(map, path, vertexCount << 1);
@@ -380,11 +377,10 @@ class SkeletonJson {
       case 'point':
         {
           final PointAttachment point =
-              attachmentLoader.newPointAttachment(skin, name);
-          point
-            ..x = _getDouble(map, 'x', 0.0) * scale
-            ..y = _getDouble(map, 'y', 0.0) * scale
-            ..rotation = _getDouble(map, 'rotation', 0.0);
+              attachmentLoader.newPointAttachment(skin, name)
+                ..x = _getDouble(map, 'x', 0.0) * scale
+                ..y = _getDouble(map, 'y', 0.0) * scale
+                ..rotation = _getDouble(map, 'rotation', 0.0);
 
           final String color = _getString(map, 'color');
           if (color.isNotEmpty) point.color.setFromString(color);
