@@ -49,7 +49,7 @@ class AnimationState {
       <TrackEntryEventCallback>[];
   final List<TrackEntry> mixingTo = <TrackEntry>[];
   final Set<int> propertyIDs = <int>{};
-  final Pool<TrackEntry?> trackEntryPool = Pool<TrackEntry?>(() => TrackEntry());
+  final Pool<TrackEntry?> trackEntryPool = Pool<TrackEntry?>(TrackEntry.new);
 
   AnimationStateData data;
   EventQueue? queue;
