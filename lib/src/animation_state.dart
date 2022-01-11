@@ -36,8 +36,9 @@ class AnimationState {
   static const int dip = 2;
   static const int dipMix = 3;
 
-  static final Animation emptyAnimation =
+  static const Animation emptyAnimation =
       Animation('<empty>', <Timeline>[], 0.0);
+
   List<TrackEntry?> tracks = <TrackEntry?>[];
   final List<Event?> events = <Event?>[];
   final List<TrackEntryCallback> onStartCallbacks = <TrackEntryCallback>[];

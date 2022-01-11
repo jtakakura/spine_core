@@ -33,9 +33,9 @@ part of spine_core;
 class Animation {
   final String name;
   final List<Timeline> timelines;
-  double duration;
+  final double duration;
 
-  Animation(this.name, this.timelines, this.duration);
+  const Animation(this.name, this.timelines, this.duration);
 
   void apply(Skeleton skeleton, double lastTime, double time, bool loop,
       List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
