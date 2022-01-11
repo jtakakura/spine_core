@@ -345,8 +345,8 @@ class Skeleton {
     return -1;
   }
 
-  Slot? findSlot(String? slotName) {
-    if (slotName == null) throw ArgumentError('slotName cannot be null.');
+  Slot? findSlot(String slotName) {
+    if (slotName.isEmpty) throw ArgumentError('slotName cannot be empty.');
     final List<Slot> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) {

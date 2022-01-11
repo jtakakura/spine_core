@@ -66,16 +66,16 @@ class SkeletonData {
     return -1;
   }
 
-  SlotData? findSlot(String? slotName) {
-    if (slotName == null) throw ArgumentError('slotName cannot be null.');
+  SlotData? findSlot(String slotName) {
+    if (slotName.isEmpty) throw ArgumentError('slotName cannot be empty.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) if (slots[i].name == slotName) return slots[i];
     return null;
   }
 
-  int findSlotIndex(String? slotName) {
-    if (slotName == null) throw ArgumentError('slotName cannot be null.');
+  int findSlotIndex(String slotName) {
+    if (slotName.isEmpty) throw ArgumentError('slotName cannot be empty.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) if (slots[i].name == slotName) return i;
