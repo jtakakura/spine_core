@@ -32,7 +32,7 @@ part of spine_core;
 
 class TransformConstraint extends Constraint {
   final TransformConstraintData data;
-  final List<Bone?> bones = <Bone?>[];
+  final List<Bone> bones = <Bone>[];
   final Vector2 temp = Vector2();
   Bone? target;
   double rotateMix = 0.0, translateMix = 0.0, scaleMix = 0.0, shearMix = 0.0;
@@ -43,7 +43,7 @@ class TransformConstraint extends Constraint {
     scaleMix = data.scaleMix;
     shearMix = data.shearMix;
     for (int i = 0; i < data.bones.length; i++)
-      bones.add(skeleton.findBone(data.bones[i].name));
+      bones.add(skeleton.findBone(data.bones[i].name)!);
     target = skeleton.findBone(data.target!.name);
   }
 
@@ -77,14 +77,14 @@ class TransformConstraint extends Constraint {
         ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
     final double offsetRotation = data.offsetRotation * degRadReflect;
     final double offsetShearY = data.offsetShearY * degRadReflect;
-    final List<Bone?> bones = this.bones;
+    final List<Bone> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) {
-      final Bone? bone = bones[i];
+      final Bone bone = bones[i];
       bool modified = false;
 
       if (rotateMix != 0) {
-        final double a = bone!.a, b = bone.b, c = bone.c, d = bone.d;
+        final double a = bone.a, b = bone.b, c = bone.c, d = bone.d;
         double r = math.atan2(tc, ta) - math.atan2(c, a) + offsetRotation;
         if (r > math.pi)
           r -= math.pi * 2;
@@ -103,13 +103,13 @@ class TransformConstraint extends Constraint {
         final Vector2 temp = this.temp..set(data.offsetX, data.offsetY);
         target.localToWorld(temp);
         bone
-          ?..worldX += (temp.x - bone.worldX) * translateMix!
+          ..worldX += (temp.x - bone.worldX) * translateMix!
           ..worldY += (temp.y - bone.worldY) * translateMix;
         modified = true;
       }
 
       if (scaleMix! > 0) {
-        double s = math.sqrt(bone!.a * bone.a + bone.c * bone.c);
+        double s = math.sqrt(bone.a * bone.a + bone.c * bone.c);
         double ts = math.sqrt(ta * ta + tc * tc);
         if (s > 0.00001) s = (s + (ts - s + data.offsetScaleX) * scaleMix) / s;
         bone
@@ -125,7 +125,7 @@ class TransformConstraint extends Constraint {
       }
 
       if (shearMix! > 0) {
-        final double b = bone!.b, d = bone.d;
+        final double b = bone.b, d = bone.d;
         final double by = math.atan2(d, b);
         double r = math.atan2(td, tb) -
             math.atan2(tc, ta) -
@@ -141,7 +141,7 @@ class TransformConstraint extends Constraint {
         modified = true;
       }
 
-      if (modified) bone!.appliedValid = false;
+      if (modified) bone.appliedValid = false;
     }
   }
 
@@ -156,14 +156,14 @@ class TransformConstraint extends Constraint {
         ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
     final double offsetRotation = data.offsetRotation * degRadReflect,
         offsetShearY = data.offsetShearY * degRadReflect;
-    final List<Bone?> bones = this.bones;
+    final List<Bone> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) {
-      final Bone? bone = bones[i];
+      final Bone bone = bones[i];
       bool modified = false;
 
       if (rotateMix != 0) {
-        final double a = bone!.a, b = bone.b, c = bone.c, d = bone.d;
+        final double a = bone.a, b = bone.b, c = bone.c, d = bone.d;
         double r = math.atan2(tc, ta) + offsetRotation;
         if (r > math.pi)
           r -= math.pi * 2;
@@ -182,7 +182,7 @@ class TransformConstraint extends Constraint {
         final Vector2 temp = this.temp..set(data.offsetX, data.offsetY);
         target.localToWorld(temp);
         bone
-          ?..worldX += temp.x * translateMix!
+          ..worldX += temp.x * translateMix!
           ..worldY += temp.y * translateMix;
         modified = true;
       }
@@ -192,12 +192,12 @@ class TransformConstraint extends Constraint {
             (math.sqrt(ta * ta + tc * tc) - 1 + data.offsetScaleX) * scaleMix +
                 1;
         bone
-          ?..a *= s
+          ..a *= s
           ..c *= s;
         s = (math.sqrt(tb * tb + td * td) - 1 + data.offsetScaleY) * scaleMix +
             1;
         bone
-          ?..b *= s
+          ..b *= s
           ..d *= s;
         modified = true;
       }
@@ -207,7 +207,7 @@ class TransformConstraint extends Constraint {
         if (r > math.pi)
           r -= math.pi * 2;
         else if (r < -math.pi) r += math.pi * 2;
-        final double b = bone!.b, d = bone.d;
+        final double b = bone.b, d = bone.d;
         r = math.atan2(d, b) + (r - math.pi / 2 + offsetShearY) * shearMix;
         final double s = math.sqrt(b * b + d * d);
         bone
@@ -216,7 +216,7 @@ class TransformConstraint extends Constraint {
         modified = true;
       }
 
-      if (modified) bone!.appliedValid = false;
+      if (modified) bone.appliedValid = false;
     }
   }
 
@@ -227,10 +227,10 @@ class TransformConstraint extends Constraint {
         shearMix = this.shearMix;
     final Bone target = this.target!;
     if (!target.appliedValid) target.updateAppliedTransform();
-    final List<Bone?> bones = this.bones;
+    final List<Bone> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) {
-      final Bone bone = bones[i]!;
+      final Bone bone = bones[i];
       if (!bone.appliedValid) bone.updateAppliedTransform();
 
       double? rotation = bone.arotation;
@@ -277,10 +277,10 @@ class TransformConstraint extends Constraint {
         shearMix = this.shearMix;
     final Bone target = this.target!;
     if (!target.appliedValid) target.updateAppliedTransform();
-    final List<Bone?> bones = this.bones;
+    final List<Bone> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) {
-      final Bone bone = bones[i]!;
+      final Bone bone = bones[i];
       if (!bone.appliedValid) bone.updateAppliedTransform();
 
       double rotation = bone.arotation;

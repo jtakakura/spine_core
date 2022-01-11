@@ -35,7 +35,7 @@ class PathConstraint extends Constraint {
   static const double epsilon = 0.00001;
 
   final PathConstraintData data;
-  final List<Bone?> bones = <Bone?>[];
+  final List<Bone> bones = <Bone>[];
   Slot? target;
   double position = 0.0, spacing = 0.0, rotateMix = 0.0, translateMix = 0.0;
 
@@ -48,7 +48,7 @@ class PathConstraint extends Constraint {
   PathConstraint(this.data, Skeleton skeleton) {
     final int n = data.bones.length;
     for (int i = 0; i < n; i++)
-      bones.add(skeleton.findBone(data.bones[i].name));
+      bones.add(skeleton.findBone(data.bones[i].name)!);
     target = skeleton.findSlot(data.target!.name);
     position = data.position;
     spacing = data.spacing;
@@ -77,7 +77,7 @@ class PathConstraint extends Constraint {
         scale = rotateMode == RotateMode.ChainScale;
     final int boneCount = this.bones.length,
         spacesCount = tangents ? boneCount : boneCount + 1;
-    final List<Bone?> bones = this.bones;
+    final List<Bone> bones = this.bones;
     final Float32List spaces =
         ArrayUtils.copyWithNewArraySize(this.spaces, spacesCount, double.infinity)
             as Float32List;
@@ -89,7 +89,7 @@ class PathConstraint extends Constraint {
             as Float32List;
       final int n = spacesCount - 1;
       for (int i = 0; i < n;) {
-        final Bone bone = bones[i]!;
+        final Bone bone = bones[i];
         final double setupLength = bone.data.length;
         if (setupLength < PathConstraint.epsilon) {
           if (scale) lengths[i] = 0.0;
@@ -126,7 +126,7 @@ class PathConstraint extends Constraint {
           (p.a * p.d - p.b * p.c > 0 ? MathUtils.degRad : -MathUtils.degRad);
     }
     for (int i = 0, p = 3; i < boneCount; i++, p += 3) {
-      final Bone bone = bones[i]!;
+      final Bone bone = bones[i];
       bone
         ..worldX += (boneX! - bone.worldX) * translateMix
         ..worldY += (boneY! - bone.worldY) * translateMix;

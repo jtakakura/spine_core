@@ -147,19 +147,19 @@ class Skeleton {
     final Bone target = constraint.target!;
     sortBone(target);
 
-    final List<Bone?> constrained = constraint.bones;
-    final Bone parent = constrained[0]!;
+    final List<Bone> constrained = constraint.bones;
+    final Bone parent = constrained[0];
     sortBone(parent);
 
     if (constrained.length > 1) {
-      final Bone? child = constrained[constrained.length - 1];
+      final Bone child = constrained[constrained.length - 1];
       if (!_updateCache.contains(child)) _updateCacheReset.add(child);
     }
 
     _updateCache.add(constraint);
 
     sortReset(parent.children);
-    constrained[constrained.length - 1]!.sorted = true;
+    constrained[constrained.length - 1].sorted = true;
   }
 
   void sortPathConstraint(PathConstraint constraint) {
@@ -177,37 +177,37 @@ class Skeleton {
     if (attachment is PathAttachment)
       sortPathConstraintAttachmentWith(attachment, slotBone);
 
-    final List<Bone?> constrained = constraint.bones;
+    final List<Bone> constrained = constraint.bones;
     final int boneCount = constrained.length;
-    for (int i = 0; i < boneCount; i++) sortBone(constrained[i]!);
+    for (int i = 0; i < boneCount; i++) sortBone(constrained[i]);
 
     _updateCache.add(constraint);
 
-    for (int i = 0; i < boneCount; i++) sortReset(constrained[i]!.children);
-    for (int i = 0; i < boneCount; i++) constrained[i]!.sorted = true;
+    for (int i = 0; i < boneCount; i++) sortReset(constrained[i].children);
+    for (int i = 0; i < boneCount; i++) constrained[i].sorted = true;
   }
 
   void sortTransformConstraint(TransformConstraint constraint) {
     sortBone(constraint.target!);
 
-    final List<Bone?> constrained = constraint.bones;
+    final List<Bone> constrained = constraint.bones;
     final int boneCount = constrained.length;
     if (constraint.data.local) {
       for (int i = 0; i < boneCount; i++) {
-        final Bone child = constrained[i]!;
+        final Bone child = constrained[i];
         sortBone(child.parent!);
         if (!_updateCache.contains(child)) _updateCacheReset.add(child);
       }
     } else {
       for (int i = 0; i < boneCount; i++) {
-        sortBone(constrained[i]!);
+        sortBone(constrained[i]);
       }
     }
 
     _updateCache.add(constraint);
 
-    for (int ii = 0; ii < boneCount; ii++) sortReset(constrained[ii]!.children);
-    for (int ii = 0; ii < boneCount; ii++) constrained[ii]!.sorted = true;
+    for (int ii = 0; ii < boneCount; ii++) sortReset(constrained[ii].children);
+    for (int ii = 0; ii < boneCount; ii++) constrained[ii].sorted = true;
   }
 
   void sortPathConstraintAttachment(Skin skin, int slotIndex, Bone slotBone) {
@@ -328,8 +328,7 @@ class Skeleton {
 
   Bone? getRootBone() => bones.isEmpty ? null : bones[0];
 
-  Bone? findBone(String? boneName) {
-    if (boneName == null) throw ArgumentError('boneName cannot be null.');
+  Bone? findBone(String boneName) {
     final List<Bone> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) {

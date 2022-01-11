@@ -32,7 +32,7 @@ part of spine_core;
 
 class IkConstraint extends Constraint {
   final IkConstraintData data;
-  final List<Bone?> bones = <Bone?>[];
+  final List<Bone> bones = <Bone>[];
   Bone? target;
   double mix = 1.0;
   int bendDirection = 0;
@@ -42,7 +42,7 @@ class IkConstraint extends Constraint {
     bendDirection = data.bendDirection;
 
     for (int i = 0; i < data.bones.length; i++)
-      bones.add(skeleton.findBone(data.bones[i].name));
+      bones.add(skeleton.findBone(data.bones[i].name)!);
     target = skeleton.findBone(data.target!.name);
   }
 
@@ -56,13 +56,13 @@ class IkConstraint extends Constraint {
   @override
   void update() {
     final Bone? target = this.target;
-    final List<Bone?> bones = this.bones;
+    final List<Bone> bones = this.bones;
     switch (bones.length) {
       case 1:
-        apply1(bones[0]!, target!.worldX, target.worldY, mix);
+        apply1(bones[0], target!.worldX, target.worldY, mix);
         break;
       case 2:
-        apply2(bones[0]!, bones[1]!, target!.worldX, target.worldY, bendDirection,
+        apply2(bones[0], bones[1], target!.worldX, target.worldY, bendDirection,
             mix);
         break;
     }
