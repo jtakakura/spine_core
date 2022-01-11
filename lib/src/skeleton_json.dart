@@ -257,7 +257,7 @@ class SkeletonJson {
     final int n = linkedMeshes.length;
     for (int i = 0; i < n; i++) {
       final LinkedMesh linkedMesh = linkedMeshes[i];
-      final Skin? skin = linkedMesh.skin == null
+      final Skin? skin = linkedMesh.skin.isEmpty
           ? skeletonData.defaultSkin
           : skeletonData.findSkin(linkedMesh.skin);
       if (skin == null) throw StateError('Skin not found: $linkedMesh.skin');
@@ -934,9 +934,9 @@ class SkeletonJson {
 
 class LinkedMesh {
   final MeshAttachment mesh;
-  final String? skin;
+  final String skin;
   final int slotIndex;
   final String parent;
 
-  LinkedMesh(this.mesh, this.skin, this.slotIndex, this.parent);
+  const LinkedMesh(this.mesh, this.skin, this.slotIndex, this.parent);
 }

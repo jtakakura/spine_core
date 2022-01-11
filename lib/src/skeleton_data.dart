@@ -82,8 +82,8 @@ class SkeletonData {
     return -1;
   }
 
-  Skin? findSkin(String? skinName) {
-    if (skinName == null) throw ArgumentError('skinName cannot be null.');
+  Skin? findSkin(String skinName) {
+    if (skinName.isEmpty) throw ArgumentError('skinName cannot be empty.');
     final List<Skin> skins = this.skins;
     final int n = skins.length;
     for (int i = 0; i < n; i++) if (skins[i].name == skinName) return skins[i];
