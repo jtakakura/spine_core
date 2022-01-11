@@ -31,8 +31,8 @@
 part of spine_core;
 
 class PathConstraint extends Constraint {
-  static final int none = -1, before = -2, after = -3;
-  static final double epsilon = 0.00001;
+  static const int none = -1, before = -2, after = -3;
+  static const double epsilon = 0.00001;
 
   final PathConstraintData data;
   final List<Bone?> bones = <Bone?>[];
