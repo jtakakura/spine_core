@@ -42,7 +42,7 @@ class MeshAttachment extends VertexAttachment {
   MeshAttachment? _parentMesh;
   bool? inheritDeform = false;
 
-  MeshAttachment(String? name) : super(name);
+  MeshAttachment(String name) : super(name);
 
   void updateUVs() {
     double u = 0.0, v = 0.0, width = 0.0, height = 0.0;

@@ -33,5 +33,5 @@ part of spine_core;
 class BoundingBoxAttachment extends VertexAttachment {
   final Color color = Color(1.0, 1.0, 1.0, 1.0);
 
-  BoundingBoxAttachment(String? name) : super(name);
+  BoundingBoxAttachment(String name) : super(name);
 }

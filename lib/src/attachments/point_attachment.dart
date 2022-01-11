@@ -34,7 +34,7 @@ class PointAttachment extends VertexAttachment {
   final Color color = Color(0.38, 0.94, 0.0, 1.0);
   double? x, y, rotation;
 
-  PointAttachment(String? name) : super(name);
+  PointAttachment(String name) : super(name);
 
   Vector2 computeWorldPosition(Bone bone, Vector2 point) {
     point

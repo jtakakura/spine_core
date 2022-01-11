@@ -94,7 +94,7 @@ class Skeleton {
     updateCache();
   }
 
-  factory Skeleton.empty() => Skeleton(SkeletonData());
+  factory Skeleton.empty() => Skeleton(SkeletonData(''));
 
   void updateCache() {
     _updateCache.length = 0;

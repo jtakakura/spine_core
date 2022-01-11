@@ -93,7 +93,7 @@ class RegionAttachment extends VertexAttachment {
   dynamic rendererObject;
   late TextureRegion region;
 
-  RegionAttachment(String? name) : super(name);
+  RegionAttachment(String name) : super(name);
 
   void updateOffset() {
     final double regionScaleX = width! / region.originalWidth * scaleX!;

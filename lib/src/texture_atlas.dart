@@ -30,7 +30,7 @@
 
 part of spine_core;
 
-typedef Texture TextureLoader(String? path);
+typedef Texture TextureLoader(String path);
 
 class TextureAtlas implements Disposable {
   List<TextureAtlasPage> pages = <TextureAtlasPage>[];
@@ -51,7 +51,7 @@ class TextureAtlas implements Disposable {
       if (line.isEmpty)
         page = null;
       else if (page == null) {
-        page = TextureAtlasPage()..name = line;
+        page = TextureAtlasPage(line);
 
         tuple = reader.readTuple(tuple);
         if (tuple.length == 2) {
@@ -85,8 +85,7 @@ class TextureAtlas implements Disposable {
           ..height = page.texture!.image.height;
         pages.add(page);
       } else {
-        final TextureAtlasRegion region = TextureAtlasRegion()
-          ..name = line
+        final TextureAtlasRegion region = TextureAtlasRegion(line)
           ..page = page
           ..rotate = reader.readValue() == 'true';
 
@@ -141,7 +140,7 @@ class TextureAtlas implements Disposable {
     }
   }
 
-  TextureAtlasRegion? findRegion(String? name) {
+  TextureAtlasRegion? findRegion(String name) {
     for (int i = 0; i < regions.length; i++) {
       if (regions[i].name == name) {
         return regions[i];
@@ -198,7 +197,8 @@ class TextureAtlasReader {
 }
 
 class TextureAtlasPage {
-  String? name;
+  final String name;
+
   TextureFilter? minFilter;
   TextureFilter? magFilter;
   TextureWrap? uWrap;
@@ -206,13 +206,18 @@ class TextureAtlasPage {
   Texture? texture;
   int? width;
   int? height;
+
+  TextureAtlasPage(this.name): assert(name.isNotEmpty);
 }
 
 class TextureAtlasRegion extends TextureRegion {
+  final String name;
+
   TextureAtlasPage? page;
-  String? name;
   int? x;
   int? y;
   int? index;
   Texture? texture;
+
+  TextureAtlasRegion(this.name): assert(name.isNotEmpty);
 }

@@ -39,7 +39,7 @@ class SkeletonJson {
 
   SkeletonData readSkeletonData(Object object) {
     final double scale = this.scale;
-    final SkeletonData skeletonData = SkeletonData();
+    final SkeletonData skeletonData = SkeletonData('');
 
     dynamic root;
 
@@ -934,9 +934,10 @@ class SkeletonJson {
 }
 
 class LinkedMesh {
-  String? parent, skin;
-  int slotIndex;
-  MeshAttachment mesh;
+  final MeshAttachment mesh;
+  final String? skin;
+  final int slotIndex;
+  final String parent;
 
   LinkedMesh(this.mesh, this.skin, this.slotIndex, this.parent);
 }

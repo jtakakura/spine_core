@@ -41,7 +41,7 @@ class SkeletonData {
       <TransformConstraintData?>[];
   final List<PathConstraintData> pathConstraints = <PathConstraintData>[];
 
-  String? name;
+  String name;
   Skin? defaultSkin;
   double? width, height;
   String? version, hash;
@@ -49,6 +49,8 @@ class SkeletonData {
   // Nonessential
   double fps = 0.0;
   String? imagesPath;
+
+  SkeletonData(this.name);
 
   BoneData? findBone(String boneName) {
     final List<BoneData> bones = this.bones;
