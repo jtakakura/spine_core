@@ -150,15 +150,17 @@ class MathUtils {
 }
 
 abstract class Interpolation {
+  const Interpolation();
+
   double applyInternal(double a);
   double apply(double start, double end, double a) =>
       start + (end - start) * applyInternal(a);
 }
 
 class Pow extends Interpolation {
-  double power = 2.0;
+  final double power;
 
-  Pow(this.power);
+  const Pow(double power): power = 2.0;
 
   @override
   double applyInternal(double a) {
@@ -168,7 +170,7 @@ class Pow extends Interpolation {
 }
 
 class PowOut extends Pow {
-  PowOut(double power) : super(power);
+  const PowOut(double power) : super(power);
 
   @override
   double applyInternal(double a) =>
