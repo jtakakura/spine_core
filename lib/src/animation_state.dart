@@ -38,7 +38,7 @@ class AnimationState {
 
   static final Animation emptyAnimation =
       Animation('<empty>', <Timeline>[], 0.0);
-  final List<TrackEntry?> tracks = <TrackEntry?>[];
+  List<TrackEntry?> tracks = <TrackEntry?>[];
   final List<Event?> events = <Event?>[];
   final List<TrackEntryCallback> onStartCallbacks = <TrackEntryCallback>[];
   final List<TrackEntryCallback> onInterruptCallbacks = <TrackEntryCallback>[];
@@ -183,8 +183,8 @@ class AnimationState {
 
         final bool firstFrame = current.timelinesRotation.isEmpty;
         if (firstFrame)
-          ArrayUtils.setArraySize(
-              current.timelinesRotation, timelineCount << 1, null);
+          current.timelinesRotation = ArrayUtils.copyWithNewArraySize(
+              current.timelinesRotation, timelineCount << 1, double.infinity);
         final Float32List timelinesRotation =
             Float32List.fromList(current.timelinesRotation);
 
@@ -229,18 +229,19 @@ class AnimationState {
     }
 
     final List<Event?> events = mix < from.eventThreshold! ? this.events : <Event?>[];
-    final bool attachments = mix < from.attachmentThreshold!,
-        drawOrder = mix < from.drawOrderThreshold!;
-    final double animationLast = from.animationLast!,
-        animationTime = from.getAnimationTime()!;
-    final int timelineCount = from.animation!.timelines.length;
+    final bool attachments = mix < from.attachmentThreshold!;
+    final bool drawOrder = mix < from.drawOrderThreshold!;
+    final double animationLast = from.animationLast!;
+    final double animationTime = from.getAnimationTime()!;
     final List<Timeline> timelines = from.animation!.timelines;
     final Int32List timelineData = Int32List.fromList(from.timelineData);
+    final int timelineCount = timelineData.length;
     final List<TrackEntry> timelineDipMix = from.timelineDipMix;
 
     final bool firstFrame = from.timelinesRotation.isEmpty;
     if (firstFrame)
-      ArrayUtils.setArraySize(from.timelinesRotation, timelineCount << 1, 0.0);
+      from.timelinesRotation = ArrayUtils.copyWithNewArraySize(
+          from.timelinesRotation, timelineCount << 1, double.infinity);
     final Float32List timelinesRotation =
         Float32List.fromList(from.timelinesRotation);
 
@@ -573,7 +574,8 @@ class AnimationState {
 
   TrackEntry? expandToIndex(int index) {
     if (index < tracks.length) return tracks[index];
-    ArrayUtils.ensureArrayCapacity(tracks, index - tracks.length + 1, null);
+    tracks = ArrayUtils.ensureArrayCapacity(
+        tracks, index - tracks.length + 1, null);
     tracks.length = index + 1;
     return null;
   }
@@ -712,7 +714,7 @@ class AnimationState {
 class TrackEntry implements Poolable {
   final List<TrackEntry> timelineDipMix = <TrackEntry>[];
   final List<int> timelineData = <int>[];
-  final List<double> timelinesRotation = <double>[];
+  List<double> timelinesRotation = <double>[];
 
   Animation? animation;
   TrackEntry? next, mixingFrom;
@@ -758,10 +760,10 @@ class TrackEntry implements Poolable {
     final List<Timeline> timelines = animation!.timelines;
     final int timelinesCount = animation!.timelines.length;
     final Int32List timelineData = Int32List.fromList(
-        ArrayUtils.setArraySize(this.timelineData, timelinesCount, 0));
+        ArrayUtils.copyWithNewArraySize(this.timelineData, timelinesCount, -1));
     this.timelineDipMix.length = 0;
-    final List<TrackEntry?> timelineDipMix =
-        ArrayUtils.setArraySize(this.timelineDipMix, timelinesCount, null);
+    final List<TrackEntry?> timelineDipMix = ArrayUtils.copyWithNewArraySize(
+        this.timelineDipMix, timelinesCount, null);
 
     outer:
     for (int i = 0; i < timelinesCount; i++) {

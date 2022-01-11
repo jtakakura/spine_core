@@ -44,6 +44,8 @@ class Slot {
     setToSetupPose();
   }
 
+  factory Slot.empty() => Slot(SlotData.empty(), Bone.empty());
+
   void setAttachment(Attachment? attachment) {
     if (this.attachment == attachment) return;
     this.attachment = attachment;

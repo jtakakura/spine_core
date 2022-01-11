@@ -742,11 +742,11 @@ class SkeletonJson {
                 deform = weighted ? Float32List(deformLength) : vertices;
               else {
                 deform = Float32List(deformLength);
-                final int? start = _getInt(valueMap, 'offset', 0);
-                ArrayUtils.arrayCopy(
-                    verticesValue, 0, deform, start, verticesValue.length);
+                final int start = _getInt(valueMap, 'offset', 0);
+                deform = ArrayUtils.arrayCopyWithGrowth(verticesValue, 0, deform,
+                    start, verticesValue.length, 0.0) as Float32List;
                 if (scale != 1) {
-                  for (int i = start!; i < i + verticesValue.length; i++)
+                  for (int i = start; i < i + verticesValue.length; i++)
                     deform[i] *= scale;
                 }
                 if (!weighted) {

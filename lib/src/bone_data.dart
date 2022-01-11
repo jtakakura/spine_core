@@ -45,8 +45,11 @@ class BoneData {
   TransformMode transformMode = TransformMode.Normal;
 
   BoneData(this.index, this.name, this.parent) {
-    if (index < 0) throw ArgumentError('index must be >= 0.');
+    if (index < 0 && name.isNotEmpty)
+      throw ArgumentError('index must be >= 0.');
   }
+
+  factory BoneData.empty() => BoneData(-1, '', null);
 }
 
 enum TransformMode {

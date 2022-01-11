@@ -176,36 +176,42 @@ class PowOut extends Pow {
 }
 
 class ArrayUtils {
-  static void arrayCopy<T>(List<T>? source, int sourceStart, List<T> dest,
-      int? destStart, int numElements) {
-    for (int? i = sourceStart, j = destStart;
-        i! < sourceStart + numElements;
+  static List<T> arrayCopyWithGrowth<T>(List<T> source, int sourceStart,
+      List<T> dest, int destStart, int numElements, T defaultValue) {
+    List<T> r = List<T>.of(dest);
+    for (int i = sourceStart, j = destStart;
+        i < sourceStart + numElements;
         i++, j++) {
-      setArrayValue(dest, j!, source![i]);
+      r = setArrayValueWithGrowth(r, j, source[i], defaultValue);
     }
+    return r;
   }
 
-  static void setArrayValue<T>(List<T> array, int index, T value) {
+  static List<T> setArrayValueWithGrowth<T>(
+      List<T> array, int index, T value, T defaultValue) {
     if (index + 1 > array.length) {
-      array.length = index + 1;
+      array = ensureArrayCapacity(array, index + 1, defaultValue);
     }
     array[index] = value;
-  }
-
-  static List<T> setArraySize<T>(List<T> array, int size, T value) {
-    final int oldSize = array.length;
-    if (oldSize == size) return array;
-    array.length = size;
-    if (oldSize < size && value != null) {
-      for (int i = oldSize; i < size; i++) setArrayValue(array, i, value);
-    }
     return array;
   }
 
-  static List<T> ensureArrayCapacity<T>(List<T> array, int size, T value) {
-    if (array.length >= size) return array;
-    return ArrayUtils.setArraySize(array, size, value);
+  static List<T> copyWithNewArraySize<T>(
+      List<T> array, int size, T defaultValue) {
+    final int oldSize = array.length;
+    return oldSize == size
+        ? array
+        : <T>[
+            ...array.take(size),
+            for (int i = oldSize; i < size; i++) defaultValue
+          ];
   }
+
+  static List<T> ensureArrayCapacity<T>(
+          List<T> array, int size, T defaultValue) =>
+      array.length >= size
+          ? array
+          : ArrayUtils.copyWithNewArraySize(array, size, defaultValue);
 }
 
 typedef T Instantiator<T>();

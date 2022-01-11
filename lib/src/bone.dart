@@ -62,6 +62,8 @@ class Bone implements Updatable {
     setToSetupPose();
   }
 
+  factory Bone.empty() => Bone(BoneData.empty(), Skeleton.empty(), null);
+
   @override
   void update() {
     updateWorldTransformWith(x, y, rotation, scaleX, scaleY, shearX, shearY);

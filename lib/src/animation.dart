@@ -763,12 +763,12 @@ class DeformTimeline extends CurveTimeline {
           return;
         }
         final Float32List vertices = Float32List.fromList(
-            ArrayUtils.setArraySize(verticesArray, vertexCount, 0.0));
+            ArrayUtils.copyWithNewArraySize(verticesArray, vertexCount, double.infinity));
         if (vertexAttachment.bones == null) {
           // Unweighted vertex positions.
-          final Float32List? setupVertices = vertexAttachment.vertices;
+          final Float32List setupVertices = vertexAttachment.vertices!;
           for (int i = 0; i < vertexCount; i++)
-            vertices[i] += (setupVertices![i] - vertices[i]) * alpha;
+            vertices[i] += (setupVertices[i] - vertices[i]) * alpha;
         } else {
           // Weighted deform offsets.
           alpha = 1 - alpha;
@@ -778,29 +778,30 @@ class DeformTimeline extends CurveTimeline {
       return;
     }
 
-    final Float32List vertices = Float32List.fromList(
-        ArrayUtils.setArraySize(verticesArray, vertexCount, 0.0));
+    Float32List vertices = Float32List.fromList(
+        ArrayUtils.copyWithNewArraySize(verticesArray, vertexCount, double.infinity));
     if (time >= frames[frames.length - 1]) {
       // Time is after last frame.
-      final Float32List? lastVertices = frameVertices[frames.length - 1];
+      final Float32List lastVertices = frameVertices[frames.length - 1]!;
       if (alpha == 1) {
-        ArrayUtils.arrayCopy(lastVertices, 0, vertices, 0, vertexCount);
+        vertices = ArrayUtils.arrayCopyWithGrowth(
+            lastVertices, 0, vertices, 0, vertexCount, double.infinity) as Float32List;
       } else if (pose == MixPose.Setup) {
         if (vertexAttachment.bones == null) {
           // Unweighted vertex positions, with alpha.
-          final Float32List? setupVertices = vertexAttachment.vertices;
+          final Float32List setupVertices = vertexAttachment.vertices!;
           for (int i = 0; i < vertexCount; i++) {
-            final double setup = setupVertices![i];
-            vertices[i] = setup + (lastVertices![i] - setup) * alpha;
+            final double setup = setupVertices[i];
+            vertices[i] = setup + (lastVertices[i] - setup) * alpha;
           }
         } else {
           // Weighted deform offsets, with alpha.
           for (int i = 0; i < vertexCount; i++)
-            vertices[i] = lastVertices![i] * alpha;
+            vertices[i] = lastVertices[i] * alpha;
         }
       } else {
         for (int i = 0; i < vertexCount; i++)
-          vertices[i] += (lastVertices![i] - vertices[i]) * alpha;
+          vertices[i] += (lastVertices[i] - vertices[i]) * alpha;
       }
       return;
     }
@@ -929,19 +930,19 @@ class DrawOrderTimeline implements Timeline {
       double alpha,
       MixPose pose,
       MixDirection direction) {
-    final List<Slot> drawOrder = skeleton.drawOrder;
+    List<Slot> drawOrder = skeleton.drawOrder;
     final List<Slot> slots = skeleton.slots;
     if (direction == MixDirection.Out && pose == MixPose.Setup) {
-      ArrayUtils.arrayCopy(
-          skeleton.slots, 0, skeleton.drawOrder, 0, skeleton.slots.length);
+      skeleton.drawOrder = ArrayUtils.arrayCopyWithGrowth(skeleton.slots, 0,
+          skeleton.drawOrder, 0, skeleton.slots.length, Slot.empty());
       return;
     }
 
     final Float32List frames = this.frames;
     if (time < frames[0]) {
       if (pose == MixPose.Setup)
-        ArrayUtils.arrayCopy(
-            skeleton.slots, 0, skeleton.drawOrder, 0, skeleton.slots.length);
+        skeleton.drawOrder = ArrayUtils.arrayCopyWithGrowth(skeleton.slots, 0,
+            skeleton.drawOrder, 0, skeleton.slots.length, Slot.empty());
       return;
     }
 
@@ -953,7 +954,8 @@ class DrawOrderTimeline implements Timeline {
 
     final Int32List? drawOrderToSetupIndex = drawOrders[frame];
     if (drawOrderToSetupIndex == null)
-      ArrayUtils.arrayCopy(slots, 0, drawOrder, 0, slots.length);
+      drawOrder = ArrayUtils.arrayCopyWithGrowth(
+          slots, 0, drawOrder, 0, slots.length, Slot.empty());
     else {
       final int n = drawOrderToSetupIndex.length;
       for (int i = 0; i < n; i++)

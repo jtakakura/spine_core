@@ -40,6 +40,9 @@ class SlotData {
   BlendMode? blendMode;
 
   SlotData(this.index, this.name, this.boneData) {
-    if (index < 0) throw ArgumentError('index must be >= 0.');
+    if (index < 0 && name.isNotEmpty)
+      throw ArgumentError('index must be >= 0.');
   }
+
+  factory SlotData.empty() => SlotData(-1, '', BoneData.empty());
 }

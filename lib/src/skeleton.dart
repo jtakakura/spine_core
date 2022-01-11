@@ -34,7 +34,7 @@ class Skeleton {
   final SkeletonData data;
   final List<Bone> bones = <Bone>[];
   final List<Slot> slots = <Slot>[];
-  final List<Slot> drawOrder = <Slot>[];
+  List<Slot> drawOrder = <Slot>[];
   final List<IkConstraint> ikConstraints = <IkConstraint>[];
   final List<TransformConstraint> transformConstraints =
       <TransformConstraint>[];
@@ -93,6 +93,8 @@ class Skeleton {
     color = Color(1.0, 1.0, 1.0, 1.0);
     updateCache();
   }
+
+  factory Skeleton.empty() => Skeleton(SkeletonData());
 
   void updateCache() {
     _updateCache.length = 0;
@@ -319,7 +321,8 @@ class Skeleton {
 
   void setSlotsToSetupPose() {
     final List<Slot> slots = this.slots;
-    ArrayUtils.arrayCopy(slots, 0, drawOrder, 0, slots.length);
+    drawOrder = ArrayUtils.arrayCopyWithGrowth(
+        slots, 0, drawOrder, 0, slots.length, Slot.empty());
     final int n = slots.length;
     for (int i = 0; i < n; i++) slots[i].setToSetupPose();
   }
@@ -472,13 +475,13 @@ class Skeleton {
         final RegionAttachment region = attachment;
         verticesLength = 8;
         vertices = Float32List.fromList(
-            ArrayUtils.setArraySize(temp, verticesLength, 0.0));
+            ArrayUtils.copyWithNewArraySize(temp, verticesLength, double.infinity));
         region.computeWorldVertices2(slot.bone, vertices, 0, 2);
       } else if (attachment is MeshAttachment) {
         final MeshAttachment mesh = attachment;
         verticesLength = mesh.worldVerticesLength;
         vertices = Float32List.fromList(
-            ArrayUtils.setArraySize(temp, verticesLength, 0.0));
+            ArrayUtils.copyWithNewArraySize(temp, verticesLength, double.infinity));
         mesh.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
       }
       if (vertices != null) {

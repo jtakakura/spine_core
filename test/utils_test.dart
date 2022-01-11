@@ -34,82 +34,82 @@ import 'package:test/test.dart';
 void main() {
   group('A group of ArrayUtils tests', () {
     test('arrayCopy Test1', () {
-      final List<int> source = <int>[0, 1, 2, 3];
-      final List<int> dest = <int>[];
-      ArrayUtils.arrayCopy(source, 2, dest, 0, 2);
+      final List<int?> source = <int?>[0, 1, 2, 3];
+      final List<int?> dest = <int?>[];
+      final List<int?> r = ArrayUtils.arrayCopyWithGrowth(source, 2, dest, 0, 2, null);
 
-      expect(dest, <int>[2, 3]);
+      expect(r, <int>[2, 3]);
     });
 
     test('arrayCopy Test2', () {
-      final List<int> source = <int>[0, 1, 2, 3];
-      final List<int> dest = <int>[4, 5, 6, 7, 8];
-      ArrayUtils.arrayCopy(source, 1, dest, 1, 2);
+      final List<int?> source = <int?>[0, 1, 2, 3];
+      final List<int?> dest = <int?>[4, 5, 6, 7, 8];
+      final List<int?> r = ArrayUtils.arrayCopyWithGrowth(source, 1, dest, 1, 2, null);
 
-      expect(dest, <int>[4, 1, 2, 7, 8]);
+      expect(r, <int>[4, 1, 2, 7, 8]);
     });
 
     test('setArrayValue Test1', () {
-      final List<int> array = <int>[0, 1, 2];
-      ArrayUtils.setArrayValue(array, 1, 3);
+      final List<int?> array = <int?>[0, 1, 2];
+      final List<int?> r = ArrayUtils.setArrayValueWithGrowth(array, 1, 3, null);
 
-      expect(array, <int>[0, 3, 2]);
+      expect(r, <int>[0, 3, 2]);
     });
 
     test('setArrayValue Test2', () {
-      final List<int> array = <int>[];
-      ArrayUtils.setArrayValue(array, 2, 1);
+      final List<int?> array = <int?>[];
+      final List<int?> r = ArrayUtils.setArrayValueWithGrowth(array, 2, 1, null);
 
-      expect(array, <int?>[null, null, 1]);
+      expect(r, <int?>[null, null, 1]);
     });
 
     test('setArraySize Test1', () {
       final List<int> array = <int>[];
-      ArrayUtils.setArraySize(array, 3, 5);
+      final List<int> r = ArrayUtils.copyWithNewArraySize(array, 3, 5);
 
-      expect(array, <int>[5, 5, 5]);
+      expect(r, <int>[5, 5, 5]);
     });
 
     test('setArraySize Test2', () {
-      final List<int> array = <int>[1, 2, 3];
-      ArrayUtils.setArraySize(array, 3, 5);
+      final List<int?> array = <int?>[1, 2, 3];
+      final List<int?> r = ArrayUtils.copyWithNewArraySize(array, 3, 5);
 
-      expect(array, <int>[1, 2, 3]);
+      expect(r, <int>[1, 2, 3]);
     });
 
     test('setArraySize Test3', () {
-      final List<int> array = <int>[1, 2, 3];
-      ArrayUtils.setArraySize(array, 2, 5);
+      final List<int?> array = <int?>[1, 2, 3];
+      final List<int?> r = ArrayUtils.copyWithNewArraySize(array, 2, 5);
 
-      expect(array, <int>[1, 2]);
+      expect(r, <int>[1, 2]);
     });
 
     test('setArraySize Test4', () {
-      final List<int> array = <int>[1, 2, 3];
-      ArrayUtils.setArraySize(array, 4, 5);
+      final List<int?> array = <int?>[1, 2, 3];
+      final List<int?> r = ArrayUtils.copyWithNewArraySize(array, 4, -1);
 
-      expect(array, <int>[1, 2, 3, 5]);
+      expect(r, <int>[1, 2, 3, -1]);
     });
 
     test('ensureArrayCapacity Test1', () {
-      final List<int> array = <int>[];
-      ArrayUtils.ensureArrayCapacity(array, 3, 5);
+      final List<int?> array = <int?>[];
+      final List<int?> r = ArrayUtils.ensureArrayCapacity(array, 3, 5);
 
-      expect(array, <int>[5, 5, 5]);
+      expect(r, <int>[5, 5, 5]);
     });
 
     test('ensureArrayCapacity Test2', () {
-      final List<int> array = <int>[1, 2, 3];
-      ArrayUtils.ensureArrayCapacity(array, 3, 5);
+      final List<int?> array = <int?>[1, 2, 3];
+      final List<int?> r = ArrayUtils.ensureArrayCapacity(array, 3, 5);
 
-      expect(array, <int>[1, 2, 3]);
+      expect(r, <int>[1, 2, 3]);
     });
 
     test('ensureArrayCapacity Test3', () {
-      final List<int> array = <int>[1, 2, 3];
-      ArrayUtils.ensureArrayCapacity(array, 2, 5);
+      final List<int?> array = <int?>[1, 2, 3];
+      final List<int?> r = ArrayUtils.ensureArrayCapacity(array, 2, 5);
 
-      expect(array, <int>[1, 2, 3]);
+      expect(r, <int>[1, 2, 3]);
     });
   });
 
