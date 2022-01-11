@@ -460,7 +460,7 @@ class SkeletonJson {
           final dynamic timelineMap = slotMap[timelineName];
           if (timelineName == 'attachment') {
             final AttachmentTimeline timeline =
-                AttachmentTimeline(timelineMap.length)..slotIndex = slotIndex;
+                AttachmentTimeline(timelineMap.length, slotIndex);
 
             int frameIndex = 0;
             for (int i = 0; i < timelineMap.length; i++) {
@@ -724,9 +724,8 @@ class SkeletonJson {
             final int deformLength =
                 weighted ? vertices!.length ~/ 3 * 2 : vertices!.length;
 
-            final DeformTimeline timeline = DeformTimeline(timelineMap.length)
-              ..slotIndex = slotIndex
-              ..attachment = attachment;
+            final DeformTimeline timeline =
+                DeformTimeline(timelineMap.length, slotIndex, attachment);
 
             int frameIndex = 0;
             for (int j = 0; j < timelineMap.length; j++) {

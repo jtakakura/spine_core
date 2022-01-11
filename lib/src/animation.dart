@@ -668,14 +668,15 @@ class TwoColorTimeline extends CurveTimeline {
 class AttachmentTimeline implements Timeline {
   final Float32List frames;
   final List<String?> attachmentNames;
-  int? slotIndex;
+  final int slotIndex;
 
-  AttachmentTimeline(int frameCount)
-      : frames = Float32List(frameCount),
+  AttachmentTimeline(int frameCount, this.slotIndex)
+      : assert(slotIndex >= 0),
+        frames = Float32List(frameCount),
         attachmentNames = List<String?>.filled(frameCount, null, growable: false);
 
   @override
-  int getPropertyId() => (TimelineType.Attachment.index << 24) + slotIndex!;
+  int getPropertyId() => (TimelineType.Attachment.index << 24) + slotIndex;
 
   int getFrameCount() => frames.length;
 
@@ -687,7 +688,7 @@ class AttachmentTimeline implements Timeline {
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
       List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
-    final Slot slot = skeleton.slots[slotIndex!];
+    final Slot slot = skeleton.slots[slotIndex];
     if (direction == MixDirection.Out && pose == MixPose.Setup) {
       final String? attachmentName = slot.data.attachmentName;
       slot.setAttachment(attachmentName == null
@@ -714,7 +715,7 @@ class AttachmentTimeline implements Timeline {
       frameIndex = Animation.binarySearch(frames, time, 1) - 1;
 
     final String? attachmentName = attachmentNames[frameIndex];
-    skeleton.slots[slotIndex!].setAttachment(attachmentName == null
+    skeleton.slots[slotIndex].setAttachment(attachmentName == null
         ? null
         : skeleton.getAttachment(slotIndex, attachmentName));
   }
@@ -723,17 +724,18 @@ class AttachmentTimeline implements Timeline {
 class DeformTimeline extends CurveTimeline {
   final Float32List frames;
   final List<Float32List?> frameVertices;
-  late int slotIndex;
-  VertexAttachment? attachment;
+  final int slotIndex;
+  final VertexAttachment attachment;
 
-  DeformTimeline(int frameCount)
-      : frames = Float32List(frameCount),
+  DeformTimeline(int frameCount, this.slotIndex, this.attachment)
+      : assert(slotIndex >= 0),
+        frames = Float32List(frameCount),
         frameVertices = List<Float32List?>.filled(frameCount, null, growable: false),
         super(frameCount);
 
   @override
   int getPropertyId() =>
-      (TimelineType.Deform.index << 27) + attachment!.id + slotIndex;
+      (TimelineType.Deform.index << 27) + attachment.id + slotIndex;
 
   void setFrame(int frameIndex, double time, Float32List? vertices) {
     frames[frameIndex] = time;
