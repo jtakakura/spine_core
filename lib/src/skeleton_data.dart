@@ -90,9 +90,9 @@ class SkeletonData {
     return null;
   }
 
-  EventData? findEvent(String? eventDataName) {
-    if (eventDataName == null)
-      throw ArgumentError('eventDataName cannot be null.');
+  EventData? findEvent(String eventDataName) {
+    if (eventDataName.isEmpty)
+      throw ArgumentError('eventDataName cannot be empty.');
     final List<EventData> events = this.events;
     final int n = events.length;
     for (int i = 0; i < n; i++)
