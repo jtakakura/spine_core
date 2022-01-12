@@ -158,12 +158,10 @@ class TextureAtlas implements Disposable {
 }
 
 class TextureAtlasReader {
-  late List<String> lines;
+  final List<String> lines;
   int index = 0;
 
-  TextureAtlasReader(String text) {
-    lines = text.split(RegExp(r'\r\n|\r|\n'));
-  }
+  TextureAtlasReader(String text) : lines = text.split(RegExp(r'\r\n|\r|\n'));
 
   String? readLine() {
     if (index >= lines.length) return null;
