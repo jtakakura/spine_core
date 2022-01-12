@@ -214,9 +214,9 @@ class TextureAtlasRegion extends TextureRegion {
   final String name;
 
   TextureAtlasPage? page;
-  int? x;
-  int? y;
-  int? index;
+  int x = 0;
+  int y = 0;
+  int index = -1;
   Texture? texture;
 
   TextureAtlasRegion(this.name): assert(name.isNotEmpty);
