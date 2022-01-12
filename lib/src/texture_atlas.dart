@@ -98,16 +98,16 @@ class TextureAtlas implements Disposable {
         final int height = int.parse(tuple[1]);
 
         region
-          ..u = x / page.width!
-          ..v = y / page.height!;
+          ..u = x / page.width
+          ..v = y / page.height;
         if (region.rotate) {
           region
-            ..u2 = (x + height) / page.width!
-            ..v2 = (y + width) / page.height!;
+            ..u2 = (x + height) / page.width
+            ..v2 = (y + width) / page.height;
         } else {
           region
-            ..u2 = (x + width) / page.width!
-            ..v2 = (y + height) / page.height!;
+            ..u2 = (x + width) / page.width
+            ..v2 = (y + height) / page.height;
         }
         region
           ..x = x
@@ -199,13 +199,13 @@ class TextureAtlasReader {
 class TextureAtlasPage {
   final String name;
 
-  TextureFilter? minFilter;
-  TextureFilter? magFilter;
-  TextureWrap? uWrap;
-  TextureWrap? vWrap;
+  TextureFilter minFilter = TextureFilter.Linear;
+  TextureFilter magFilter = TextureFilter.Linear;
+  TextureWrap uWrap = TextureWrap.ClampToEdge;
+  TextureWrap vWrap = TextureWrap.ClampToEdge;
   Texture? texture;
-  int? width;
-  int? height;
+  int width = 0;
+  int height = 0;
 
   TextureAtlasPage(this.name): assert(name.isNotEmpty);
 }
