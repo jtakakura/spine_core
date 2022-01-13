@@ -32,20 +32,20 @@ part of spine_core;
 
 class PointAttachment extends VertexAttachment {
   final Color color = Color(0.38, 0.94, 0.0, 1.0);
-  double? x, y, rotation;
+  double x = 0.0, y = 0.0, rotation = 0.0;
 
   PointAttachment(String name) : super(name);
 
   Vector2 computeWorldPosition(Bone bone, Vector2 point) {
     point
-      ..x = x! * bone.a + y! * bone.b + bone.worldX
-      ..y = x! * bone.c + y! * bone.d + bone.worldY;
+      ..x = x * bone.a + y * bone.b + bone.worldX
+      ..y = x * bone.c + y * bone.d + bone.worldY;
     return point;
   }
 
   double computeWorldRotation(Bone bone) {
-    final double cos = MathUtils.cosDeg(rotation!),
-        sin = MathUtils.sinDeg(rotation!);
+    final double cos = MathUtils.cosDeg(rotation);
+    final double sin = MathUtils.sinDeg(rotation);
     final double x = cos * bone.a + sin * bone.b;
     final double y = cos * bone.c + sin * bone.d;
     return math.atan2(y, x) * MathUtils.radDeg;
