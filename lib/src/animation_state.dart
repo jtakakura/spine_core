@@ -172,7 +172,7 @@ class AnimationState {
 
       // Apply current entry.
       final double animationLast = current.animationLast,
-          animationTime = current.getAnimationTime()!;
+          animationTime = current.getAnimationTime();
       final int timelineCount = current.animation!.timelines.length;
       final List<Timeline> timelines = current.animation!.timelines;
       if (mix == 1) {
@@ -233,7 +233,7 @@ class AnimationState {
     final bool attachments = mix < from.attachmentThreshold;
     final bool drawOrder = mix < from.drawOrderThreshold;
     final double animationLast = from.animationLast;
-    final double animationTime = from.getAnimationTime()!;
+    final double animationTime = from.getAnimationTime();
     final List<Timeline> timelines = from.animation!.timelines;
     final Int32List timelineData = Int32List.fromList(from.timelineData);
     final int timelineCount = timelineData.length;
@@ -798,7 +798,7 @@ class TrackEntry implements Poolable {
     return false;
   }
 
-  double? getAnimationTime() {
+  double getAnimationTime() {
     if (loop) {
       final double duration = animationEnd - animationStart;
       if (duration == 0) return animationStart;
