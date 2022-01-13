@@ -561,10 +561,10 @@ class SkeletonJson {
             int frameIndex = 0;
             for (int i = 0; i < timelineMap.length; i++) {
               final dynamic valueMap = timelineMap[i];
-              final double? x = _getDouble(valueMap, 'x', 0.0),
-                  y = _getDouble(valueMap, 'y', 0.0);
+              final double x = _getDouble(valueMap, 'x', 0.0);
+              final double y = _getDouble(valueMap, 'y', 0.0);
               timeline.setFrame(frameIndex, _getDouble(valueMap, 'time'),
-                  x! * timelineScale, y! * timelineScale);
+                  x * timelineScale, y * timelineScale);
               readCurve(valueMap, timeline, frameIndex);
               frameIndex++;
             }

@@ -41,10 +41,10 @@ class SkeletonData {
       <TransformConstraintData?>[];
   final List<PathConstraintData> pathConstraints = <PathConstraintData>[];
 
-  String name;
+  final String name;
   Skin? defaultSkin;
-  double? width, height;
-  String? version, hash;
+  double width = 0.0, height = 0.0;
+  String version = '', hash = '';
 
   // Nonessential
   double fps = 0.0;

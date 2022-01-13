@@ -98,16 +98,16 @@ class TextureAtlas implements Disposable {
         final int height = int.parse(tuple[1]);
 
         region
-          ..u = x / page.width!
-          ..v = y / page.height!;
+          ..u = x / page.width
+          ..v = y / page.height;
         if (region.rotate) {
           region
-            ..u2 = (x + height) / page.width!
-            ..v2 = (y + width) / page.height!;
+            ..u2 = (x + height) / page.width
+            ..v2 = (y + width) / page.height;
         } else {
           region
-            ..u2 = (x + width) / page.width!
-            ..v2 = (y + height) / page.height!;
+            ..u2 = (x + width) / page.width
+            ..v2 = (y + height) / page.height;
         }
         region
           ..x = x
@@ -172,12 +172,10 @@ class TextureAtlas implements Disposable {
 }
 
 class TextureAtlasReader {
-  late List<String> lines;
+  final List<String> lines;
   int index = 0;
 
-  TextureAtlasReader(String text) {
-    lines = text.split(RegExp(r'\r\n|\r|\n'));
-  }
+  TextureAtlasReader(String text) : lines = text.split(RegExp(r'\r\n|\r|\n'));
 
   String? readLine() {
     if (index >= lines.length) return null;
@@ -213,13 +211,13 @@ class TextureAtlasReader {
 class TextureAtlasPage {
   final String name;
 
-  TextureFilter? minFilter;
-  TextureFilter? magFilter;
-  TextureWrap? uWrap;
-  TextureWrap? vWrap;
+  TextureFilter minFilter = TextureFilter.Linear;
+  TextureFilter magFilter = TextureFilter.Linear;
+  TextureWrap uWrap = TextureWrap.ClampToEdge;
+  TextureWrap vWrap = TextureWrap.ClampToEdge;
   Texture? texture;
-  int? width;
-  int? height;
+  int width = 0;
+  int height = 0;
 
   TextureAtlasPage(this.name): assert(name.isNotEmpty);
 }
@@ -228,9 +226,9 @@ class TextureAtlasRegion extends TextureRegion {
   final String name;
 
   TextureAtlasPage? page;
-  int? x;
-  int? y;
-  int? index;
+  int x = 0;
+  int y = 0;
+  int index = -1;
   Texture? texture;
 
   TextureAtlasRegion(this.name): assert(name.isNotEmpty);

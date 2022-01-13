@@ -35,9 +35,9 @@ class PathConstraintData {
   final List<BoneData> bones = <BoneData>[];
   int order = 0;
   SlotData? target;
-  PositionMode? positionMode;
-  SpacingMode? spacingMode;
-  RotateMode? rotateMode;
+  PositionMode positionMode = PositionMode.Percent;
+  SpacingMode spacingMode = SpacingMode.Length;
+  RotateMode rotateMode = RotateMode.Tangent;
   double offsetRotation = 0.0;
   double position = 0.0, spacing = 0.0, rotateMix = 0.0, translateMix = 0.0;
 

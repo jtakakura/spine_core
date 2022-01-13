@@ -35,8 +35,8 @@ abstract class Texture {
 
   Texture(this.image);
 
-  void setFilters(TextureFilter? minFilter, TextureFilter? magFilter);
-  void setWraps(TextureWrap? uWrap, TextureWrap? vWrap);
+  void setFilters(TextureFilter minFilter, TextureFilter magFilter);
+  void setWraps(TextureWrap uWrap, TextureWrap vWrap);
   void dispose();
 
   static TextureFilter filterFromString(String text) {
@@ -107,9 +107,9 @@ class TextureRegion {
 class FakeTexture extends Texture {
   FakeTexture([dynamic image]) : super(image);
   @override
-  void setFilters(TextureFilter? minFilter, TextureFilter? magFilter) {}
+  void setFilters(TextureFilter minFilter, TextureFilter magFilter) {}
   @override
-  void setWraps(TextureWrap? uWrap, TextureWrap? vWrap) {}
+  void setWraps(TextureWrap uWrap, TextureWrap vWrap) {}
   @override
   void dispose() {}
 }

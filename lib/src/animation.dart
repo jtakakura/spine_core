@@ -51,13 +51,13 @@ class Animation {
           .apply(skeleton, lastTime, time, events, alpha, pose, direction);
   }
 
-  static int binarySearch(List<double> values, [double? target, int step = 1]) {
+  static int binarySearch(List<double> values, double target, [int step = 1]) {
     int low = 0;
     int high = values.length ~/ step - 2;
     if (high == 0) return step;
     int current = high >> 1;
     for (;;) {
-      if (values[(current + 1) * step] <= target!)
+      if (values[(current + 1) * step] <= target)
         low = current + 1;
       else
         high = current;
@@ -66,9 +66,9 @@ class Animation {
     }
   }
 
-  static int linearSearch(List<double> values, [double? target, int step = 1]) {
+  static int linearSearch(List<double> values, double target, [int step = 1]) {
     for (int i = 0; i <= values.length - step; i += step)
-      if (values[i] > target!) return i;
+      if (values[i] > target) return i;
     return -1;
   }
 }
@@ -389,7 +389,7 @@ class ScaleTimeline extends TranslateTimeline {
         ..scaleX = x
         ..scaleY = y;
     } else {
-      double? bx = 0.0, by = 0.0;
+      double bx = 0.0, by = 0.0;
       if (pose == MixPose.Setup) {
         bx = bone.data.scaleX;
         by = bone.data.scaleY;
@@ -867,7 +867,7 @@ class EventTimeline extends Timeline {
   int getFrameCount() => frames.length;
 
   void setFrame(int frameIndex, Event event) {
-    frames[frameIndex] = event.time!;
+    frames[frameIndex] = event.time;
     events[frameIndex] = event;
   }
 
