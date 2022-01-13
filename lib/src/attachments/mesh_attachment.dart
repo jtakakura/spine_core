@@ -35,12 +35,12 @@ class MeshAttachment extends VertexAttachment {
   final Color tempColor = Color(0.0, 0.0, 0.0, 0.0);
 
   TextureRegion? region;
-  String? path;
+  String path = '';
   Float32List? regionUVs, uvs;
   Int16List? triangles;
-  int? hullLength;
+  int hullLength = 0;
   MeshAttachment? _parentMesh;
-  bool? inheritDeform = false;
+  bool inheritDeform = false;
 
   MeshAttachment(String name) : super(name);
 
@@ -77,7 +77,7 @@ class MeshAttachment extends VertexAttachment {
   @override
   bool applyDeform(VertexAttachment? sourceAttachment) =>
       this == sourceAttachment ||
-      (inheritDeform! && _parentMesh == sourceAttachment);
+      (inheritDeform && _parentMesh == sourceAttachment);
 
   MeshAttachment? get parentMesh => _parentMesh;
   set parentMesh(MeshAttachment? value) {
