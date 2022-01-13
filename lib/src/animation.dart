@@ -867,7 +867,7 @@ class EventTimeline extends Timeline {
   int getFrameCount() => frames.length;
 
   void setFrame(int frameIndex, Event event) {
-    frames[frameIndex] = event.time!;
+    frames[frameIndex] = event.time;
     events[frameIndex] = event;
   }
 

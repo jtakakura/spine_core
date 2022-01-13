@@ -393,8 +393,8 @@ class AnimationState {
     final int n = events.length;
     for (; i < n; i++) {
       final Event event = events[i]!;
-      if (event.time! < trackLastWrapped) break;
-      if (event.time! > animationEnd)
+      if (event.time < trackLastWrapped) break;
+      if (event.time > animationEnd)
         continue; // Discard events outside animation start/end.
       queue!.event(entry, event);
     }
@@ -411,7 +411,7 @@ class AnimationState {
     // Queue events after complete.
     for (; i < n; i++) {
       final Event event = events[i]!;
-      if (event.time! < animationStart)
+      if (event.time < animationStart)
         continue; // Discard events outside animation start/end.
       queue!.event(entry, events[i]);
     }

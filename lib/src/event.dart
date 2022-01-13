@@ -31,11 +31,11 @@
 part of spine_core;
 
 class Event {
+  final double time;
   final EventData data;
-  int? intValue;
-  double? floatValue;
-  String? stringValue;
-  double? time;
+  int intValue = -1;
+  double floatValue = double.infinity;
+  String stringValue = '';
 
   Event(this.time, this.data);
 }
