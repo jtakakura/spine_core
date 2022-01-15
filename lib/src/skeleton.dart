@@ -470,14 +470,14 @@ class Skeleton {
       if (attachment is RegionAttachment) {
         final RegionAttachment region = attachment;
         verticesLength = 8;
-        vertices = Float32List.fromList(
-            ArrayUtils.copyWithNewArraySize(temp, verticesLength, double.infinity));
+        vertices = Float32List.fromList(ArrayUtils.copyWithNewArraySize(
+            temp, verticesLength, double.infinity));
         region.computeWorldVertices2(slot.bone, vertices, 0, 2);
       } else if (attachment is MeshAttachment) {
         final MeshAttachment mesh = attachment;
         verticesLength = mesh.worldVerticesLength;
-        vertices = Float32List.fromList(
-            ArrayUtils.copyWithNewArraySize(temp, verticesLength, double.infinity));
+        vertices = Float32List.fromList(ArrayUtils.copyWithNewArraySize(
+            temp, verticesLength, double.infinity));
         mesh.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
       }
       if (vertices != null) {
