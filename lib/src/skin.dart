@@ -32,7 +32,8 @@ part of spine_core;
 
 class Skin {
   final String name;
-  final List<Map<String, Attachment>?> attachments = <Map<String, Attachment>?>[];
+  final List<Map<String, Attachment>?> attachments =
+      <Map<String, Attachment>?>[];
 
   Skin(this.name);
 

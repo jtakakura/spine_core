@@ -46,8 +46,8 @@ class SkeletonClipping {
     clipAttachment = clip;
 
     final int n = clip.worldVerticesLength;
-    final Float32List vertices =
-        ArrayUtils.copyWithNewArraySize(this.clippingPolygon, n, double.infinity) as Float32List;
+    final Float32List vertices = ArrayUtils.copyWithNewArraySize(
+        this.clippingPolygon, n, double.infinity) as Float32List;
     clip.computeWorldVertices(slot, 0, n, vertices, 0, 2);
     final Float32List clippingPolygon = this.clippingPolygon as Float32List;
     SkeletonClipping.makeClockwise(clippingPolygon);
@@ -59,7 +59,9 @@ class SkeletonClipping {
     for (int i = 0; i < nn; i++) {
       final Float32List polygon = clippingPolygons[i];
       SkeletonClipping.makeClockwise(polygon);
-      polygon..add(polygon[0])..add(polygon[1]);
+      polygon
+        ..add(polygon[0])
+        ..add(polygon[1]);
     }
 
     return clippingPolygons.length;
@@ -126,8 +128,9 @@ class SkeletonClipping {
           final Float32List clipOutputItems = this.clipOutput as Float32List;
           final Float32List clippedVerticesItems =
               ArrayUtils.copyWithNewArraySize(
-                      clippedVertices, s + clipOutputCount * vertexSize, double.infinity)
-                  as Float32List;
+                  clippedVertices,
+                  s + clipOutputCount * vertexSize,
+                  double.infinity) as Float32List;
           for (int ii = 0; ii < clipOutputLength; ii += 2) {
             final double x = clipOutputItems[ii], y = clipOutputItems[ii + 1];
             clippedVerticesItems[s] = x;
@@ -167,7 +170,8 @@ class SkeletonClipping {
         } else {
           final Float32List clippedVerticesItems =
               ArrayUtils.copyWithNewArraySize(
-                  clippedVertices, s + 3 * vertexSize, double.infinity) as Float32List;
+                      clippedVertices, s + 3 * vertexSize, double.infinity)
+                  as Float32List;
           clippedVerticesItems[s] = x1;
           clippedVerticesItems[s + 1] = y1;
           clippedVerticesItems[s + 2] = light.r;
@@ -289,7 +293,9 @@ class SkeletonClipping {
         if (deltaX * (inputY - edgeY2) - deltaY * (inputX - edgeX2) > 0) {
           if (side2) {
             // v1 inside, v2 inside
-            output..add(inputX2)..add(inputY2);
+            output
+              ..add(inputX2)
+              ..add(inputY2);
             continue;
           }
           // v1 inside, v2 outside
@@ -319,7 +325,9 @@ class SkeletonClipping {
         return true;
       }
 
-      output..add(output[0])..add(output[1]);
+      output
+        ..add(output[0])
+        ..add(output[1]);
 
       if (i == clippingVerticesLast) break;
       final Float32List temp = output;
