@@ -51,7 +51,8 @@ class Triangulator {
     final List<bool> isConcave = isConcaveArray..length = 0;
     final int n = vertexCount;
     for (int i = 0; i < n; ++i)
-      isConcave[i] = Triangulator._isConcave(i, vertexCount, vertices, indices as Int16List);
+      isConcave[i] = Triangulator._isConcave(
+          i, vertexCount, vertices, indices as Int16List);
 
     final List<int> triangles = this.triangles..length = 0;
 
@@ -114,7 +115,10 @@ class Triangulator {
     }
 
     if (vertexCount == 3) {
-      triangles..add(indices[2])..add(indices[0])..add(indices[1]);
+      triangles
+        ..add(indices[2])
+        ..add(indices[0])
+        ..add(indices[1]);
     }
 
     return triangles as Int16List;
@@ -154,7 +158,9 @@ class Triangulator {
         final int winding2 = Triangulator.winding(
             x3, y3, polygon[0], polygon[1], polygon[2], polygon[3]);
         if (winding1 == lastWinding && winding2 == lastWinding) {
-          polygon..add(x3)..add(y3);
+          polygon
+            ..add(x3)
+            ..add(y3);
           polygonIndices.add(t3);
           merged = true;
         }
@@ -230,7 +236,9 @@ class Triangulator {
         if (winding1 == winding && winding2 == winding) {
           otherPoly.length = 0;
           otherIndices.length = 0;
-          polygon..add(x3)..add(y3);
+          polygon
+            ..add(x3)
+            ..add(y3);
           polygonIndices.add(otherLastIndex);
           prevPrevX = prevX;
           prevPrevY = prevY;

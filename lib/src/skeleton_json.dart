@@ -220,10 +220,12 @@ class SkeletonJson {
               _getString(constraintMap, 'rotateMode', 'tangent'))
           ..offsetRotation = _getDouble(constraintMap, 'rotation', 0.0)
           ..position = _getDouble(constraintMap, 'position', 0.0);
-        if (data.positionMode == PositionMode.Fixed) data.position = data.position * scale;
+        if (data.positionMode == PositionMode.Fixed)
+          data.position = data.position * scale;
         data.spacing = _getDouble(constraintMap, 'spacing', 0.0);
         if (data.spacingMode == SpacingMode.Length ||
-            data.spacingMode == SpacingMode.Fixed) data.spacing = data.spacing * scale;
+            data.spacingMode == SpacingMode.Fixed)
+          data.spacing = data.spacing * scale;
         data
           ..rotateMix = _getDouble(constraintMap, 'rotateMix', 1.0)
           ..translateMix = _getDouble(constraintMap, 'translateMix', 1.0);
@@ -714,8 +716,8 @@ class SkeletonJson {
             throw StateError('Slot not found: ${_getString(slotMap, 'name')}');
           for (String timelineName in slotMap.keys) {
             final dynamic timelineMap = slotMap[timelineName];
-            final VertexAttachment? attachment =
-                skin.getAttachment(slotIndex, timelineName) as VertexAttachment?;
+            final VertexAttachment? attachment = skin.getAttachment(
+                slotIndex, timelineName) as VertexAttachment?;
             if (attachment == null)
               throw StateError(
                   'Deform attachment not found: ${_getString(timelineMap, 'name')}');
@@ -739,8 +741,8 @@ class SkeletonJson {
               else {
                 deform = Float32List(deformLength);
                 final int start = _getInt(valueMap, 'offset', 0);
-                deform = ArrayUtils.arrayCopyWithGrowth(verticesValue, 0, deform,
-                    start, verticesValue.length, 0.0) as Float32List;
+                deform = ArrayUtils.arrayCopyWithGrowth(verticesValue, 0,
+                    deform, start, verticesValue.length, 0.0) as Float32List;
                 if (scale != 1) {
                   for (int i = start; i < i + verticesValue.length; i++)
                     deform[i] *= scale;

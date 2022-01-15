@@ -99,7 +99,8 @@ class RegionAttachment extends VertexAttachment {
     final double regionScaleX = width! / region.originalWidth * scaleX!;
     final double regionScaleY = height! / region.originalHeight * scaleY!;
     final double localX = -width! / 2 * scaleX! + region.offsetX * regionScaleX;
-    final double localY = -height! / 2 * scaleY! + region.offsetY * regionScaleY;
+    final double localY =
+        -height! / 2 * scaleY! + region.offsetY * regionScaleY;
     final double localX2 = localX + region.width * regionScaleX;
     final double localY2 = localY + region.height * regionScaleY;
     final double radians = rotation! * math.pi / 180;

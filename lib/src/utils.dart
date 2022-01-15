@@ -128,8 +128,11 @@ class MathUtils {
 
   static double sinDeg(double degrees) => math.sin(degrees * MathUtils.degRad);
 
-  static double signum(double value) =>
-      value > 0 ? 1.0 : value < 0 ? -1.0 : 0.0;
+  static double signum(double value) => value > 0
+      ? 1.0
+      : value < 0
+          ? -1.0
+          : 0.0;
 
   static int toInt(double x) => x > 0 ? x.floor() : x.ceil();
 
@@ -160,7 +163,7 @@ abstract class Interpolation {
 class Pow extends Interpolation {
   final double power;
 
-  const Pow(double power): power = 2.0;
+  const Pow(double power) : power = 2.0;
 
   @override
   double applyInternal(double a) {

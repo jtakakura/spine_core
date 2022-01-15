@@ -36,7 +36,8 @@ void main() {
     test('arrayCopy Test1', () {
       final List<int?> source = <int?>[0, 1, 2, 3];
       final List<int?> dest = <int?>[];
-      final List<int?> r = ArrayUtils.arrayCopyWithGrowth(source, 2, dest, 0, 2, null);
+      final List<int?> r =
+          ArrayUtils.arrayCopyWithGrowth(source, 2, dest, 0, 2, null);
 
       expect(r, <int>[2, 3]);
     });
@@ -44,21 +45,24 @@ void main() {
     test('arrayCopy Test2', () {
       final List<int?> source = <int?>[0, 1, 2, 3];
       final List<int?> dest = <int?>[4, 5, 6, 7, 8];
-      final List<int?> r = ArrayUtils.arrayCopyWithGrowth(source, 1, dest, 1, 2, null);
+      final List<int?> r =
+          ArrayUtils.arrayCopyWithGrowth(source, 1, dest, 1, 2, null);
 
       expect(r, <int>[4, 1, 2, 7, 8]);
     });
 
     test('setArrayValue Test1', () {
       final List<int?> array = <int?>[0, 1, 2];
-      final List<int?> r = ArrayUtils.setArrayValueWithGrowth(array, 1, 3, null);
+      final List<int?> r =
+          ArrayUtils.setArrayValueWithGrowth(array, 1, 3, null);
 
       expect(r, <int>[0, 3, 2]);
     });
 
     test('setArrayValue Test2', () {
       final List<int?> array = <int?>[];
-      final List<int?> r = ArrayUtils.setArrayValueWithGrowth(array, 2, 1, null);
+      final List<int?> r =
+          ArrayUtils.setArrayValueWithGrowth(array, 2, 1, null);
 
       expect(r, <int?>[null, null, 1]);
     });

@@ -63,7 +63,8 @@ class PathConstraint extends Constraint {
   @override
   void update() {
     if (target!.getAttachment() is! PathAttachment) return;
-    final PathAttachment? attachment = target!.getAttachment() as PathAttachment?;
+    final PathAttachment? attachment =
+        target!.getAttachment() as PathAttachment?;
 
     final double? rotateMix = this.rotateMix, translateMix = this.translateMix;
     final bool translate = translateMix! > 0, rotate = rotateMix! > 0;
@@ -78,15 +79,14 @@ class PathConstraint extends Constraint {
     final int boneCount = this.bones.length,
         spacesCount = tangents ? boneCount : boneCount + 1;
     final List<Bone> bones = this.bones;
-    final Float32List spaces =
-        ArrayUtils.copyWithNewArraySize(this.spaces, spacesCount, double.infinity)
-            as Float32List;
+    final Float32List spaces = ArrayUtils.copyWithNewArraySize(
+        this.spaces, spacesCount, double.infinity) as Float32List;
     late Float32List lengths;
     final double? spacing = this.spacing;
     if (scale || lengthSpacing) {
       if (scale)
-        lengths = ArrayUtils.copyWithNewArraySize(this.lengths, boneCount, double.infinity)
-            as Float32List;
+        lengths = ArrayUtils.copyWithNewArraySize(
+            this.lengths, boneCount, double.infinity) as Float32List;
       final int n = spacesCount - 1;
       for (int i = 0; i < n;) {
         final Bone bone = bones[i];
@@ -186,9 +186,8 @@ class PathConstraint extends Constraint {
     final Slot? target = this.target;
     double? position = this.position;
     final Float32List spaces = this.spaces;
-    final Float32List out =
-        ArrayUtils.copyWithNewArraySize(positions, spacesCount * 3 + 2, double.infinity)
-            as Float32List;
+    final Float32List out = ArrayUtils.copyWithNewArraySize(
+        positions, spacesCount * 3 + 2, double.infinity) as Float32List;
     Float32List world;
     final bool? closed = path.closed;
     int verticesLength = path.worldVerticesLength,
@@ -247,7 +246,8 @@ class PathConstraint extends Constraint {
           prevCurve = curve;
           if (closed && curve == curveCount) {
             path
-              ..computeWorldVertices(target!, verticesLength - 4, 4, world, 0, 2)
+              ..computeWorldVertices(
+                  target!, verticesLength - 4, 4, world, 0, 2)
               ..computeWorldVertices(target, 0, 4, world, 4, 2);
           } else
             path.computeWorldVertices(target!, curve * 6 + 2, 8, world, 0, 2);
@@ -272,8 +272,8 @@ class PathConstraint extends Constraint {
     // World vertices.
     if (closed!) {
       verticesLength += 2;
-      world = ArrayUtils.copyWithNewArraySize(this.world, verticesLength, double.infinity)
-          as Float32List;
+      world = ArrayUtils.copyWithNewArraySize(
+          this.world, verticesLength, double.infinity) as Float32List;
       path
         ..computeWorldVertices(target!, 2, verticesLength - 4, world, 0, 2)
         ..computeWorldVertices(target, 0, 2, world, verticesLength - 4, 2);
@@ -282,15 +282,14 @@ class PathConstraint extends Constraint {
     } else {
       curveCount--;
       verticesLength -= 4;
-      world = ArrayUtils.copyWithNewArraySize(this.world, verticesLength, double.infinity)
-          as Float32List;
+      world = ArrayUtils.copyWithNewArraySize(
+          this.world, verticesLength, double.infinity) as Float32List;
       path.computeWorldVertices(target!, 2, verticesLength, world, 0, 2);
     }
 
     // Curve lengths.
-    final Float32List curves =
-        ArrayUtils.copyWithNewArraySize(this.curves, curveCount, double.infinity)
-            as Float32List;
+    final Float32List curves = ArrayUtils.copyWithNewArraySize(
+        this.curves, curveCount, double.infinity) as Float32List;
     double pathLength = 0.0;
     double x1 = world[0],
         y1 = world[1],
