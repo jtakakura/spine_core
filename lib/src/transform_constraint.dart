@@ -34,19 +34,17 @@ class TransformConstraint extends Constraint {
   final TransformConstraintData data;
   final List<Bone> bones = <Bone>[];
   final Vector2 temp = Vector2();
-  Bone target;
+  Bone? target;
   double rotateMix = 0.0, translateMix = 0.0, scaleMix = 0.0, shearMix = 0.0;
 
   TransformConstraint(this.data, Skeleton skeleton) {
-    if (data == null) throw ArgumentError('data cannot be null.');
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     rotateMix = data.rotateMix;
     translateMix = data.translateMix;
     scaleMix = data.scaleMix;
     shearMix = data.shearMix;
     for (int i = 0; i < data.bones.length; i++)
-      bones.add(skeleton.findBone(data.bones[i].name));
-    target = skeleton.findBone(data.target.name);
+      bones.add(skeleton.findBone(data.bones[i].name)!);
+    target = skeleton.findBone(data.target!.name);
   }
 
   void apply() {
@@ -69,11 +67,11 @@ class TransformConstraint extends Constraint {
   }
 
   void applyAbsoluteWorld() {
-    final double rotateMix = this.rotateMix,
+    final double? rotateMix = this.rotateMix,
         translateMix = this.translateMix,
         scaleMix = this.scaleMix,
         shearMix = this.shearMix;
-    final Bone target = this.target;
+    final Bone target = this.target!;
     final double ta = target.a, tb = target.b, tc = target.c, td = target.d;
     final double degRadReflect =
         ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
@@ -91,7 +89,7 @@ class TransformConstraint extends Constraint {
         if (r > math.pi)
           r -= math.pi * 2;
         else if (r < -math.pi) r += math.pi * 2;
-        r *= rotateMix;
+        r *= rotateMix!;
         final double cos = math.cos(r), sin = math.sin(r);
         bone
           ..a = cos * a - sin * c
@@ -105,12 +103,12 @@ class TransformConstraint extends Constraint {
         final Vector2 temp = this.temp..set(data.offsetX, data.offsetY);
         target.localToWorld(temp);
         bone
-          ..worldX += (temp.x - bone.worldX) * translateMix
+          ..worldX += (temp.x - bone.worldX) * translateMix!
           ..worldY += (temp.y - bone.worldY) * translateMix;
         modified = true;
       }
 
-      if (scaleMix > 0) {
+      if (scaleMix! > 0) {
         double s = math.sqrt(bone.a * bone.a + bone.c * bone.c);
         double ts = math.sqrt(ta * ta + tc * tc);
         if (s > 0.00001) s = (s + (ts - s + data.offsetScaleX) * scaleMix) / s;
@@ -126,7 +124,7 @@ class TransformConstraint extends Constraint {
         modified = true;
       }
 
-      if (shearMix > 0) {
+      if (shearMix! > 0) {
         final double b = bone.b, d = bone.d;
         final double by = math.atan2(d, b);
         double r = math.atan2(td, tb) -
@@ -148,11 +146,11 @@ class TransformConstraint extends Constraint {
   }
 
   void applyRelativeWorld() {
-    final double rotateMix = this.rotateMix,
+    final double? rotateMix = this.rotateMix,
         translateMix = this.translateMix,
         scaleMix = this.scaleMix,
         shearMix = this.shearMix;
-    final Bone target = this.target;
+    final Bone target = this.target!;
     final double ta = target.a, tb = target.b, tc = target.c, td = target.d;
     final double degRadReflect =
         ta * td - tb * tc > 0 ? MathUtils.degRad : -MathUtils.degRad;
@@ -170,7 +168,7 @@ class TransformConstraint extends Constraint {
         if (r > math.pi)
           r -= math.pi * 2;
         else if (r < -math.pi) r += math.pi * 2;
-        r *= rotateMix;
+        r *= rotateMix!;
         final double cos = math.cos(r), sin = math.sin(r);
         bone
           ..a = cos * a - sin * c
@@ -184,12 +182,12 @@ class TransformConstraint extends Constraint {
         final Vector2 temp = this.temp..set(data.offsetX, data.offsetY);
         target.localToWorld(temp);
         bone
-          ..worldX += temp.x * translateMix
+          ..worldX += temp.x * translateMix!
           ..worldY += temp.y * translateMix;
         modified = true;
       }
 
-      if (scaleMix > 0) {
+      if (scaleMix! > 0) {
         double s =
             (math.sqrt(ta * ta + tc * tc) - 1 + data.offsetScaleX) * scaleMix +
                 1;
@@ -204,7 +202,7 @@ class TransformConstraint extends Constraint {
         modified = true;
       }
 
-      if (shearMix > 0) {
+      if (shearMix! > 0) {
         double r = math.atan2(td, tb) - math.atan2(tc, ta);
         if (r > math.pi)
           r -= math.pi * 2;
@@ -223,11 +221,11 @@ class TransformConstraint extends Constraint {
   }
 
   void applyAbsoluteLocal() {
-    final double rotateMix = this.rotateMix,
+    final double? rotateMix = this.rotateMix,
         translateMix = this.translateMix,
         scaleMix = this.scaleMix,
         shearMix = this.shearMix;
-    final Bone target = this.target;
+    final Bone target = this.target!;
     if (!target.appliedValid) target.updateAppliedTransform();
     final List<Bone> bones = this.bones;
     final int n = bones.length;
@@ -235,21 +233,21 @@ class TransformConstraint extends Constraint {
       final Bone bone = bones[i];
       if (!bone.appliedValid) bone.updateAppliedTransform();
 
-      double rotation = bone.arotation;
+      double? rotation = bone.arotation;
       if (rotateMix != 0) {
         double r = target.arotation - rotation + data.offsetRotation;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-        rotation += r * rotateMix;
+        rotation += r * rotateMix!;
       }
 
-      double x = bone.ax, y = bone.ay;
+      double? x = bone.ax, y = bone.ay;
       if (translateMix != 0) {
-        x += (target.ax - x + data.offsetX) * translateMix;
-        y += (target.ay - y + data.offsetY) * translateMix;
+        x = x + (target.ax - x + data.offsetX) * translateMix!;
+        y = y + (target.ay - y + data.offsetY) * translateMix;
       }
 
       double scaleX = bone.ascaleX, scaleY = bone.ascaleY;
-      if (scaleMix > 0) {
+      if (scaleMix! > 0) {
         if (scaleX > 0.00001)
           scaleX = (scaleX +
                   (target.ascaleX - scaleX + data.offsetScaleX) * scaleMix) /
@@ -261,10 +259,10 @@ class TransformConstraint extends Constraint {
       }
 
       final double shearY = bone.ashearY;
-      if (shearMix > 0) {
+      if (shearMix! > 0) {
         double r = target.ashearY - shearY + data.offsetShearY;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-        bone.shearY += r * shearMix;
+        bone.shearY = bone.shearY + r * shearMix;
       }
 
       bone.updateWorldTransformWith(
@@ -273,11 +271,11 @@ class TransformConstraint extends Constraint {
   }
 
   void applyRelativeLocal() {
-    final double rotateMix = this.rotateMix,
+    final double? rotateMix = this.rotateMix,
         translateMix = this.translateMix,
         scaleMix = this.scaleMix,
         shearMix = this.shearMix;
-    final Bone target = this.target;
+    final Bone target = this.target!;
     if (!target.appliedValid) target.updateAppliedTransform();
     final List<Bone> bones = this.bones;
     final int n = bones.length;
@@ -287,16 +285,16 @@ class TransformConstraint extends Constraint {
 
       double rotation = bone.arotation;
       if (rotateMix != 0)
-        rotation += (target.arotation + data.offsetRotation) * rotateMix;
+        rotation = rotation + (target.arotation + data.offsetRotation) * rotateMix!;
 
       double x = bone.ax, y = bone.ay;
       if (translateMix != 0) {
-        x += (target.ax + data.offsetX) * translateMix;
-        y += (target.ay + data.offsetY) * translateMix;
+        x = x + (target.ax + data.offsetX) * translateMix!;
+        y = y + (target.ay + data.offsetY) * translateMix;
       }
 
       double scaleX = bone.ascaleX, scaleY = bone.ascaleY;
-      if (scaleMix > 0) {
+      if (scaleMix! > 0) {
         if (scaleX > 0.00001)
           scaleX *= ((target.ascaleX - 1 + data.offsetScaleX) * scaleMix) + 1;
         if (scaleY > 0.00001)
@@ -304,8 +302,8 @@ class TransformConstraint extends Constraint {
       }
 
       double shearY = bone.ashearY;
-      if (shearMix > 0)
-        shearY += (target.ashearY + data.offsetShearY) * shearMix;
+      if (shearMix! > 0)
+        shearY = shearY + (target.ashearY + data.offsetShearY) * shearMix;
 
       bone.updateWorldTransformWith(
           x, y, rotation, scaleX, scaleY, bone.ashearX, shearY);

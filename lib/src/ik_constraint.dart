@@ -33,19 +33,17 @@ part of spine_core;
 class IkConstraint extends Constraint {
   final IkConstraintData data;
   final List<Bone> bones = <Bone>[];
-  Bone target;
+  Bone? target;
   double mix = 1.0;
   int bendDirection = 0;
 
   IkConstraint(this.data, Skeleton skeleton) {
-    if (data == null) throw ArgumentError('data cannot be null.');
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     mix = data.mix;
     bendDirection = data.bendDirection;
 
     for (int i = 0; i < data.bones.length; i++)
-      bones.add(skeleton.findBone(data.bones[i].name));
-    target = skeleton.findBone(data.target.name);
+      bones.add(skeleton.findBone(data.bones[i].name)!);
+    target = skeleton.findBone(data.target!.name);
   }
 
   @override
@@ -57,14 +55,14 @@ class IkConstraint extends Constraint {
 
   @override
   void update() {
-    final Bone target = this.target;
+    final Bone? target = this.target;
     final List<Bone> bones = this.bones;
     switch (bones.length) {
       case 1:
-        apply1(bones[0], target.worldX, target.worldY, mix);
+        apply1(bones[0], target!.worldX, target.worldY, mix);
         break;
       case 2:
-        apply2(bones[0], bones[1], target.worldX, target.worldY, bendDirection,
+        apply2(bones[0], bones[1], target!.worldX, target.worldY, bendDirection,
             mix);
         break;
     }
@@ -72,7 +70,7 @@ class IkConstraint extends Constraint {
 
   void apply1(Bone bone, double targetX, double targetY, double alpha) {
     if (!bone.appliedValid) bone.updateAppliedTransform();
-    final Bone p = bone.parent;
+    final Bone p = bone.parent!;
     final double id = 1 / (p.a * p.d - p.b * p.c);
     final double x = targetX - p.worldX, y = targetY - p.worldY;
     final double tx = (x * p.d - y * p.b) * id - bone.ax,
@@ -139,7 +137,7 @@ class IkConstraint extends Constraint {
       cwx = a * cx + b * cy + parent.worldX;
       cwy = c * cx + d * cy + parent.worldY;
     }
-    final Bone pp = parent.parent;
+    final Bone pp = parent.parent!;
     a = pp.a;
     b = pp.b;
     c = pp.c;

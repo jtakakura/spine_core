@@ -36,22 +36,21 @@ class SkeletonData {
   final List<Skin> skins = <Skin>[];
   final List<EventData> events = <EventData>[];
   final List<Animation> animations = <Animation>[];
-  final List<IkConstraintData> ikConstraints = <IkConstraintData>[];
-  final List<TransformConstraintData> transformConstraints =
-      <TransformConstraintData>[];
+  final List<IkConstraintData?> ikConstraints = <IkConstraintData?>[];
+  final List<TransformConstraintData?> transformConstraints =
+      <TransformConstraintData?>[];
   final List<PathConstraintData> pathConstraints = <PathConstraintData>[];
 
-  String name;
-  Skin defaultSkin;
-  double width, height;
-  String version, hash;
+  String? name;
+  Skin? defaultSkin;
+  double? width, height;
+  String? version, hash;
 
   // Nonessential
   double fps = 0.0;
-  String imagesPath;
+  String? imagesPath;
 
-  BoneData findBone(String boneName) {
-    if (boneName == null) throw ArgumentError('boneName cannot be null.');
+  BoneData? findBone(String boneName) {
     final List<BoneData> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) if (bones[i].name == boneName) return bones[i];
@@ -59,14 +58,13 @@ class SkeletonData {
   }
 
   int findBoneIndex(String boneName) {
-    if (boneName == null) throw ArgumentError('boneName cannot be null.');
     final List<BoneData> bones = this.bones;
     final int n = bones.length;
     for (int i = 0; i < n; i++) if (bones[i].name == boneName) return i;
     return -1;
   }
 
-  SlotData findSlot(String slotName) {
+  SlotData? findSlot(String? slotName) {
     if (slotName == null) throw ArgumentError('slotName cannot be null.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
@@ -74,7 +72,7 @@ class SkeletonData {
     return null;
   }
 
-  int findSlotIndex(String slotName) {
+  int findSlotIndex(String? slotName) {
     if (slotName == null) throw ArgumentError('slotName cannot be null.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
@@ -82,7 +80,7 @@ class SkeletonData {
     return -1;
   }
 
-  Skin findSkin(String skinName) {
+  Skin? findSkin(String? skinName) {
     if (skinName == null) throw ArgumentError('skinName cannot be null.');
     final List<Skin> skins = this.skins;
     final int n = skins.length;
@@ -90,7 +88,7 @@ class SkeletonData {
     return null;
   }
 
-  EventData findEvent(String eventDataName) {
+  EventData? findEvent(String? eventDataName) {
     if (eventDataName == null)
       throw ArgumentError('eventDataName cannot be null.');
     final List<EventData> events = this.events;
@@ -100,9 +98,7 @@ class SkeletonData {
     return null;
   }
 
-  Animation findAnimation(String animationName) {
-    if (animationName == null)
-      throw ArgumentError('animationName cannot be null.');
+  Animation? findAnimation(String animationName) {
     final List<Animation> animations = this.animations;
     final int n = animations.length;
     for (int i = 0; i < n; i++)
@@ -110,31 +106,25 @@ class SkeletonData {
     return null;
   }
 
-  IkConstraintData findIkConstraint(String constraintName) {
-    if (constraintName == null)
-      throw ArgumentError('constraintName cannot be null.');
-    final List<IkConstraintData> ikConstraints = this.ikConstraints;
+  IkConstraintData? findIkConstraint(String constraintName) {
+    final List<IkConstraintData?> ikConstraints = this.ikConstraints;
     final int n = ikConstraints.length;
     for (int i = 0; i < n; i++)
-      if (ikConstraints[i].name == constraintName) return ikConstraints[i];
+      if (ikConstraints[i]!.name == constraintName) return ikConstraints[i];
     return null;
   }
 
-  TransformConstraintData findTransformConstraint(String constraintName) {
-    if (constraintName == null)
-      throw ArgumentError('constraintName cannot be null.');
-    final List<TransformConstraintData> transformConstraints =
+  TransformConstraintData? findTransformConstraint(String constraintName) {
+    final List<TransformConstraintData?> transformConstraints =
         this.transformConstraints;
     final int n = transformConstraints.length;
     for (int i = 0; i < n; i++)
-      if (transformConstraints[i].name == constraintName)
+      if (transformConstraints[i]!.name == constraintName)
         return transformConstraints[i];
     return null;
   }
 
-  PathConstraintData findPathConstraint(String constraintName) {
-    if (constraintName == null)
-      throw ArgumentError('constraintName cannot be null.');
+  PathConstraintData? findPathConstraint(String constraintName) {
     final List<PathConstraintData> pathConstraints = this.pathConstraints;
     final int n = pathConstraints.length;
     for (int i = 0; i < n; i++)
@@ -143,8 +133,6 @@ class SkeletonData {
   }
 
   int findPathConstraintIndex(String pathConstraintName) {
-    if (pathConstraintName == null)
-      throw ArgumentError('pathConstraintName cannot be null.');
     final List<PathConstraintData> pathConstraints = this.pathConstraints;
     final int n = pathConstraints.length;
     for (int i = 0; i < n; i++)

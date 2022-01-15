@@ -33,8 +33,8 @@ part of spine_core;
 class BoneData {
   final int index;
   final String name;
-  BoneData parent;
-  double length;
+  BoneData? parent;
+  late double length;
   double x = 0.0,
       y = 0.0,
       rotation = 0.0,
@@ -45,9 +45,11 @@ class BoneData {
   TransformMode transformMode = TransformMode.Normal;
 
   BoneData(this.index, this.name, this.parent) {
-    if (index < 0) throw ArgumentError('index must be >= 0.');
-    if (name == null) throw ArgumentError('name cannot be null.');
+    if (index < 0 && name.isNotEmpty)
+      throw ArgumentError('index must be >= 0.');
   }
+
+  factory BoneData.empty() => BoneData(-1, '', null);
 }
 
 enum TransformMode {

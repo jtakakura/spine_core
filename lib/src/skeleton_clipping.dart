@@ -38,8 +38,8 @@ class SkeletonClipping {
   final List<int> clippedTriangles = <int>[];
   final List<double> scratch = <double>[];
 
-  ClippingAttachment clipAttachment;
-  List<Float32List> clippingPolygons;
+  ClippingAttachment? clipAttachment;
+  List<Float32List>? clippingPolygons;
 
   int clipStart(Slot slot, ClippingAttachment clip) {
     if (clipAttachment != null) return 0;
@@ -47,9 +47,9 @@ class SkeletonClipping {
 
     final int n = clip.worldVerticesLength;
     final Float32List vertices =
-        ArrayUtils.setArraySize(this.clippingPolygon, n, 0.0);
+        ArrayUtils.copyWithNewArraySize(this.clippingPolygon, n, double.infinity) as Float32List;
     clip.computeWorldVertices(slot, 0, n, vertices, 0, 2);
-    final Float32List clippingPolygon = this.clippingPolygon;
+    final Float32List clippingPolygon = this.clippingPolygon as Float32List;
     SkeletonClipping.makeClockwise(clippingPolygon);
     final List<Float32List> clippingPolygons = this.clippingPolygons =
         triangulator.decompose(
@@ -66,7 +66,7 @@ class SkeletonClipping {
   }
 
   void clipEndWithSlot(Slot slot) {
-    if (clipAttachment != null && clipAttachment.endSlot == slot.data)
+    if (clipAttachment != null && clipAttachment!.endSlot == slot.data)
       clipEnd();
   }
 
@@ -90,11 +90,11 @@ class SkeletonClipping {
       Color light,
       Color dark,
       bool twoColor) {
-    final Float32List clipOutput = this.clipOutput,
-        clippedVertices = this.clippedVertices;
-    final Int16List clippedTriangles = this.clippedTriangles;
-    final List<Float32List> polygons = clippingPolygons;
-    final int polygonsCount = clippingPolygons.length;
+    final Float32List clipOutput = this.clipOutput as Float32List,
+        clippedVertices = this.clippedVertices as Float32List;
+    final Int16List clippedTriangles = this.clippedTriangles as Int16List;
+    final List<Float32List>? polygons = clippingPolygons;
+    final int polygonsCount = clippingPolygons!.length;
     final int vertexSize = twoColor ? 12 : 8;
 
     int index = 0;
@@ -116,16 +116,18 @@ class SkeletonClipping {
 
       for (int p = 0; p < polygonsCount; p++) {
         int s = clippedVertices.length;
-        if (clip(x1, y1, x2, y2, x3, y3, polygons[p], clipOutput)) {
+        if (clip(x1, y1, x2, y2, x3, y3, polygons![p], clipOutput)) {
           final int clipOutputLength = clipOutput.length;
           if (clipOutputLength == 0) continue;
           final double d0 = y2 - y3, d1 = x3 - x2, d2 = x1 - x3, d4 = y3 - y1;
           final double d = 1 / (d0 * d2 + d1 * (y1 - y3));
 
           int clipOutputCount = clipOutputLength >> 1;
-          final Float32List clipOutputItems = this.clipOutput;
-          final Float32List clippedVerticesItems = ArrayUtils.setArraySize(
-              clippedVertices, s + clipOutputCount * vertexSize, 0.0);
+          final Float32List clipOutputItems = this.clipOutput as Float32List;
+          final Float32List clippedVerticesItems =
+              ArrayUtils.copyWithNewArraySize(
+                      clippedVertices, s + clipOutputCount * vertexSize, double.infinity)
+                  as Float32List;
           for (int ii = 0; ii < clipOutputLength; ii += 2) {
             final double x = clipOutputItems[ii], y = clipOutputItems[ii + 1];
             clippedVerticesItems[s] = x;
@@ -150,8 +152,10 @@ class SkeletonClipping {
           }
 
           s = clippedTriangles.length;
-          final Int16List clippedTrianglesItems = ArrayUtils.setArraySize(
-              clippedTriangles, s + 3 * (clipOutputCount - 2), 0.0);
+          final Int16List clippedTrianglesItems =
+              ArrayUtils.copyWithNewArraySize(
+                      clippedTriangles, s + 3 * (clipOutputCount - 2), -1)
+                  as Int16List;
           clipOutputCount--;
           for (int ii = 1; ii < clipOutputCount; ii++) {
             clippedTrianglesItems[s] = index;
@@ -162,7 +166,8 @@ class SkeletonClipping {
           index += clipOutputCount + 1;
         } else {
           final Float32List clippedVerticesItems =
-              ArrayUtils.setArraySize(clippedVertices, s + 3 * vertexSize, 0.0);
+              ArrayUtils.copyWithNewArraySize(
+                  clippedVertices, s + 3 * vertexSize, double.infinity) as Float32List;
           clippedVerticesItems[s] = x1;
           clippedVerticesItems[s + 1] = y1;
           clippedVerticesItems[s + 2] = light.r;
@@ -227,7 +232,8 @@ class SkeletonClipping {
 
           s = clippedTriangles.length;
           final Int16List clippedTrianglesItems =
-              ArrayUtils.setArraySize(clippedTriangles, s + 3, 0);
+              ArrayUtils.copyWithNewArraySize(clippedTriangles, s + 3, -1)
+                  as Int16List;
           clippedTrianglesItems[s] = index;
           clippedTrianglesItems[s + 1] = (index + 1);
           clippedTrianglesItems[s + 2] = (index + 2);
@@ -247,9 +253,9 @@ class SkeletonClipping {
     Float32List input;
     if (clippingArea.length % 4 >= 2) {
       input = output;
-      output = scratch;
+      output = scratch as Float32List;
     } else
-      input = scratch;
+      input = scratch as Float32List;
 
     input
       ..length = 0

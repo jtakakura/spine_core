@@ -30,7 +30,7 @@
 
 part of spine_core;
 
-typedef Texture TextureLoader(String path);
+typedef Texture TextureLoader(String? path);
 
 class TextureAtlas implements Disposable {
   List<TextureAtlasPage> pages = <TextureAtlasPage>[];
@@ -41,14 +41,11 @@ class TextureAtlas implements Disposable {
   }
 
   void _load(String atlasText, TextureLoader textureLoader) {
-    if (textureLoader == null)
-      throw ArgumentError('textureLoader cannot be null.');
-
     final TextureAtlasReader reader = TextureAtlasReader(atlasText);
-    final List<String> tuple = <String>[];
-    TextureAtlasPage page;
+    List<String> tuple = <String>[];
+    TextureAtlasPage? page;
     for (;;) {
-      String line = reader.readLine();
+      String? line = reader.readLine();
       if (line == null) break;
       line = line.trim();
       if (line.isEmpty)
@@ -56,14 +53,15 @@ class TextureAtlas implements Disposable {
       else if (page == null) {
         page = TextureAtlasPage()..name = line;
 
-        if (reader.readTuple(tuple) == 2) {
+        tuple = reader.readTuple(tuple);
+        if (tuple.length == 2) {
           // size is only optional for an atlas packed with an old TexturePacker.
           page
             ..width = int.parse(tuple[0])
             ..height = int.parse(tuple[1]);
-          reader.readTuple(tuple);
+          tuple = reader.readTuple(tuple);
         }
-        reader.readTuple(tuple);
+        tuple = reader.readTuple(tuple);
         page
           ..minFilter = Texture.filterFromString(tuple[0])
           ..magFilter = Texture.filterFromString(tuple[1]);
@@ -81,10 +79,10 @@ class TextureAtlas implements Disposable {
 
         page
           ..texture = textureLoader(line)
-          ..texture.setFilters(page.minFilter, page.magFilter)
-          ..texture.setWraps(page.uWrap, page.vWrap)
-          ..width = page.texture.image.width
-          ..height = page.texture.image.height;
+          ..texture!.setFilters(page.minFilter, page.magFilter)
+          ..texture!.setWraps(page.uWrap, page.vWrap)
+          ..width = page.texture!.image.width
+          ..height = page.texture!.image.height;
         pages.add(page);
       } else {
         final TextureAtlasRegion region = TextureAtlasRegion()
@@ -92,25 +90,25 @@ class TextureAtlas implements Disposable {
           ..page = page
           ..rotate = reader.readValue() == 'true';
 
-        reader.readTuple(tuple);
+        tuple = reader.readTuple(tuple);
         final int x = int.parse(tuple[0]);
         final int y = int.parse(tuple[1]);
 
-        reader.readTuple(tuple);
+        tuple = reader.readTuple(tuple);
         final int width = int.parse(tuple[0]);
         final int height = int.parse(tuple[1]);
 
         region
-          ..u = x / page.width
-          ..v = y / page.height;
+          ..u = x / page.width!
+          ..v = y / page.height!;
         if (region.rotate) {
           region
-            ..u2 = (x + height) / page.width
-            ..v2 = (y + width) / page.height;
+            ..u2 = (x + height) / page.width!
+            ..v2 = (y + width) / page.height!;
         } else {
           region
-            ..u2 = (x + width) / page.width
-            ..v2 = (y + height) / page.height;
+            ..u2 = (x + width) / page.width!
+            ..v2 = (y + height) / page.height!;
         }
         region
           ..x = x
@@ -118,9 +116,12 @@ class TextureAtlas implements Disposable {
           ..width = width.abs()
           ..height = height.abs();
 
-        if (reader.readTuple(tuple) == 4) {
-          if (reader.readTuple(tuple) == 4) {
-            reader.readTuple(tuple);
+        // \todo This is correct?
+        tuple = reader.readTuple(tuple);
+        if (tuple.length == 4) {
+          tuple = reader.readTuple(tuple);
+          if (tuple.length == 4) {
+            tuple = reader.readTuple(tuple);
           }
         }
 
@@ -128,7 +129,7 @@ class TextureAtlas implements Disposable {
           ..originalWidth = int.parse(tuple[0])
           ..originalHeight = int.parse(tuple[1]);
 
-        reader.readTuple(tuple);
+        tuple = reader.readTuple(tuple);
         region
           ..offsetX = int.parse(tuple[0])
           ..offsetY = int.parse(tuple[1])
@@ -140,7 +141,7 @@ class TextureAtlas implements Disposable {
     }
   }
 
-  TextureAtlasRegion findRegion(String name) {
+  TextureAtlasRegion? findRegion(String? name) {
     for (int i = 0; i < regions.length; i++) {
       if (regions[i].name == name) {
         return regions[i];
@@ -152,66 +153,66 @@ class TextureAtlas implements Disposable {
   @override
   void dispose() {
     for (int i = 0; i < pages.length; i++) {
-      pages[i].texture.dispose();
+      pages[i].texture!.dispose();
     }
   }
 }
 
 class TextureAtlasReader {
-  List<String> lines;
+  late List<String> lines;
   int index = 0;
 
   TextureAtlasReader(String text) {
     lines = text.split(RegExp(r'\r\n|\r|\n'));
   }
 
-  String readLine() {
+  String? readLine() {
     if (index >= lines.length) return null;
     return lines[index++];
   }
 
   String readValue() {
-    final String line = readLine();
+    final String line = readLine()!;
     final int colon = line.indexOf(':');
     if (colon == -1) throw StateError('Invalid line: $line');
     return line.substring(colon + 1).trim();
   }
 
-  int readTuple(List<String> tuple) {
-    final String line = readLine();
+  List<String> readTuple(List<String> tuple) {
+    final String line = readLine()!;
     final int colon = line.indexOf(':');
     if (colon == -1) throw StateError('Invalid line: $line');
     int i = 0, lastMatch = colon + 1;
     for (; i < 3; i++) {
       final int comma = line.indexOf(',', lastMatch);
       if (comma == -1) break;
-      //  tuple[i] = line.substring(lastMatch, comma).trim();
-      ArrayUtils.setArrayValue(
-          tuple, i, line.substring(lastMatch, comma).trim());
+      // tuple[i] = line.substring(lastMatch, comma).trim();
+      tuple = ArrayUtils.setArrayValueWithGrowth(
+          tuple, i, line.substring(lastMatch, comma).trim(), '');
       lastMatch = comma + 1;
     }
-    ArrayUtils.setArrayValue(tuple, i, line.substring(lastMatch).trim());
     // tuple[i] = line.substring(lastMatch).trim();
-    return i + 1;
+    return ArrayUtils.setArrayValueWithGrowth(
+        tuple, i, line.substring(lastMatch).trim(), '');
   }
 }
 
 class TextureAtlasPage {
-  String name;
-  TextureFilter minFilter;
-  TextureFilter magFilter;
-  TextureWrap uWrap;
-  TextureWrap vWrap;
-  Texture texture;
-  int width;
-  int height;
+  String? name;
+  TextureFilter? minFilter;
+  TextureFilter? magFilter;
+  TextureWrap? uWrap;
+  TextureWrap? vWrap;
+  Texture? texture;
+  int? width;
+  int? height;
 }
 
 class TextureAtlasRegion extends TextureRegion {
-  TextureAtlasPage page;
-  String name;
-  int x;
-  int y;
-  int index;
-  Texture texture;
+  TextureAtlasPage? page;
+  String? name;
+  int? x;
+  int? y;
+  int? index;
+  Texture? texture;
 }

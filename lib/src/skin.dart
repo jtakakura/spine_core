@@ -32,37 +32,34 @@ part of spine_core;
 
 class Skin {
   final String name;
-  final List<Map<String, Attachment>> attachments = <Map<String, Attachment>>[];
+  final List<Map<String, Attachment>?> attachments = <Map<String, Attachment>?>[];
 
-  Skin(this.name) {
-    if (name == null) throw ArgumentError('name cannot be null.');
-  }
+  Skin(this.name);
 
   void addAttachment(int slotIndex, String name, Attachment attachment) {
-    if (attachment == null) throw ArgumentError('attachment cannot be null.');
     if (slotIndex >= attachments.length) attachments.length = slotIndex + 1;
     if (attachments[slotIndex] == null)
       attachments[slotIndex] = <String, Attachment>{};
-    attachments[slotIndex][name] = attachment;
+    attachments[slotIndex]![name] = attachment;
   }
 
-  Attachment getAttachment(int slotIndex, String name) {
+  Attachment? getAttachment(int slotIndex, String? name) {
     if (slotIndex >= attachments.length) return null;
-    return attachments[slotIndex][name];
+    return attachments[slotIndex]![name!];
   }
 
-  void attachAll(Skeleton skeleton, Skin oldSkin) {
+  void attachAll(Skeleton skeleton, Skin? oldSkin) {
     int slotIndex = 0;
     for (int i = 0; i < skeleton.slots.length; i++) {
       final Slot slot = skeleton.slots[i];
-      final Attachment slotAttachment = slot.getAttachment();
-      if (slotAttachment != null && slotIndex < oldSkin.attachments.length) {
+      final Attachment? slotAttachment = slot.getAttachment();
+      if (slotAttachment != null && slotIndex < oldSkin!.attachments.length) {
         final Map<String, Attachment> map =
             oldSkin.attachments[slotIndex] ?? <String, Attachment>{};
         for (String key in map.keys) {
-          final Attachment skinAttachment = map[key];
+          final Attachment? skinAttachment = map[key];
           if (slotAttachment == skinAttachment) {
-            final Attachment attachment = getAttachment(slotIndex, key);
+            final Attachment? attachment = getAttachment(slotIndex, key);
             if (attachment != null) slot.setAttachment(attachment);
             break;
           }

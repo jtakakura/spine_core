@@ -31,13 +31,13 @@
 part of spine_core;
 
 class AtlasAttachmentLoader implements AttachmentLoader {
-  TextureAtlas atlas;
+  final TextureAtlas atlas;
 
-  AtlasAttachmentLoader(this.atlas);
+  const AtlasAttachmentLoader(this.atlas);
 
   @override
   RegionAttachment newRegionAttachment(Skin skin, String name, String path) {
-    final TextureAtlasRegion region = atlas.findRegion(path);
+    final TextureAtlasRegion? region = atlas.findRegion(path);
     if (region == null)
       throw StateError(
           'Region not found in atlas: $path (region attachment: $name)');
@@ -49,7 +49,7 @@ class AtlasAttachmentLoader implements AttachmentLoader {
 
   @override
   MeshAttachment newMeshAttachment(Skin skin, String name, String path) {
-    final TextureAtlasRegion region = atlas.findRegion(path);
+    final TextureAtlasRegion? region = atlas.findRegion(path);
     if (region == null)
       throw StateError(
           'Region not found in atlas: $path (mesh attachment: $name)');

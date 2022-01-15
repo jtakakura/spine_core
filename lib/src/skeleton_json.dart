@@ -43,9 +43,7 @@ class SkeletonJson {
 
     dynamic root;
 
-    if (object == null) {
-      throw ArgumentError('object cannot be null.');
-    } else if (object is String) {
+    if (object is String) {
       root = json.decode(object);
     } else if (object is Map) {
       root = object;
@@ -70,9 +68,9 @@ class SkeletonJson {
       for (int i = 0; i < root['bones'].length; i++) {
         final dynamic boneMap = root['bones'][i];
 
-        BoneData parent;
+        BoneData? parent;
         final String parentName = _getString(boneMap, 'parent');
-        if (parentName != null) {
+        if (parentName.isNotEmpty) {
           parent = skeletonData.findBone(parentName);
           if (parent == null)
             throw StateError('Parent bone not found: $parentName');
@@ -100,19 +98,19 @@ class SkeletonJson {
         final dynamic slotMap = root['slots'][i];
         final String slotName = _getString(slotMap, 'name');
         final String boneName = _getString(slotMap, 'bone');
-        final BoneData boneData = skeletonData.findBone(boneName);
+        final BoneData? boneData = skeletonData.findBone(boneName);
         if (boneData == null)
           throw StateError('Slot bone not found: ' + boneName);
         final SlotData data =
             SlotData(skeletonData.slots.length, slotName, boneData);
 
         final String color = _getString(slotMap, 'color');
-        if (color != null) data.color.setFromString(color);
+        if (color.isNotEmpty) data.color.setFromString(color);
 
         final String dark = _getString(slotMap, 'dark');
-        if (dark != null) {
+        if (dark.isNotEmpty) {
           data.darkColor = Color(1.0, 1.0, 1.0, 1.0);
-          data.darkColor.setFromString(dark);
+          data.darkColor!.setFromString(dark);
         }
 
         data
@@ -133,7 +131,7 @@ class SkeletonJson {
 
         for (int j = 0; j < constraintMap['bones'].length; j++) {
           final String boneName = constraintMap['bones'][j];
-          final BoneData bone = skeletonData.findBone(boneName);
+          final BoneData? bone = skeletonData.findBone(boneName);
           if (bone == null) throw StateError('IK bone not found: ' + boneName);
           data.bones.add(bone);
         }
@@ -161,8 +159,8 @@ class SkeletonJson {
               ..order = _getInt(constraintMap, 'order', 0);
 
         for (int j = 0; j < constraintMap['bones'].length; j++) {
-          final String boneName = constraintMap['bones'][j];
-          final BoneData bone = skeletonData.findBone(boneName);
+          final String boneName = constraintMap['bones'][j]!;
+          final BoneData? bone = skeletonData.findBone(boneName);
           if (bone == null)
             throw StateError('Transform constraint bone not found: $boneName');
           data.bones.add(bone);
@@ -201,8 +199,8 @@ class SkeletonJson {
               ..order = _getInt(constraintMap, 'order', 0);
 
         for (int j = 0; j < constraintMap['bones'].length; j++) {
-          final String boneName = constraintMap['bones'][j];
-          final BoneData bone = skeletonData.findBone(boneName);
+          final String boneName = constraintMap['bones'][j]!;
+          final BoneData? bone = skeletonData.findBone(boneName);
           if (bone == null)
             throw StateError('Transform constraint bone not found: $boneName');
           data.bones.add(bone);
@@ -222,10 +220,10 @@ class SkeletonJson {
               _getString(constraintMap, 'rotateMode', 'tangent'))
           ..offsetRotation = _getDouble(constraintMap, 'rotation', 0.0)
           ..position = _getDouble(constraintMap, 'position', 0.0);
-        if (data.positionMode == PositionMode.Fixed) data.position *= scale;
+        if (data.positionMode == PositionMode.Fixed) data.position = data.position * scale;
         data.spacing = _getDouble(constraintMap, 'spacing', 0.0);
         if (data.spacingMode == SpacingMode.Length ||
-            data.spacingMode == SpacingMode.Fixed) data.spacing *= scale;
+            data.spacingMode == SpacingMode.Fixed) data.spacing = data.spacing * scale;
         data
           ..rotateMix = _getDouble(constraintMap, 'rotateMix', 1.0)
           ..translateMix = _getDouble(constraintMap, 'translateMix', 1.0);
@@ -244,7 +242,7 @@ class SkeletonJson {
           if (slotIndex == -1) throw StateError('Slot not found: $slotName');
           final dynamic slotMap = skinMap[slotName];
           for (String entryName in slotMap.keys) {
-            final Attachment attachment = readAttachment(
+            final Attachment? attachment = readAttachment(
                 slotMap[entryName], skin, slotIndex, entryName, skeletonData);
             if (attachment != null)
               skin.addAttachment(slotIndex, entryName, attachment);
@@ -259,15 +257,15 @@ class SkeletonJson {
     final int n = linkedMeshes.length;
     for (int i = 0; i < n; i++) {
       final LinkedMesh linkedMesh = linkedMeshes[i];
-      final Skin skin = linkedMesh.skin == null
+      final Skin? skin = linkedMesh.skin == null
           ? skeletonData.defaultSkin
           : skeletonData.findSkin(linkedMesh.skin);
       if (skin == null) throw StateError('Skin not found: $linkedMesh.skin');
-      final Attachment parent =
+      final Attachment? parent =
           skin.getAttachment(linkedMesh.slotIndex, linkedMesh.parent);
       if (parent == null)
         throw StateError('Parent mesh not found: $linkedMesh.parent');
-      linkedMesh.mesh.parentMesh = parent;
+      linkedMesh.mesh.parentMesh = parent as MeshAttachment?;
       linkedMesh.mesh.updateUVs();
     }
     linkedMeshes.length = 0;
@@ -277,9 +275,9 @@ class SkeletonJson {
       for (String eventName in root['events'].keys) {
         final dynamic eventMap = root['events'][eventName];
         final EventData data = EventData(eventName)
-          ..intValue = _getInt(eventMap, 'int', 0)
-          ..floatValue = _getDouble(eventMap, 'float', 0.0)
-          ..stringValue = _getString(eventMap, 'string', '');
+          ..intValue = _getInt(eventMap, 'int')
+          ..floatValue = _getDouble(eventMap, 'float')
+          ..stringValue = _getString(eventMap, 'string');
         skeletonData.events.add(data);
       }
     }
@@ -295,7 +293,7 @@ class SkeletonJson {
     return skeletonData;
   }
 
-  Attachment readAttachment(Map<String, dynamic> map, Skin skin, int slotIndex,
+  Attachment? readAttachment(Map<String, dynamic> map, Skin skin, int slotIndex,
       String name, SkeletonData skeletonData) {
     final double scale = this.scale;
     name = _getString(map, 'name', name);
@@ -307,20 +305,18 @@ class SkeletonJson {
         {
           final String path = _getString(map, 'path', name);
           final RegionAttachment region =
-              attachmentLoader.newRegionAttachment(skin, name, path);
-          if (region == null) return null;
-          region
-            ..path = path
-            ..x = _getDouble(map, 'x', 0.0) * scale
-            ..y = _getDouble(map, 'y', 0.0) * scale
-            ..scaleX = _getDouble(map, 'scaleX', 1.0)
-            ..scaleY = _getDouble(map, 'scaleY', 1.0)
-            ..rotation = _getDouble(map, 'rotation', 0.0)
-            ..width = _getDouble(map, 'width') * scale
-            ..height = _getDouble(map, 'height') * scale;
+              attachmentLoader.newRegionAttachment(skin, name, path)
+                ..path = path
+                ..x = _getDouble(map, 'x', 0.0) * scale
+                ..y = _getDouble(map, 'y', 0.0) * scale
+                ..scaleX = _getDouble(map, 'scaleX', 1.0)
+                ..scaleY = _getDouble(map, 'scaleY', 1.0)
+                ..rotation = _getDouble(map, 'rotation', 0.0)
+                ..width = _getDouble(map, 'width') * scale
+                ..height = _getDouble(map, 'height') * scale;
 
           final String color = _getString(map, 'color');
-          if (color != null) region.color.setFromString(color);
+          if (color.isNotEmpty) region.color.setFromString(color);
 
           region.updateOffset();
           return region;
@@ -329,10 +325,9 @@ class SkeletonJson {
         {
           final BoundingBoxAttachment box =
               attachmentLoader.newBoundingBoxAttachment(skin, name);
-          if (box == null) return null;
           readVertices(map, box, _getInt(map, 'vertexCount') << 1);
           final String color = _getString(map, 'color');
-          if (color != null) box.color.setFromString(color);
+          if (color.isNotEmpty) box.color.setFromString(color);
           return box;
         }
       case 'mesh':
@@ -340,22 +335,20 @@ class SkeletonJson {
         {
           final String path = _getString(map, 'path', name);
           final MeshAttachment mesh =
-              attachmentLoader.newMeshAttachment(skin, name, path);
-          if (mesh == null) return null;
-          mesh.path = path;
+              attachmentLoader.newMeshAttachment(skin, name, path)..path = path;
 
           final String color = _getString(map, 'color');
-          if (color != null) mesh.color.setFromString(color);
+          if (color.isNotEmpty) mesh.color.setFromString(color);
 
           final String parent = _getString(map, 'parent');
-          if (parent != null) {
+          if (parent.isNotEmpty) {
             mesh.inheritDeform = _getBool(map, 'deform', true);
             linkedMeshes.add(
                 LinkedMesh(mesh, _getString(map, 'skin'), slotIndex, parent));
             return mesh;
           }
 
-          final Float32List uvs = _getFloat32List(map, 'uvs');
+          final Float32List uvs = _getFloat32List(map, 'uvs')!;
           readVertices(map, mesh, uvs.length);
           mesh
             ..triangles = _getInt16List(map, 'triangles')
@@ -367,45 +360,40 @@ class SkeletonJson {
       case 'path':
         {
           final PathAttachment path =
-              attachmentLoader.newPathAttachment(skin, name);
-          if (path == null) return null;
-          path
-            ..closed = _getBool(map, 'closed', false)
-            ..constantSpeed = _getBool(map, 'constantSpeed', true);
+              attachmentLoader.newPathAttachment(skin, name)
+                ..closed = _getBool(map, 'closed', false)
+                ..constantSpeed = _getBool(map, 'constantSpeed', true);
 
           final int vertexCount = _getInt(map, 'vertexCount');
           readVertices(map, path, vertexCount << 1);
 
-          path.lengths = _getFloat32List(map, 'lengths')
-              .map((double length) => length * scale);
+          path.lengths = _getFloat32List(map, 'lengths')!
+              .map((double length) => length * scale) as Float32List;
 
           final String color = _getString(map, 'color');
-          if (color != null) path.color.setFromString(color);
+          if (color.isNotEmpty) path.color.setFromString(color);
           return path;
         }
       case 'point':
         {
           final PointAttachment point =
-              attachmentLoader.newPointAttachment(skin, name);
-          if (point == null) return null;
-          point
-            ..x = _getDouble(map, 'x', 0.0) * scale
-            ..y = _getDouble(map, 'y', 0.0) * scale
-            ..rotation = _getDouble(map, 'rotation', 0.0);
+              attachmentLoader.newPointAttachment(skin, name)
+                ..x = _getDouble(map, 'x', 0.0) * scale
+                ..y = _getDouble(map, 'y', 0.0) * scale
+                ..rotation = _getDouble(map, 'rotation', 0.0);
 
           final String color = _getString(map, 'color');
-          if (color != null) point.color.setFromString(color);
+          if (color.isNotEmpty) point.color.setFromString(color);
           return point;
         }
       case 'clipping':
         {
           final ClippingAttachment clip =
               attachmentLoader.newClippingAttachment(skin, name);
-          if (clip == null) return null;
 
           final String end = _getString(map, 'end');
-          if (end != null) {
-            final SlotData slot = skeletonData.findSlot(end);
+          if (end.isNotEmpty) {
+            final SlotData? slot = skeletonData.findSlot(end);
             if (slot == null)
               throw StateError('Clipping end slot not found: $end');
             clip.endSlot = slot;
@@ -415,7 +403,7 @@ class SkeletonJson {
           readVertices(map, clip, vertexCount << 1);
 
           final String color = _getString(map, 'color');
-          if (color != null) clip.color.setFromString(color);
+          if (color.isNotEmpty) clip.color.setFromString(color);
           return clip;
         }
     }
@@ -426,7 +414,7 @@ class SkeletonJson {
       int verticesLength) {
     final double scale = this.scale;
     attachment.worldVerticesLength = verticesLength;
-    final Float32List vertices = _getFloat32List(map, 'vertices');
+    final Float32List vertices = _getFloat32List(map, 'vertices')!;
     if (verticesLength == vertices.length) {
       if (scale != 1) {
         final int n = vertices.length;
@@ -573,10 +561,10 @@ class SkeletonJson {
             int frameIndex = 0;
             for (int i = 0; i < timelineMap.length; i++) {
               final dynamic valueMap = timelineMap[i];
-              final double x = _getDouble(valueMap, 'x', 0.0),
+              final double? x = _getDouble(valueMap, 'x', 0.0),
                   y = _getDouble(valueMap, 'y', 0.0);
               timeline.setFrame(frameIndex, _getDouble(valueMap, 'time'),
-                  x * timelineScale, y * timelineScale);
+                  x! * timelineScale, y! * timelineScale);
               readCurve(valueMap, timeline, frameIndex);
               frameIndex++;
             }
@@ -596,7 +584,7 @@ class SkeletonJson {
     if (map.containsKey('ik')) {
       for (String constraintName in map['ik'].keys) {
         final dynamic constraintMap = map['ik'][constraintName];
-        final IkConstraintData constraint =
+        final IkConstraintData? constraint =
             skeletonData.findIkConstraint(constraintName);
         final IkConstraintTimeline timeline =
             IkConstraintTimeline(constraintMap.length)
@@ -625,7 +613,7 @@ class SkeletonJson {
     if (map.containsKey('transform')) {
       for (String constraintName in map['transform'].keys) {
         final dynamic constraintMap = map['transform'][constraintName];
-        final TransformConstraintData constraint =
+        final TransformConstraintData? constraint =
             skeletonData.findTransformConstraint(constraintName);
         final TransformConstraintTimeline timeline =
             TransformConstraintTimeline(constraintMap.length)
@@ -717,7 +705,7 @@ class SkeletonJson {
     if (map.containsKey('deform')) {
       for (String deformName in map['deform'].keys) {
         final dynamic deformMap = map['deform'][deformName];
-        final Skin skin = skeletonData.findSkin(deformName);
+        final Skin? skin = skeletonData.findSkin(deformName);
         if (skin == null) throw StateError('Skin not found: $deformName');
         for (String slotName in deformMap.keys) {
           final dynamic slotMap = deformMap[slotName];
@@ -726,15 +714,15 @@ class SkeletonJson {
             throw StateError('Slot not found: ${_getString(slotMap, 'name')}');
           for (String timelineName in slotMap.keys) {
             final dynamic timelineMap = slotMap[timelineName];
-            final VertexAttachment attachment =
-                skin.getAttachment(slotIndex, timelineName);
+            final VertexAttachment? attachment =
+                skin.getAttachment(slotIndex, timelineName) as VertexAttachment?;
             if (attachment == null)
               throw StateError(
                   'Deform attachment not found: ${_getString(timelineMap, 'name')}');
             final bool weighted = attachment.bones != null;
-            final Float32List vertices = attachment.vertices;
+            final Float32List? vertices = attachment.vertices;
             final int deformLength =
-                weighted ? vertices.length ~/ 3 * 2 : vertices.length;
+                weighted ? vertices!.length ~/ 3 * 2 : vertices!.length;
 
             final DeformTimeline timeline = DeformTimeline(timelineMap.length)
               ..slotIndex = slotIndex
@@ -743,16 +731,16 @@ class SkeletonJson {
             int frameIndex = 0;
             for (int j = 0; j < timelineMap.length; j++) {
               final dynamic valueMap = timelineMap[j];
-              Float32List deform;
-              final Float32List verticesValue =
+              Float32List? deform;
+              final Float32List? verticesValue =
                   _getFloat32List(valueMap, 'vertices');
               if (verticesValue == null)
                 deform = weighted ? Float32List(deformLength) : vertices;
               else {
                 deform = Float32List(deformLength);
                 final int start = _getInt(valueMap, 'offset', 0);
-                ArrayUtils.arrayCopy(
-                    verticesValue, 0, deform, start, verticesValue.length);
+                deform = ArrayUtils.arrayCopyWithGrowth(verticesValue, 0, deform,
+                    start, verticesValue.length, 0.0) as Float32List;
                 if (scale != 1) {
                   for (int i = start; i < i + verticesValue.length; i++)
                     deform[i] *= scale;
@@ -786,8 +774,8 @@ class SkeletonJson {
       int frameIndex = 0;
       for (int j = 0; j < drawOrderNode.length; j++) {
         final dynamic drawOrderMap = drawOrderNode[j];
-        Int32List drawOrder;
-        final List<dynamic> offsets = drawOrderMap['offsets'];
+        Int32List? drawOrder;
+        final List<dynamic>? offsets = drawOrderMap['offsets'];
         if (offsets != null) {
           drawOrder = Int32List.fromList(List<int>.filled(slotCount, -1));
           final Int32List unchanged = Int32List.fromList(
@@ -829,7 +817,7 @@ class SkeletonJson {
       for (int i = 0; i < map['events'].length; i++) {
         final dynamic eventMap = map['events'][i];
         final String eventDataName = _getString(eventMap, 'name');
-        final EventData eventData = skeletonData.findEvent(eventDataName);
+        final EventData? eventData = skeletonData.findEvent(eventDataName);
         if (eventData == null)
           throw StateError('Event not found: $eventDataName');
         final Event event = Event(_getDouble(eventMap, 'time'), eventData)
@@ -855,12 +843,12 @@ class SkeletonJson {
     if (map['curve'] == 'stepped')
       timeline.setStepped(frameIndex);
     else if (map['curve'] is List) {
-      final Float32List curve = _getFloat32List(map, 'curve');
+      final Float32List curve = _getFloat32List(map, 'curve')!;
       timeline.setCurve(frameIndex, curve[0], curve[1], curve[2], curve[3]);
     }
   }
 
-  static Float32List _getFloat32List(Map<String, dynamic> map, String name) {
+  static Float32List? _getFloat32List(Map<String, dynamic> map, String name) {
     if (!map.containsKey(name)) {
       return null;
     }
@@ -872,7 +860,7 @@ class SkeletonJson {
     return result;
   }
 
-  static Int16List _getInt16List(Map<String, dynamic> map, String name) {
+  static Int16List? _getInt16List(Map<String, dynamic> map, String name) {
     if (!map.containsKey(name)) {
       return null;
     }
@@ -886,19 +874,19 @@ class SkeletonJson {
   }
 
   static String _getString(Map<String, dynamic> map, String name,
-          [String defaultValue]) =>
+          [String defaultValue = '']) =>
       map[name] is String ? map[name] : defaultValue;
 
   static double _getDouble(Map<String, dynamic> map, String name,
-          [double defaultValue]) =>
+          [double defaultValue = 0.0]) =>
       map[name] is num ? map[name].toDouble() : defaultValue;
 
   static int _getInt(Map<String, dynamic> map, String name,
-          [int defaultValue]) =>
+          [int defaultValue = 0]) =>
       map[name] is num ? map[name].toInt() : defaultValue;
 
   static bool _getBool(Map<String, dynamic> map, String name,
-          [bool defaultValue]) =>
+          [bool defaultValue = false]) =>
       map[name] is bool ? map[name] : defaultValue;
 
   static BlendMode blendModeFromString(String str) {
@@ -946,7 +934,7 @@ class SkeletonJson {
 }
 
 class LinkedMesh {
-  String parent, skin;
+  String? parent, skin;
   int slotIndex;
   MeshAttachment mesh;
 

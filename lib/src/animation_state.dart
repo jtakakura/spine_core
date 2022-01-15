@@ -36,10 +36,11 @@ class AnimationState {
   static const int dip = 2;
   static const int dipMix = 3;
 
-  static final Animation emptyAnimation =
+  static const Animation emptyAnimation =
       Animation('<empty>', <Timeline>[], 0.0);
-  final List<TrackEntry> tracks = <TrackEntry>[];
-  final List<Event> events = <Event>[];
+
+  List<TrackEntry?> tracks = <TrackEntry?>[];
+  final List<Event?> events = <Event?>[];
   final List<TrackEntryCallback> onStartCallbacks = <TrackEntryCallback>[];
   final List<TrackEntryCallback> onInterruptCallbacks = <TrackEntryCallback>[];
   final List<TrackEntryCallback> onEndCallbacks = <TrackEntryCallback>[];
@@ -48,11 +49,11 @@ class AnimationState {
   final List<TrackEntryEventCallback> onEventCallbacks =
       <TrackEntryEventCallback>[];
   final List<TrackEntry> mixingTo = <TrackEntry>[];
-  final Set<int> propertyIDs = Set<int>();
-  final Pool<TrackEntry> trackEntryPool = Pool<TrackEntry>(() => TrackEntry());
+  final Set<int> propertyIDs = <int>{};
+  final Pool<TrackEntry?> trackEntryPool = Pool<TrackEntry?>(TrackEntry.new);
 
   AnimationStateData data;
-  EventQueue queue;
+  EventQueue? queue;
   bool animationsChanged = false;
   double timeScale = 1.0;
 
@@ -62,79 +63,79 @@ class AnimationState {
 
   void update(double delta) {
     delta *= timeScale;
-    final List<TrackEntry> tracks = this.tracks;
+    final List<TrackEntry?> tracks = this.tracks;
 
     final int n = tracks.length;
     for (int i = 0; i < n; i++) {
-      final TrackEntry current = tracks[i];
+      final TrackEntry? current = tracks[i];
       if (current == null) continue;
 
       current
         ..animationLast = current.nextAnimationLast
         ..trackLast = current.nextTrackLast;
 
-      double currentDelta = delta * current.timeScale;
+      double currentDelta = delta * current.timeScale!;
 
-      if (current.delay > 0) {
-        current.delay -= currentDelta;
-        if (current.delay > 0) continue;
-        currentDelta = -current.delay;
+      if (current.delay! > 0) {
+        current.delay = current.delay! - currentDelta;
+        if (current.delay! > 0) continue;
+        currentDelta = -current.delay!;
         current.delay = 0.0;
       }
 
-      TrackEntry next = current.next;
+      TrackEntry? next = current.next;
       if (next != null) {
         // When the next entry's delay is passed, change to the next entry, preserving leftover time.
-        final double nextTime = current.trackLast - next.delay;
+        final double nextTime = current.trackLast! - next.delay!;
         if (nextTime >= 0) {
           next
             ..delay = 0.0
-            ..trackTime = nextTime + delta * next.timeScale;
-          current.trackTime += currentDelta;
+            ..trackTime = nextTime + delta * next.timeScale!;
+          current.trackTime = current.trackTime! + currentDelta;
           setCurrent(i, next, true);
-          while (next.mixingFrom != null) {
-            next.mixTime += currentDelta;
+          while (next!.mixingFrom != null) {
+            next.mixTime = next.mixTime! + currentDelta;
             next = next.mixingFrom;
           }
           continue;
         }
-      } else if (current.trackLast >= current.trackEnd &&
+      } else if (current.trackLast! >= current.trackEnd! &&
           current.mixingFrom == null) {
         tracks[i] = null;
-        queue.end(current);
+        queue!.end(current);
         disposeNext(current);
         continue;
       }
       if (current.mixingFrom != null && updateMixingFrom(current, delta)) {
         // End mixing from entries once all have completed.
-        TrackEntry from = current.mixingFrom;
+        TrackEntry? from = current.mixingFrom;
         current.mixingFrom = null;
         while (from != null) {
-          queue.end(from);
+          queue!.end(from);
           from = from.mixingFrom;
         }
       }
 
-      current.trackTime += currentDelta;
+      current.trackTime = current.trackTime! + currentDelta;
     }
 
-    queue.drain();
+    queue!.drain();
   }
 
   bool updateMixingFrom(TrackEntry to, double delta) {
-    final TrackEntry from = to.mixingFrom;
+    final TrackEntry? from = to.mixingFrom;
     if (from == null) return true;
 
     final bool finished = updateMixingFrom(from, delta);
 
     // Require mixTime > 0 to ensure the mixing from entry was applied at least once.
-    if (to.mixTime > 0 && (to.mixTime >= to.mixDuration || to.timeScale == 0)) {
+    if (to.mixTime! > 0 && (to.mixTime! >= to.mixDuration! || to.timeScale == 0)) {
       // Require totalAlpha == 0 to ensure mixing is complete, unless mixDuration == 0 (the transition is a single frame).
       if (from.totalAlpha == 0 || to.mixDuration == 0) {
         to
           ..mixingFrom = from.mixingFrom
           ..interruptAlpha = from.interruptAlpha;
-        queue.end(from);
+        queue!.end(from);
       }
       return finished;
     }
@@ -142,50 +143,49 @@ class AnimationState {
     from
       ..animationLast = from.nextAnimationLast
       ..trackLast = from.nextTrackLast
-      ..trackTime += delta * from.timeScale;
-    to.mixTime += delta * to.timeScale;
+      ..trackTime = from.trackTime! + delta * from.timeScale!;
+    to.mixTime = to.mixTime! + delta * to.timeScale!;
     return false;
   }
 
   bool apply(Skeleton skeleton) {
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     if (animationsChanged) _animationsChanged();
 
-    final List<Event> events = this.events;
-    final List<TrackEntry> tracks = this.tracks;
+    final List<Event?> events = this.events;
+    final List<TrackEntry?> tracks = this.tracks;
     bool applied = false;
 
     final int n = tracks.length;
     for (int i = 0; i < n; i++) {
-      final TrackEntry current = tracks[i];
-      if (current == null || current.delay > 0) continue;
+      final TrackEntry? current = tracks[i];
+      if (current == null || current.delay! > 0) continue;
       applied = true;
       final MixPose currentPose =
           i == 0 ? MixPose.Current : MixPose.CurrentLayered;
 
       // Apply mixing from entries first.
-      double mix = current.alpha;
+      double mix = current.alpha!;
       if (current.mixingFrom != null)
         mix *= applyMixingFrom(current, skeleton, currentPose);
-      else if (current.trackTime >= current.trackEnd && current.next == null)
+      else if (current.trackTime! >= current.trackEnd! && current.next == null)
         mix = 0.0;
 
       // Apply current entry.
-      final double animationLast = current.animationLast,
-          animationTime = current.getAnimationTime();
-      final int timelineCount = current.animation.timelines.length;
-      final List<Timeline> timelines = current.animation.timelines;
+      final double animationLast = current.animationLast!,
+          animationTime = current.getAnimationTime()!;
+      final int timelineCount = current.animation!.timelines.length;
+      final List<Timeline> timelines = current.animation!.timelines;
       if (mix == 1) {
         for (int ii = 0; ii < timelineCount; ii++)
           timelines[ii].apply(skeleton, animationLast, animationTime, events,
               1.0, MixPose.Setup, MixDirection.In);
       } else {
-        final Int32List timelineData = current.timelineData;
+        final Int32List timelineData = current.timelineData as Int32List;
 
         final bool firstFrame = current.timelinesRotation.isEmpty;
         if (firstFrame)
-          ArrayUtils.setArraySize(
-              current.timelinesRotation, timelineCount << 1, null);
+          current.timelinesRotation = ArrayUtils.copyWithNewArraySize(
+              current.timelinesRotation, timelineCount << 1, double.infinity);
         final Float32List timelinesRotation =
             Float32List.fromList(current.timelinesRotation);
 
@@ -210,13 +210,13 @@ class AnimationState {
         ..nextTrackLast = current.trackTime;
     }
 
-    queue.drain();
+    queue!.drain();
     return applied;
   }
 
   double applyMixingFrom(
       TrackEntry to, Skeleton skeleton, MixPose currentPose) {
-    final TrackEntry from = to.mixingFrom;
+    final TrackEntry from = to.mixingFrom!;
     if (from.mixingFrom != null) applyMixingFrom(from, skeleton, currentPose);
 
     double mix = 0.0;
@@ -225,28 +225,29 @@ class AnimationState {
       mix = 1.0;
       currentPose = MixPose.Setup;
     } else {
-      mix = to.mixTime / to.mixDuration;
+      mix = to.mixTime! / to.mixDuration!;
       if (mix > 1) mix = 1.0;
     }
 
-    final List<Event> events = mix < from.eventThreshold ? this.events : null;
-    final bool attachments = mix < from.attachmentThreshold,
-        drawOrder = mix < from.drawOrderThreshold;
-    final double animationLast = from.animationLast,
-        animationTime = from.getAnimationTime();
-    final int timelineCount = from.animation.timelines.length;
-    final List<Timeline> timelines = from.animation.timelines;
+    final List<Event?> events = mix < from.eventThreshold! ? this.events : <Event?>[];
+    final bool attachments = mix < from.attachmentThreshold!;
+    final bool drawOrder = mix < from.drawOrderThreshold!;
+    final double animationLast = from.animationLast!;
+    final double animationTime = from.getAnimationTime()!;
+    final List<Timeline> timelines = from.animation!.timelines;
     final Int32List timelineData = Int32List.fromList(from.timelineData);
+    final int timelineCount = timelineData.length;
     final List<TrackEntry> timelineDipMix = from.timelineDipMix;
 
     final bool firstFrame = from.timelinesRotation.isEmpty;
     if (firstFrame)
-      ArrayUtils.setArraySize(from.timelinesRotation, timelineCount << 1, 0.0);
+      from.timelinesRotation = ArrayUtils.copyWithNewArraySize(
+          from.timelinesRotation, timelineCount << 1, double.infinity);
     final Float32List timelinesRotation =
         Float32List.fromList(from.timelinesRotation);
 
     MixPose pose;
-    final double alphaDip = from.alpha * to.interruptAlpha,
+    final double alphaDip = from.alpha! * to.interruptAlpha!,
         alphaMix = alphaDip * (1 - mix);
 
     double alpha = 0.0;
@@ -272,10 +273,10 @@ class AnimationState {
           pose = MixPose.Setup;
           alpha = alphaDip;
           final TrackEntry dipMix = timelineDipMix[i];
-          alpha *= math.max(0, 1 - dipMix.mixTime / dipMix.mixDuration);
+          alpha *= math.max(0, 1 - dipMix.mixTime! / dipMix.mixDuration!);
           break;
       }
-      from.totalAlpha += alpha;
+      from.totalAlpha = from.totalAlpha! + alpha;
       if (timeline is RotateTimeline)
         applyRotateTimeline(timeline, skeleton, animationTime, alpha, pose,
             timelinesRotation, i << 1, firstFrame);
@@ -285,7 +286,7 @@ class AnimationState {
       }
     }
 
-    if (to.mixDuration > 0) queueEvents(from, animationTime);
+    if (to.mixDuration! > 0) queueEvents(from, animationTime);
     this.events.length = 0;
     from
       ..nextAnimationLast = animationTime
@@ -306,7 +307,7 @@ class AnimationState {
     if (firstFrame) timelinesRotation[i] = 0.0;
 
     if (alpha == 1) {
-      timeline.apply(skeleton, 0.0, time, null, 1.0, pose, MixDirection.In);
+      timeline.apply(skeleton, 0.0, time, <Event?>[], 1.0, pose, MixDirection.In);
       return;
     }
 
@@ -380,115 +381,114 @@ class AnimationState {
         r1 - (16384 - (16384.499999999996 - r1 / 360).toInt()) * 360;
   }
 
-  void queueEvents(TrackEntry entry, double animationTime) {
-    final double animationStart = entry.animationStart,
+  void queueEvents(TrackEntry entry, double? animationTime) {
+    final double? animationStart = entry.animationStart,
         animationEnd = entry.animationEnd;
-    final double duration = animationEnd - animationStart;
-    final double trackLastWrapped = entry.trackLast % duration;
+    final double duration = animationEnd! - animationStart!;
+    final double trackLastWrapped = entry.trackLast! % duration;
 
     // Queue events before complete.
-    final List<Event> events = this.events;
+    final List<Event?> events = this.events;
     int i = 0;
     final int n = events.length;
     for (; i < n; i++) {
-      final Event event = events[i];
-      if (event.time < trackLastWrapped) break;
-      if (event.time > animationEnd)
+      final Event event = events[i]!;
+      if (event.time! < trackLastWrapped) break;
+      if (event.time! > animationEnd)
         continue; // Discard events outside animation start/end.
-      queue.event(entry, event);
+      queue!.event(entry, event);
     }
 
     // Queue complete if completed a loop iteration or the animation.
     bool complete = false;
     if (entry.loop)
-      complete = duration == 0 || trackLastWrapped > entry.trackTime % duration;
+      complete = duration == 0 || trackLastWrapped > entry.trackTime! % duration;
     else
       complete =
-          animationTime >= animationEnd && entry.animationLast < animationEnd;
-    if (complete) queue.complete(entry);
+          animationTime! >= animationEnd && entry.animationLast! < animationEnd;
+    if (complete) queue!.complete(entry);
 
     // Queue events after complete.
     for (; i < n; i++) {
-      final Event event = events[i];
-      if (event.time < animationStart)
+      final Event event = events[i]!;
+      if (event.time! < animationStart)
         continue; // Discard events outside animation start/end.
-      queue.event(entry, events[i]);
+      queue!.event(entry, events[i]);
     }
   }
 
   void clearTracks() {
-    final bool oldDrainDisabled = queue.drainDisabled;
-    queue.drainDisabled = true;
+    final bool oldDrainDisabled = queue!.drainDisabled;
+    queue!.drainDisabled = true;
 
     final int n = tracks.length;
     for (int i = 0; i < n; i++) clearTrack(i);
     tracks.length = 0;
     queue
-      ..drainDisabled = oldDrainDisabled
+      ?..drainDisabled = oldDrainDisabled
       ..drain();
   }
 
   void clearTrack(int trackIndex) {
     if (trackIndex >= tracks.length) return;
-    final TrackEntry current = tracks[trackIndex];
+    final TrackEntry? current = tracks[trackIndex];
     if (current == null) return;
 
-    queue.end(current);
+    queue!.end(current);
 
     disposeNext(current);
 
     TrackEntry entry = current;
     for (;;) {
-      final TrackEntry from = entry.mixingFrom;
+      final TrackEntry? from = entry.mixingFrom;
       if (from == null) break;
-      queue.end(from);
+      queue!.end(from);
       entry.mixingFrom = null;
       entry = from;
     }
 
     tracks[current.trackIndex] = null;
 
-    queue.drain();
+    queue!.drain();
   }
 
-  void setCurrent(int index, TrackEntry current, bool interrupt) {
-    final TrackEntry from = expandToIndex(index);
+  void setCurrent(int index, TrackEntry? current, bool interrupt) {
+    final TrackEntry? from = expandToIndex(index);
     tracks[index] = current;
 
     if (from != null) {
-      if (interrupt) queue.interrupt(from);
+      if (interrupt) queue!.interrupt(from);
       current
-        ..mixingFrom = from
+        ?..mixingFrom = from
         ..mixTime = 0.0;
 
       // Store the interrupted mix percentage.
-      if (from.mixingFrom != null && from.mixDuration > 0)
-        current.interruptAlpha *= math.min(1, from.mixTime / from.mixDuration);
+      if (from.mixingFrom != null && from.mixDuration! > 0)
+        current!.interruptAlpha = current.interruptAlpha! * math.min(1, from.mixTime! / from.mixDuration!);
 
       // Reset rotation for mixing out, in case entry was mixed in.
       from.timelinesRotation.length = 0;
     }
 
-    queue.start(current);
+    queue!.start(current);
   }
 
-  TrackEntry setAnimation(int trackIndex, String animationName, bool loop) {
-    final Animation animation = data.skeletonData.findAnimation(animationName);
+  TrackEntry? setAnimation(int trackIndex, String animationName, bool loop) {
+    final Animation? animation = data.skeletonData.findAnimation(animationName);
     if (animation == null)
       throw StateError('Animation not found: $animationName');
     return setAnimationWith(trackIndex, animation, loop);
   }
 
-  TrackEntry setAnimationWith(int trackIndex, Animation animation, bool loop) {
-    if (animation == null) throw ArgumentError('animation cannot be null.');
+  TrackEntry? setAnimationWith(int trackIndex, Animation animation, bool loop) {
     bool interrupt = true;
-    TrackEntry current = expandToIndex(trackIndex);
+    TrackEntry? current = expandToIndex(trackIndex);
     if (current != null) {
       if (current.nextTrackLast == -1) {
         // Don't mix from an entry that was never applied.
         tracks[trackIndex] = current.mixingFrom;
         queue
-          ..interrupt(current)
+          ?..interrupt(current)
           ..end(current);
         disposeNext(current);
         current = current.mixingFrom;
@@ -496,15 +496,15 @@ class AnimationState {
       } else
         disposeNext(current);
     }
-    final TrackEntry entry = trackEntry(trackIndex, animation, loop, current);
+    final TrackEntry? entry = trackEntry(trackIndex, animation, loop, current);
     setCurrent(trackIndex, entry, interrupt);
-    queue.drain();
+    queue!.drain();
     return entry;
   }
 
   TrackEntry addAnimation(
       int trackIndex, String animationName, bool loop, double delay) {
-    final Animation animation = data.skeletonData.findAnimation(animationName);
+    final Animation? animation = data.skeletonData.findAnimation(animationName);
     if (animation == null)
       throw ArgumentError('Animation not found: $animationName');
     return addAnimationWith(trackIndex, animation, loop, delay);
@@ -512,28 +512,26 @@ class AnimationState {
 
   TrackEntry addAnimationWith(
       int trackIndex, Animation animation, bool loop, double delay) {
-    if (animation == null) throw ArgumentError('animation cannot be null.');
-
-    TrackEntry last = expandToIndex(trackIndex);
+    TrackEntry? last = expandToIndex(trackIndex);
     if (last != null) {
-      while (last.next != null) last = last.next;
+      while (last!.next != null) last = last.next;
     }
 
-    final TrackEntry entry = trackEntry(trackIndex, animation, loop, last);
+    final TrackEntry entry = trackEntry(trackIndex, animation, loop, last)!;
 
     if (last == null) {
       setCurrent(trackIndex, entry, true);
-      queue.drain();
+      queue!.drain();
     } else {
       last.next = entry;
       if (delay <= 0) {
-        final double duration = last.animationEnd - last.animationStart;
+        final double duration = last.animationEnd! - last.animationStart!;
         if (duration != 0) {
           if (last.loop)
-            delay += duration * (1 + (last.trackTime ~/ duration));
+            delay += duration * (1 + (last.trackTime! ~/ duration));
           else
             delay += duration;
-          delay -= data.getMix(last.animation, animation);
+          delay -= data.getMix(last.animation!, animation);
         } else
           delay = 0.0;
       }
@@ -543,10 +541,10 @@ class AnimationState {
     return entry;
   }
 
-  TrackEntry setEmptyAnimation(int trackIndex, double mixDuration) {
-    final TrackEntry entry =
+  TrackEntry? setEmptyAnimation(int trackIndex, double mixDuration) {
+    final TrackEntry? entry =
         setAnimationWith(trackIndex, AnimationState.emptyAnimation, false)
-          ..mixDuration = mixDuration
+          ?..mixDuration = mixDuration
           ..trackEnd = mixDuration;
     return entry;
   }
@@ -562,30 +560,31 @@ class AnimationState {
   }
 
   void setEmptyAnimations(double mixDuration) {
-    final bool oldDrainDisabled = queue.drainDisabled;
-    queue.drainDisabled = true;
+    final bool oldDrainDisabled = queue!.drainDisabled;
+    queue!.drainDisabled = true;
 
     final int n = tracks.length;
     for (int i = 0; i < n; i++) {
-      final TrackEntry current = tracks[i];
+      final TrackEntry? current = tracks[i];
       if (current != null) setEmptyAnimation(current.trackIndex, mixDuration);
     }
     queue
-      ..drainDisabled = oldDrainDisabled
+      ?..drainDisabled = oldDrainDisabled
       ..drain();
   }
 
-  TrackEntry expandToIndex(int index) {
+  TrackEntry? expandToIndex(int index) {
     if (index < tracks.length) return tracks[index];
-    ArrayUtils.ensureArrayCapacity(tracks, index - tracks.length + 1, null);
+    tracks = ArrayUtils.ensureArrayCapacity(
+        tracks, index - tracks.length + 1, null);
     tracks.length = index + 1;
     return null;
   }
 
-  TrackEntry trackEntry(
-      int trackIndex, Animation animation, bool loop, TrackEntry last) {
-    final TrackEntry entry = trackEntryPool.obtain()
-      ..trackIndex = trackIndex
+  TrackEntry? trackEntry(
+      int trackIndex, Animation animation, bool loop, TrackEntry? last) {
+    final TrackEntry? entry = trackEntryPool.obtain()
+      ?..trackIndex = trackIndex
       ..animation = animation
       ..loop = loop
       ..eventThreshold = 0.0
@@ -605,14 +604,14 @@ class AnimationState {
       ..interruptAlpha = 1.0
       ..mixTime = 0.0
       ..mixDuration =
-          last == null ? 0.0 : data.getMix(last.animation, animation);
+          last == null ? 0.0 : data.getMix(last.animation!, animation);
     return entry;
   }
 
   void disposeNext(TrackEntry entry) {
-    TrackEntry next = entry.next;
+    TrackEntry? next = entry.next;
     while (next != null) {
-      queue.dispose(next);
+      queue!.dispose(next);
       next = next.next;
     }
     entry.next = null;
@@ -626,23 +625,21 @@ class AnimationState {
 
     final int n = tracks.length;
     for (int i = 0; i < n; i++) {
-      final TrackEntry entry = tracks[i];
+      final TrackEntry? entry = tracks[i];
       if (entry != null) entry.setTimelineData(null, mixingTo, propertyIDs);
     }
   }
 
-  TrackEntry getCurrent(int trackIndex) {
+  TrackEntry? getCurrent(int trackIndex) {
     if (trackIndex >= tracks.length) return null;
     return tracks[trackIndex];
   }
 
   void addOnStartCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onStartCallbacks.add(callback);
   }
 
   void removeOnStartCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onStartCallbacks.indexOf(callback);
     if (index >= 0) onStartCallbacks.removeAt(index);
   }
@@ -651,12 +648,10 @@ class AnimationState {
       onStartCallbacks.length = 0;
 
   void addOnInterruptCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onInterruptCallbacks.add(callback);
   }
 
   void removeOnInterruptCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onInterruptCallbacks.indexOf(callback);
     if (index >= 0) onInterruptCallbacks.removeAt(index);
   }
@@ -665,12 +660,10 @@ class AnimationState {
       onInterruptCallbacks.length = 0;
 
   void addOnEndCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onEndCallbacks.add(callback);
   }
 
   void removeOnEndCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onEndCallbacks.indexOf(callback);
     if (index >= 0) onEndCallbacks.removeAt(index);
   }
@@ -679,12 +672,10 @@ class AnimationState {
       onEndCallbacks.length = 0;
 
   void addOnDisposeCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onDisposeCallbacks.add(callback);
   }
 
   void removeOnDisposeCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onDisposeCallbacks.indexOf(callback);
     if (index >= 0) onDisposeCallbacks.removeAt(index);
   }
@@ -693,12 +684,10 @@ class AnimationState {
       onDisposeCallbacks.length = 0;
 
   void addOnCompleteCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     onCompleteCallbacks.add(callback);
   }
 
   void removeOnCompleteCallback(TrackEntryCallback callback) {
-    if (callback == null) return;
     final int index = onCompleteCallbacks.indexOf(callback);
     if (index >= 0) onCompleteCallbacks.removeAt(index);
   }
@@ -707,12 +696,10 @@ class AnimationState {
       onCompleteCallbacks.length = 0;
 
   void addOnEventCallback(TrackEntryEventCallback callback) {
-    if (callback == null) return;
     onEventCallbacks.add(callback);
   }
 
   void removeOnEventCallback(TrackEntryEventCallback callback) {
-    if (callback == null) return;
     final int index = onEventCallbacks.indexOf(callback);
     if (index >= 0) onEventCallbacks.removeAt(index);
   }
@@ -721,29 +708,29 @@ class AnimationState {
       onEventCallbacks.length = 0;
 
   void clearListenerNotifications() {
-    queue.clear();
+    queue!.clear();
   }
 }
 
 class TrackEntry implements Poolable {
   final List<TrackEntry> timelineDipMix = <TrackEntry>[];
   final List<int> timelineData = <int>[];
-  final List<double> timelinesRotation = <double>[];
+  List<double> timelinesRotation = <double>[];
 
-  Animation animation;
-  TrackEntry next, mixingFrom;
-  TrackEntryCallback onStartCallback;
-  TrackEntryCallback onInterruptCallback;
-  TrackEntryCallback onEndCallback;
-  TrackEntryCallback onDisposeCallback;
-  TrackEntryCallback onCompleteCallback;
-  TrackEntryEventCallback onEventCallback;
-  int trackIndex;
-  bool loop;
-  double eventThreshold, attachmentThreshold, drawOrderThreshold;
-  double animationStart, animationEnd, animationLast, nextAnimationLast;
-  double delay, trackTime, trackLast, nextTrackLast, trackEnd, timeScale;
-  double alpha, mixTime, mixDuration, interruptAlpha, totalAlpha;
+  Animation? animation;
+  TrackEntry? next, mixingFrom;
+  TrackEntryCallback? onStartCallback;
+  TrackEntryCallback? onInterruptCallback;
+  TrackEntryCallback? onEndCallback;
+  TrackEntryCallback? onDisposeCallback;
+  TrackEntryCallback? onCompleteCallback;
+  TrackEntryEventCallback? onEventCallback;
+  late int trackIndex;
+  late bool loop;
+  double? eventThreshold, attachmentThreshold, drawOrderThreshold;
+  double? animationStart, animationEnd, animationLast, nextAnimationLast;
+  double? delay, trackTime, trackLast, nextTrackLast, trackEnd, timeScale;
+  double? alpha, mixTime, mixDuration, interruptAlpha, totalAlpha;
 
   @override
   void reset() {
@@ -762,22 +749,22 @@ class TrackEntry implements Poolable {
   }
 
   TrackEntry setTimelineData(
-      TrackEntry to, List<TrackEntry> mixingToArray, Set<int> propertyIDs) {
+      TrackEntry? to, List<TrackEntry> mixingToArray, Set<int> propertyIDs) {
     if (to != null) mixingToArray.add(to);
     final TrackEntry lastEntry = mixingFrom != null
-        ? mixingFrom.setTimelineData(this, mixingToArray, propertyIDs)
+        ? mixingFrom!.setTimelineData(this, mixingToArray, propertyIDs)
         : this;
     if (to != null) mixingToArray.removeLast();
 
     final List<TrackEntry> mixingTo = mixingToArray;
     final int mixingToLast = mixingToArray.length - 1;
-    final List<Timeline> timelines = animation.timelines;
-    final int timelinesCount = animation.timelines.length;
+    final List<Timeline> timelines = animation!.timelines;
+    final int timelinesCount = animation!.timelines.length;
     final Int32List timelineData = Int32List.fromList(
-        ArrayUtils.setArraySize(this.timelineData, timelinesCount, 0));
+        ArrayUtils.copyWithNewArraySize(this.timelineData, timelinesCount, -1));
     this.timelineDipMix.length = 0;
-    final List<TrackEntry> timelineDipMix =
-        ArrayUtils.setArraySize(this.timelineDipMix, timelinesCount, null);
+    final List<TrackEntry?> timelineDipMix = ArrayUtils.copyWithNewArraySize(
+        this.timelineDipMix, timelinesCount, null);
 
     outer:
     for (int i = 0; i < timelinesCount; i++) {
@@ -790,7 +777,7 @@ class TrackEntry implements Poolable {
         for (int ii = mixingToLast; ii >= 0; ii--) {
           final TrackEntry entry = mixingTo[ii];
           if (!entry.hasTimeline(id)) {
-            if (entry.mixDuration > 0) {
+            if (entry.mixDuration! > 0) {
               timelineData[i] = AnimationState.dipMix;
               timelineDipMix[i] = entry;
               continue outer;
@@ -804,20 +791,20 @@ class TrackEntry implements Poolable {
   }
 
   bool hasTimeline(int id) {
-    final List<Timeline> timelines = animation.timelines;
+    final List<Timeline> timelines = animation!.timelines;
     final int n = timelines.length;
     for (int i = 0; i < n; i++)
       if (timelines[i].getPropertyId() == id) return true;
     return false;
   }
 
-  double getAnimationTime() {
+  double? getAnimationTime() {
     if (loop) {
-      final double duration = animationEnd - animationStart;
+      final double duration = animationEnd! - animationStart!;
       if (duration == 0) return animationStart;
-      return (trackTime % duration) + animationStart;
+      return (trackTime! % duration) + animationStart!;
     }
-    return math.min(trackTime + animationStart, animationEnd);
+    return math.min(trackTime! + animationStart!, animationEnd!);
   }
 
   void setAnimationLast(double animationLast) {
@@ -825,7 +812,7 @@ class TrackEntry implements Poolable {
     nextAnimationLast = animationLast;
   }
 
-  bool isComplete() => trackTime >= animationEnd - animationStart;
+  bool isComplete() => trackTime! >= animationEnd! - animationStart!;
 
   void resetRotationDirections() {
     timelinesRotation.length = 0;
@@ -839,7 +826,7 @@ class EventQueue {
 
   EventQueue(this.animState);
 
-  void start(TrackEntry entry) {
+  void start(TrackEntry? entry) {
     objects..add(EventType.Start)..add(entry);
     animState.animationsChanged = true;
   }
@@ -861,7 +848,7 @@ class EventQueue {
     objects..add(EventType.Complete)..add(entry);
   }
 
-  void event(TrackEntry entry, Event event) {
+  void event(TrackEntry entry, Event? event) {
     objects..add(EventType.Event)..add(entry)..add(event);
   }
 
@@ -883,42 +870,43 @@ class EventQueue {
         animState.onEventCallbacks;
 
     for (int i = 0; i < objects.length; i += 2) {
-      final EventType type = objects[i] as EventType;
-      final TrackEntry entry = objects[i + 1] as TrackEntry;
+      final EventType? type = objects[i] as EventType?;
+      final TrackEntry? entry = objects[i + 1] as TrackEntry?;
       switch (type) {
+        case null:
         case EventType.Start:
-          if (entry.onStartCallback != null) entry.onStartCallback(entry);
+          if (entry!.onStartCallback != null) entry.onStartCallback!(entry);
           onStartCallbacks
               .forEach((TrackEntryCallback callback) => callback(entry));
           break;
         case EventType.Interrupt:
-          if (entry.onInterruptCallback != null)
-            entry.onInterruptCallback(entry);
+          if (entry!.onInterruptCallback != null)
+            entry.onInterruptCallback!(entry);
           onInterruptCallbacks
               .forEach((TrackEntryCallback callback) => callback(entry));
           break;
         case EventType.End:
         case EventType.Dispose:
           if (type == EventType.End) {
-            if (entry.onEndCallback != null) entry.onEndCallback(entry);
+            if (entry!.onEndCallback != null) entry.onEndCallback!(entry);
             onEndCallbacks
                 .forEach((TrackEntryCallback callback) => callback(entry));
           }
-          if (entry.onDisposeCallback != null) entry.onDisposeCallback(entry);
+          if (entry!.onDisposeCallback != null) entry.onDisposeCallback!(entry);
           onDisposeCallbacks
               .forEach((TrackEntryCallback callback) => callback(entry));
           animState.trackEntryPool.free(entry);
           break;
         case EventType.Complete:
-          if (entry.onCompleteCallback != null) entry.onCompleteCallback(entry);
+          if (entry!.onCompleteCallback != null) entry.onCompleteCallback!(entry);
           onCompleteCallbacks
               .forEach((TrackEntryCallback callback) => callback(entry));
           break;
         case EventType.Event:
-          final Event event = objects[i++ + 2] as Event;
+          final Event? event = objects[i++ + 2] as Event?;
 
-          if (entry.onEventCallback != null)
-            entry.onEventCallback(entry, event);
+          if (entry!.onEventCallback != null)
+            entry.onEventCallback!(entry, event);
           onEventCallbacks.forEach(
               (TrackEntryEventCallback callback) => callback(entry, event));
           break;
@@ -936,5 +924,5 @@ class EventQueue {
 
 enum EventType { Start, Interrupt, End, Dispose, Complete, Event }
 
-typedef void TrackEntryCallback(TrackEntry entry);
-typedef void TrackEntryEventCallback(TrackEntry entry, Event event);
+typedef void TrackEntryCallback(TrackEntry? entry);
+typedef void TrackEntryEventCallback(TrackEntry? entry, Event? event);

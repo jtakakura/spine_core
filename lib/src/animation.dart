@@ -33,16 +33,12 @@ part of spine_core;
 class Animation {
   final String name;
   final List<Timeline> timelines;
-  double duration;
+  final double duration;
 
-  Animation(this.name, this.timelines, this.duration) {
-    if (name == null) throw ArgumentError('name cannot be null.');
-    if (timelines == null) throw ArgumentError('timelines cannot be null.');
-  }
+  const Animation(this.name, this.timelines, this.duration);
 
   void apply(Skeleton skeleton, double lastTime, double time, bool loop,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction) {
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
 
     if (loop && duration != 0) {
       time %= duration;
@@ -55,13 +51,13 @@ class Animation {
           .apply(skeleton, lastTime, time, events, alpha, pose, direction);
   }
 
-  static int binarySearch(List<double> values, [double target, int step = 1]) {
+  static int binarySearch(List<double> values, [double? target, int step = 1]) {
     int low = 0;
     int high = values.length ~/ step - 2;
     if (high == 0) return step;
     int current = high >> 1;
     for (;;) {
-      if (values[(current + 1) * step] <= target)
+      if (values[(current + 1) * step] <= target!)
         low = current + 1;
       else
         high = current;
@@ -70,16 +66,16 @@ class Animation {
     }
   }
 
-  static int linearSearch(List<double> values, [double target, int step = 1]) {
+  static int linearSearch(List<double> values, [double? target, int step = 1]) {
     for (int i = 0; i <= values.length - step; i += step)
-      if (values[i] > target) return i;
+      if (values[i] > target!) return i;
     return -1;
   }
 }
 
 abstract class Timeline {
   void apply(Skeleton skeleton, double lastTime, double time,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction);
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction);
   int getPropertyId();
 }
 
@@ -196,7 +192,7 @@ class RotateTimeline extends CurveTimeline {
   static const int prevTime = -2, prevRotation = -1;
   static const int rotation = 1;
 
-  int boneIndex;
+  late int boneIndex;
   final Float32List frames; // time, degrees, ...
 
   RotateTimeline(int frameCount)
@@ -214,7 +210,7 @@ class RotateTimeline extends CurveTimeline {
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction) {
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
     final Bone bone = skeleton.bones[boneIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
@@ -223,7 +219,7 @@ class RotateTimeline extends CurveTimeline {
       } else if (pose == MixPose.Current) {
         double r = bone.data.rotation - bone.rotation;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-        bone.rotation += r * alpha;
+        bone.rotation = bone.rotation + r * alpha;
       }
       return;
     }
@@ -238,7 +234,7 @@ class RotateTimeline extends CurveTimeline {
             frames[frames.length + RotateTimeline.prevRotation] -
             bone.rotation;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-        bone.rotation += r * alpha;
+        bone.rotation = bone.rotation + r * alpha;
       }
       return;
     }
@@ -263,7 +259,7 @@ class RotateTimeline extends CurveTimeline {
     } else {
       r = bone.data.rotation + r - bone.rotation;
       r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
-      bone.rotation += r * alpha;
+      bone.rotation = bone.rotation + r * alpha;
     }
   }
 }
@@ -274,7 +270,7 @@ class TranslateTimeline extends CurveTimeline {
   static const int x = 1, y = 2;
 
   final Float32List frames;
-  int boneIndex;
+  late int boneIndex;
 
   TranslateTimeline(int frameCount)
       : frames = Float32List(frameCount * TranslateTimeline.entries),
@@ -292,7 +288,7 @@ class TranslateTimeline extends CurveTimeline {
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction) {
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
     final Bone bone = skeleton.bones[boneIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
@@ -349,7 +345,7 @@ class ScaleTimeline extends TranslateTimeline {
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction) {
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
     final Bone bone = skeleton.bones[boneIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
@@ -393,7 +389,7 @@ class ScaleTimeline extends TranslateTimeline {
         ..scaleX = x
         ..scaleY = y;
     } else {
-      double bx = 0.0, by = 0.0;
+      double? bx = 0.0, by = 0.0;
       if (pose == MixPose.Setup) {
         bx = bone.data.scaleX;
         by = bone.data.scaleY;
@@ -424,7 +420,7 @@ class ShearTimeline extends TranslateTimeline {
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction) {
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
     final Bone bone = skeleton.bones[boneIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
@@ -483,7 +479,7 @@ class ColorTimeline extends CurveTimeline {
   static const int r = 1, g = 2, b = 3, a = 4;
 
   final Float32List frames;
-  int slotIndex;
+  late int slotIndex;
 
   ColorTimeline(int frameCount)
       : frames = Float32List(frameCount * ColorTimeline.entries),
@@ -504,15 +500,15 @@ class ColorTimeline extends CurveTimeline {
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction) {
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
     final Slot slot = skeleton.slots[slotIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
       if (pose == MixPose.Setup) {
         slot.color.setFromColor(slot.data.color);
       } else if (pose == MixPose.Current) {
-        final Color color = slot.color, setup = slot.data.color;
-        color.add((setup.r - color.r) * alpha, (setup.g - color.g) * alpha,
+        final Color? color = slot.color, setup = slot.data.color;
+        color!.add((setup!.r - color.r) * alpha, (setup.g - color.g) * alpha,
             (setup.b - color.b) * alpha, (setup.a - color.a) * alpha);
       }
       return;
@@ -567,7 +563,7 @@ class TwoColorTimeline extends CurveTimeline {
   static const int prevR2 = -3, prevG2 = -2, prevB2 = -1;
   static const int r = 1, g = 2, b = 3, a = 4, r2 = 5, g2 = 6, b2 = 7;
 
-  int slotIndex;
+  late int slotIndex;
   final Float32List frames;
 
   TwoColorTimeline(int frameCount)
@@ -592,24 +588,24 @@ class TwoColorTimeline extends CurveTimeline {
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction) {
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
     final Slot slot = skeleton.slots[slotIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
       if (pose == MixPose.Setup) {
         slot.color.setFromColor(slot.data.color);
-        slot.darkColor.setFromColor(slot.data.darkColor);
+        slot.darkColor!.setFromColor(slot.data.darkColor!);
       } else if (pose == MixPose.Current) {
-        final Color light = slot.color,
+        final Color? light = slot.color,
             dark = slot.darkColor,
             setupLight = slot.data.color,
             setupDark = slot.data.darkColor;
-        light.add(
-            (setupLight.r - light.r) * alpha,
+        light!.add(
+            (setupLight!.r - light.r) * alpha,
             (setupLight.g - light.g) * alpha,
             (setupLight.b - light.b) * alpha,
             (setupLight.a - light.a) * alpha);
-        dark.add((setupDark.r - dark.r) * alpha, (setupDark.g - dark.g) * alpha,
+        dark!.add((setupDark!.r - dark.r) * alpha, (setupDark.g - dark.g) * alpha,
             (setupDark.b - dark.b) * alpha, 0.0);
       }
       return;
@@ -654,16 +650,16 @@ class TwoColorTimeline extends CurveTimeline {
     }
     if (alpha == 1) {
       slot.color.set(r, g, b, a);
-      slot.darkColor.set(r2, g2, b2, 1.0);
+      slot.darkColor!.set(r2, g2, b2, 1.0);
     } else {
-      final Color light = slot.color, dark = slot.darkColor;
+      final Color? light = slot.color, dark = slot.darkColor;
       if (pose == MixPose.Setup) {
-        light.setFromColor(slot.data.color);
-        dark.setFromColor(slot.data.darkColor);
+        light!.setFromColor(slot.data.color);
+        dark!.setFromColor(slot.data.darkColor!);
       }
-      light.add((r - light.r) * alpha, (g - light.g) * alpha,
+      light!.add((r - light.r) * alpha, (g - light.g) * alpha,
           (b - light.b) * alpha, (a - light.a) * alpha);
-      dark.add((r2 - dark.r) * alpha, (g2 - dark.g) * alpha,
+      dark!.add((r2 - dark.r) * alpha, (g2 - dark.g) * alpha,
           (b2 - dark.b) * alpha, 0.0);
     }
   }
@@ -671,29 +667,29 @@ class TwoColorTimeline extends CurveTimeline {
 
 class AttachmentTimeline implements Timeline {
   final Float32List frames;
-  final List<String> attachmentNames;
-  int slotIndex;
+  final List<String?> attachmentNames;
+  int? slotIndex;
 
   AttachmentTimeline(int frameCount)
       : frames = Float32List(frameCount),
-        attachmentNames = List<String>(frameCount);
+        attachmentNames = List<String?>.filled(frameCount, null, growable: false);
 
   @override
-  int getPropertyId() => (TimelineType.Attachment.index << 24) + slotIndex;
+  int getPropertyId() => (TimelineType.Attachment.index << 24) + slotIndex!;
 
   int getFrameCount() => frames.length;
 
-  void setFrame(int frameIndex, double time, String attachmentName) {
+  void setFrame(int frameIndex, double time, String? attachmentName) {
     frames[frameIndex] = time;
     attachmentNames[frameIndex] = attachmentName;
   }
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction) {
-    final Slot slot = skeleton.slots[slotIndex];
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
+    final Slot slot = skeleton.slots[slotIndex!];
     if (direction == MixDirection.Out && pose == MixPose.Setup) {
-      final String attachmentName = slot.data.attachmentName;
+      final String? attachmentName = slot.data.attachmentName;
       slot.setAttachment(attachmentName == null
           ? null
           : skeleton.getAttachment(slotIndex, attachmentName));
@@ -703,7 +699,7 @@ class AttachmentTimeline implements Timeline {
     final Float32List frames = this.frames;
     if (time < frames[0]) {
       if (pose == MixPose.Setup) {
-        final String attachmentName = slot.data.attachmentName;
+        final String? attachmentName = slot.data.attachmentName;
         slot.setAttachment(attachmentName == null
             ? null
             : skeleton.getAttachment(slotIndex, attachmentName));
@@ -717,8 +713,8 @@ class AttachmentTimeline implements Timeline {
     else
       frameIndex = Animation.binarySearch(frames, time, 1) - 1;
 
-    final String attachmentName = attachmentNames[frameIndex];
-    skeleton.slots[slotIndex].setAttachment(attachmentName == null
+    final String? attachmentName = attachmentNames[frameIndex];
+    skeleton.slots[slotIndex!].setAttachment(attachmentName == null
         ? null
         : skeleton.getAttachment(slotIndex, attachmentName));
   }
@@ -726,29 +722,29 @@ class AttachmentTimeline implements Timeline {
 
 class DeformTimeline extends CurveTimeline {
   final Float32List frames;
-  final List<Float32List> frameVertices;
-  int slotIndex;
-  VertexAttachment attachment;
+  final List<Float32List?> frameVertices;
+  late int slotIndex;
+  VertexAttachment? attachment;
 
   DeformTimeline(int frameCount)
       : frames = Float32List(frameCount),
-        frameVertices = List<Float32List>(frameCount),
+        frameVertices = List<Float32List?>.filled(frameCount, null, growable: false),
         super(frameCount);
 
   @override
   int getPropertyId() =>
-      (TimelineType.Deform.index << 27) + attachment.id + slotIndex;
+      (TimelineType.Deform.index << 27) + attachment!.id + slotIndex;
 
-  void setFrame(int frameIndex, double time, Float32List vertices) {
+  void setFrame(int frameIndex, double time, Float32List? vertices) {
     frames[frameIndex] = time;
     frameVertices[frameIndex] = vertices;
   }
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
-      List<Event> events, double alpha, MixPose pose, MixDirection direction) {
+      List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
     final Slot slot = skeleton.slots[slotIndex];
-    final Attachment slotAttachment = slot.getAttachment();
+    final Attachment? slotAttachment = slot.getAttachment();
 
     if (slotAttachment is! VertexAttachment) return;
 
@@ -759,8 +755,8 @@ class DeformTimeline extends CurveTimeline {
         List<double>.from(slot.attachmentVertices);
     if (verticesArray.isEmpty) alpha = 1.0;
 
-    final List<Float32List> frameVertices = this.frameVertices;
-    final int vertexCount = frameVertices[0].length;
+    final List<Float32List?> frameVertices = this.frameVertices;
+    final int vertexCount = frameVertices[0]!.length;
 
     final Float32List frames = this.frames;
     if (time < frames[0]) {
@@ -772,10 +768,10 @@ class DeformTimeline extends CurveTimeline {
           return;
         }
         final Float32List vertices = Float32List.fromList(
-            ArrayUtils.setArraySize(verticesArray, vertexCount, 0.0));
+            ArrayUtils.copyWithNewArraySize(verticesArray, vertexCount, double.infinity));
         if (vertexAttachment.bones == null) {
           // Unweighted vertex positions.
-          final Float32List setupVertices = vertexAttachment.vertices;
+          final Float32List setupVertices = vertexAttachment.vertices!;
           for (int i = 0; i < vertexCount; i++)
             vertices[i] += (setupVertices[i] - vertices[i]) * alpha;
         } else {
@@ -787,17 +783,18 @@ class DeformTimeline extends CurveTimeline {
       return;
     }
 
-    final Float32List vertices = Float32List.fromList(
-        ArrayUtils.setArraySize(verticesArray, vertexCount, 0.0));
+    Float32List vertices = Float32List.fromList(
+        ArrayUtils.copyWithNewArraySize(verticesArray, vertexCount, double.infinity));
     if (time >= frames[frames.length - 1]) {
       // Time is after last frame.
-      final Float32List lastVertices = frameVertices[frames.length - 1];
+      final Float32List lastVertices = frameVertices[frames.length - 1]!;
       if (alpha == 1) {
-        ArrayUtils.arrayCopy(lastVertices, 0, vertices, 0, vertexCount);
+        vertices = ArrayUtils.arrayCopyWithGrowth(
+            lastVertices, 0, vertices, 0, vertexCount, double.infinity) as Float32List;
       } else if (pose == MixPose.Setup) {
         if (vertexAttachment.bones == null) {
           // Unweighted vertex positions, with alpha.
-          final Float32List setupVertices = vertexAttachment.vertices;
+          final Float32List setupVertices = vertexAttachment.vertices!;
           for (int i = 0; i < vertexCount; i++) {
             final double setup = setupVertices[i];
             vertices[i] = setup + (lastVertices[i] - setup) * alpha;
@@ -816,39 +813,39 @@ class DeformTimeline extends CurveTimeline {
 
     // Interpolate between the previous frame and the current frame.
     final int frame = Animation.binarySearch(frames, time);
-    final Float32List prevVertices = frameVertices[frame - 1];
-    final Float32List nextVertices = frameVertices[frame];
+    final Float32List? prevVertices = frameVertices[frame - 1];
+    final Float32List? nextVertices = frameVertices[frame];
     final double frameTime = frames[frame];
     final double percent = getCurvePercent(
         frame - 1, 1 - (time - frameTime) / (frames[frame - 1] - frameTime));
 
     if (alpha == 1) {
       for (int i = 0; i < vertexCount; i++) {
-        final double prev = prevVertices[i];
-        vertices[i] = prev + (nextVertices[i] - prev) * percent;
+        final double prev = prevVertices![i];
+        vertices[i] = prev + (nextVertices![i] - prev) * percent;
       }
     } else if (pose == MixPose.Setup) {
       if (vertexAttachment.bones == null) {
         // Unweighted vertex positions, with alpha.
-        final Float32List setupVertices = vertexAttachment.vertices;
+        final Float32List? setupVertices = vertexAttachment.vertices;
         for (int i = 0; i < vertexCount; i++) {
-          final double prev = prevVertices[i], setup = setupVertices[i];
+          final double prev = prevVertices![i], setup = setupVertices![i];
           vertices[i] = setup +
-              (prev + (nextVertices[i] - prev) * percent - setup) * alpha;
+              (prev + (nextVertices![i] - prev) * percent - setup) * alpha;
         }
       } else {
         // Weighted deform offsets, with alpha.
         for (int i = 0; i < vertexCount; i++) {
-          final double prev = prevVertices[i];
-          vertices[i] = (prev + (nextVertices[i] - prev) * percent) * alpha;
+          final double prev = prevVertices![i];
+          vertices[i] = (prev + (nextVertices![i] - prev) * percent) * alpha;
         }
       }
     } else {
       // Vertex positions or deform offsets, with alpha.
       for (int i = 0; i < vertexCount; i++) {
-        final double prev = prevVertices[i];
+        final double prev = prevVertices![i];
         vertices[i] +=
-            (prev + (nextVertices[i] - prev) * percent - vertices[i]) * alpha;
+            (prev + (nextVertices![i] - prev) * percent - vertices[i]) * alpha;
       }
     }
   }
@@ -856,11 +853,11 @@ class DeformTimeline extends CurveTimeline {
 
 class EventTimeline extends Timeline {
   final Float32List frames;
-  final List<Event> events;
+  final List<Event?> events;
 
   EventTimeline(int frameCount)
       : frames = Float32List(frameCount),
-        events = List<Event>(frameCount);
+        events = List<Event?>.filled(frameCount, null, growable: false);
 
   @override
   int getPropertyId() => TimelineType.Event.index << 24;
@@ -868,7 +865,7 @@ class EventTimeline extends Timeline {
   int getFrameCount() => frames.length;
 
   void setFrame(int frameIndex, Event event) {
-    frames[frameIndex] = event.time;
+    frames[frameIndex] = event.time!;
     events[frameIndex] = event;
   }
 
@@ -877,11 +874,11 @@ class EventTimeline extends Timeline {
       Skeleton skeleton,
       double lastTime,
       double time,
-      List<Event> firedEvents,
+      List<Event?> firedEvents,
       double alpha,
       MixPose pose,
       MixDirection direction) {
-    if (firedEvents == null) return;
+    if (firedEvents.isEmpty) return;
     final Float32List frames = this.frames;
     final int frameCount = this.frames.length;
 
@@ -913,18 +910,18 @@ class EventTimeline extends Timeline {
 
 class DrawOrderTimeline implements Timeline {
   final Float32List frames;
-  final List<Int32List> drawOrders;
+  final List<Int32List?> drawOrders;
 
   DrawOrderTimeline(int frameCount)
       : frames = Float32List(frameCount),
-        drawOrders = List<Int32List>(frameCount);
+        drawOrders = List<Int32List?>.filled(frameCount, null, growable: false);
 
   @override
   int getPropertyId() => TimelineType.DrawOrder.index << 24;
 
   int getFrameCount() => frames.length;
 
-  void setFrame(int frameIndex, double time, Int32List drawOrder) {
+  void setFrame(int frameIndex, double time, Int32List? drawOrder) {
     frames[frameIndex] = time;
     drawOrders[frameIndex] = drawOrder;
   }
@@ -934,23 +931,23 @@ class DrawOrderTimeline implements Timeline {
       Skeleton skeleton,
       double lastTime,
       double time,
-      List<Event> firedEvents,
+      List<Event?> firedEvents,
       double alpha,
       MixPose pose,
       MixDirection direction) {
-    final List<Slot> drawOrder = skeleton.drawOrder;
+    List<Slot> drawOrder = skeleton.drawOrder;
     final List<Slot> slots = skeleton.slots;
     if (direction == MixDirection.Out && pose == MixPose.Setup) {
-      ArrayUtils.arrayCopy(
-          skeleton.slots, 0, skeleton.drawOrder, 0, skeleton.slots.length);
+      skeleton.drawOrder = ArrayUtils.arrayCopyWithGrowth(skeleton.slots, 0,
+          skeleton.drawOrder, 0, skeleton.slots.length, Slot.empty());
       return;
     }
 
     final Float32List frames = this.frames;
     if (time < frames[0]) {
       if (pose == MixPose.Setup)
-        ArrayUtils.arrayCopy(
-            skeleton.slots, 0, skeleton.drawOrder, 0, skeleton.slots.length);
+        skeleton.drawOrder = ArrayUtils.arrayCopyWithGrowth(skeleton.slots, 0,
+            skeleton.drawOrder, 0, skeleton.slots.length, Slot.empty());
       return;
     }
 
@@ -960,9 +957,10 @@ class DrawOrderTimeline implements Timeline {
     else
       frame = Animation.binarySearch(frames, time) - 1;
 
-    final Int32List drawOrderToSetupIndex = drawOrders[frame];
+    final Int32List? drawOrderToSetupIndex = drawOrders[frame];
     if (drawOrderToSetupIndex == null)
-      ArrayUtils.arrayCopy(slots, 0, drawOrder, 0, slots.length);
+      drawOrder = ArrayUtils.arrayCopyWithGrowth(
+          slots, 0, drawOrder, 0, slots.length, Slot.empty());
     else {
       final int n = drawOrderToSetupIndex.length;
       for (int i = 0; i < n; i++)
@@ -977,7 +975,7 @@ class IkConstraintTimeline extends CurveTimeline {
   static const int mix = 1, bendDirection = 2;
 
   final Float32List frames;
-  int ikConstraintIndex;
+  late int ikConstraintIndex;
 
   IkConstraintTimeline(int frameCount)
       : frames = Float32List(frameCount * IkConstraintTimeline.entries),
@@ -1000,7 +998,7 @@ class IkConstraintTimeline extends CurveTimeline {
       Skeleton skeleton,
       double lastTime,
       double time,
-      List<Event> firedEvents,
+      List<Event?> firedEvents,
       double alpha,
       MixPose pose,
       MixDirection direction) {
@@ -1029,9 +1027,9 @@ class IkConstraintTimeline extends CurveTimeline {
                   alpha
           ..bendDirection = direction == MixDirection.Out
               ? constraint.data.bendDirection
-              : frames[frames.length + IkConstraintTimeline.prevBendDirection];
+              : frames[frames.length + IkConstraintTimeline.prevBendDirection] as int;
       } else {
-        constraint.mix +=
+        constraint.mix = constraint.mix +
             (frames[frames.length + IkConstraintTimeline.prevMix] -
                     constraint.mix) *
                 alpha;
@@ -1063,9 +1061,9 @@ class IkConstraintTimeline extends CurveTimeline {
                 alpha
         ..bendDirection = direction == MixDirection.Out
             ? constraint.data.bendDirection
-            : frames[frame + IkConstraintTimeline.prevBendDirection];
+            : frames[frame + IkConstraintTimeline.prevBendDirection] as int;
     } else {
-      constraint.mix += (mix +
+      constraint.mix = constraint.mix + (mix +
               (frames[frame + IkConstraintTimeline.mix] - mix) * percent -
               constraint.mix) *
           alpha;
@@ -1086,7 +1084,7 @@ class TransformConstraintTimeline extends CurveTimeline {
   static const int rotate = 1, translate = 2, scale = 3, shear = 4;
 
   final Float32List frames;
-  int transformConstraintIndex;
+  late int transformConstraintIndex;
 
   TransformConstraintTimeline(int frameCount)
       : frames = Float32List(frameCount * TransformConstraintTimeline.entries),
@@ -1111,7 +1109,7 @@ class TransformConstraintTimeline extends CurveTimeline {
       Skeleton skeleton,
       double lastTime,
       double time,
-      List<Event> firedEvents,
+      List<Event?> firedEvents,
       double alpha,
       MixPose pose,
       MixDirection direction) {
@@ -1197,7 +1195,7 @@ class PathConstraintPositionTimeline extends CurveTimeline {
   static const int value = 1;
 
   final Float32List frames;
-  int pathConstraintIndex;
+  late int pathConstraintIndex;
 
   PathConstraintPositionTimeline(int frameCount)
       : frames =
@@ -1219,7 +1217,7 @@ class PathConstraintPositionTimeline extends CurveTimeline {
       Skeleton skeleton,
       double lastTime,
       double time,
-      List<Event> firedEvents,
+      List<Event?> firedEvents,
       double alpha,
       MixPose pose,
       MixDirection direction) {
@@ -1230,7 +1228,7 @@ class PathConstraintPositionTimeline extends CurveTimeline {
       if (pose == MixPose.Setup) {
         constraint.position = constraint.data.position;
       } else if (pose == MixPose.Current) {
-        constraint.position +=
+        constraint.position = constraint.position +
             (constraint.data.position - constraint.position) * alpha;
       }
       return;
@@ -1261,7 +1259,7 @@ class PathConstraintPositionTimeline extends CurveTimeline {
       constraint.position = constraint.data.position +
           (position - constraint.data.position) * alpha;
     else
-      constraint.position += (position - constraint.position) * alpha;
+      constraint.position = constraint.position + (position - constraint.position) * alpha;
   }
 }
 
@@ -1277,7 +1275,7 @@ class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
       Skeleton skeleton,
       double lastTime,
       double time,
-      List<Event> firedEvents,
+      List<Event?> firedEvents,
       double alpha,
       MixPose pose,
       MixDirection direction) {
@@ -1288,7 +1286,7 @@ class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
       if (pose == MixPose.Setup) {
         constraint.spacing = constraint.data.spacing;
       } else if (pose == MixPose.Current) {
-        constraint.spacing +=
+        constraint.spacing = constraint.spacing +
             (constraint.data.spacing - constraint.spacing) * alpha;
       }
       return;
@@ -1320,7 +1318,7 @@ class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
       constraint.spacing =
           constraint.data.spacing + (spacing - constraint.data.spacing) * alpha;
     else
-      constraint.spacing += (spacing - constraint.spacing) * alpha;
+      constraint.spacing = constraint.spacing + (spacing - constraint.spacing) * alpha;
   }
 }
 
@@ -1330,7 +1328,7 @@ class PathConstraintMixTimeline extends CurveTimeline {
   static const int rotate = 1, translate = 2;
 
   final Float32List frames;
-  int pathConstraintIndex;
+  late int pathConstraintIndex;
 
   PathConstraintMixTimeline(int frameCount)
       : frames = Float32List(frameCount * PathConstraintMixTimeline.entries),
@@ -1353,7 +1351,7 @@ class PathConstraintMixTimeline extends CurveTimeline {
       Skeleton skeleton,
       double lastTime,
       double time,
-      List<Event> firedEvents,
+      List<Event?> firedEvents,
       double alpha,
       MixPose pose,
       MixDirection direction) {

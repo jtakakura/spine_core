@@ -34,7 +34,7 @@ class ClippingAttachment extends VertexAttachment {
   // Nonessential.
   final Color color = Color(0.2275, 0.2275, 0.8078, 1.0); // ce3a3aff
 
-  SlotData endSlot;
+  SlotData? endSlot;
 
-  ClippingAttachment(String name) : super(name);
+  ClippingAttachment(String? name) : super(name);
 }

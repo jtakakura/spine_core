@@ -35,13 +35,13 @@ class Bone implements Updatable {
   final Skeleton skeleton;
   final List<Bone> children = <Bone>[];
 
-  Bone parent;
+  Bone? parent;
 
   double x = 0.0,
       y = 0.0,
       rotation = 0.0,
-      scaleX = 0.0,
-      scaleY = 0.0,
+      scaleX = 1.0,
+      scaleY = 1.0,
       shearX = 0.0,
       shearY = 0.0;
   double ax = 0.0,
@@ -59,10 +59,10 @@ class Bone implements Updatable {
   bool sorted = false;
 
   Bone(this.data, this.skeleton, this.parent) {
-    if (data == null) throw ArgumentError('data cannot be null.');
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     setToSetupPose();
   }
+
+  factory Bone.empty() => Bone(BoneData.empty(), Skeleton.empty(), null);
 
   @override
   void update() {
@@ -111,9 +111,9 @@ class Bone implements Updatable {
       return;
     }
 
-    double pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
-    worldX = pa * x + pb * y + parent.worldX;
-    worldY = pc * x + pd * y + parent.worldY;
+    double pa = parent!.a, pb = parent!.b, pc = parent!.c, pd = parent!.d;
+    worldX = pa * x + pb * y + parent!.worldX;
+    worldY = pc * x + pd * y + parent!.worldY;
 
     switch (data.transformMode) {
       case TransformMode.Normal:
@@ -228,7 +228,7 @@ class Bone implements Updatable {
 
   void updateAppliedTransform() {
     appliedValid = true;
-    final Bone parent = this.parent;
+    final Bone? parent = this.parent;
     if (parent == null) {
       ax = worldX;
       ay = worldY;
@@ -278,9 +278,9 @@ class Bone implements Updatable {
   }
 
   Vector2 localToWorld(Vector2 local) {
-    final double x = local.x, y = local.y;
+    final double? x = local.x, y = local.y;
     local
-      ..x = x * a + y * b + worldX
+      ..x = x! * a + y! * b + worldX
       ..y = x * c + y * d + worldY;
     return local;
   }

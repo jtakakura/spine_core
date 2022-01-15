@@ -31,12 +31,12 @@
 part of spine_core;
 
 class PathConstraint extends Constraint {
-  static final int none = -1, before = -2, after = -3;
-  static final double epsilon = 0.00001;
+  static const int none = -1, before = -2, after = -3;
+  static const double epsilon = 0.00001;
 
   final PathConstraintData data;
   final List<Bone> bones = <Bone>[];
-  Slot target;
+  Slot? target;
   double position = 0.0, spacing = 0.0, rotateMix = 0.0, translateMix = 0.0;
 
   Float32List spaces = Float32List(0), positions = Float32List(0);
@@ -46,12 +46,10 @@ class PathConstraint extends Constraint {
   Float32List segments = Float32List(10);
 
   PathConstraint(this.data, Skeleton skeleton) {
-    if (data == null) throw ArgumentError('data cannot be null.');
-    if (skeleton == null) throw ArgumentError('skeleton cannot be null.');
     final int n = data.bones.length;
     for (int i = 0; i < n; i++)
-      bones.add(skeleton.findBone(data.bones[i].name));
-    target = skeleton.findSlot(data.target.name);
+      bones.add(skeleton.findBone(data.bones[i].name)!);
+    target = skeleton.findSlot(data.target!.name);
     position = data.position;
     spacing = data.spacing;
     rotateMix = data.rotateMix;
@@ -64,29 +62,31 @@ class PathConstraint extends Constraint {
 
   @override
   void update() {
-    if (target.getAttachment() is! PathAttachment) return;
-    final PathAttachment attachment = target.getAttachment();
+    if (target!.getAttachment() is! PathAttachment) return;
+    final PathAttachment? attachment = target!.getAttachment() as PathAttachment?;
 
-    final double rotateMix = this.rotateMix, translateMix = this.translateMix;
-    final bool translate = translateMix > 0, rotate = rotateMix > 0;
+    final double? rotateMix = this.rotateMix, translateMix = this.translateMix;
+    final bool translate = translateMix! > 0, rotate = rotateMix! > 0;
     if (!translate && !rotate) return;
 
     final PathConstraintData data = this.data;
-    final SpacingMode spacingMode = data.spacingMode;
+    final SpacingMode? spacingMode = data.spacingMode;
     final bool lengthSpacing = spacingMode == SpacingMode.Length;
-    final RotateMode rotateMode = data.rotateMode;
+    final RotateMode? rotateMode = data.rotateMode;
     final bool tangents = rotateMode == RotateMode.Tangent,
         scale = rotateMode == RotateMode.ChainScale;
     final int boneCount = this.bones.length,
         spacesCount = tangents ? boneCount : boneCount + 1;
     final List<Bone> bones = this.bones;
     final Float32List spaces =
-        ArrayUtils.setArraySize(this.spaces, spacesCount, 0.0);
-    Float32List lengths;
-    final double spacing = this.spacing;
+        ArrayUtils.copyWithNewArraySize(this.spaces, spacesCount, double.infinity)
+            as Float32List;
+    late Float32List lengths;
+    final double? spacing = this.spacing;
     if (scale || lengthSpacing) {
       if (scale)
-        lengths = ArrayUtils.setArraySize(this.lengths, boneCount, 0.0);
+        lengths = ArrayUtils.copyWithNewArraySize(this.lengths, boneCount, double.infinity)
+            as Float32List;
       final int n = spacesCount - 1;
       for (int i = 0; i < n;) {
         final Bone bone = bones[i];
@@ -98,22 +98,22 @@ class PathConstraint extends Constraint {
           final double x = setupLength * bone.a, y = setupLength * bone.c;
           final double length = math.sqrt(x * x + y * y);
           if (scale) lengths[i] = length;
-          spaces[++i] = (lengthSpacing ? setupLength + spacing : spacing) *
+          spaces[++i] = (lengthSpacing ? setupLength + spacing! : spacing)! *
               length /
               setupLength;
         }
       }
     } else {
-      for (int i = 1; i < spacesCount; i++) spaces[i] = spacing;
+      for (int i = 1; i < spacesCount; i++) spaces[i] = spacing!;
     }
 
     final Float32List positions = computeWorldPositions(
-        attachment,
+        attachment!,
         spacesCount,
         tangents,
         data.positionMode == PositionMode.Percent,
         spacingMode == SpacingMode.Percent);
-    double boneX = positions[0],
+    double? boneX = positions[0],
         boneY = positions[1],
         offsetRotation = data.offsetRotation;
     bool tip = false;
@@ -121,15 +121,15 @@ class PathConstraint extends Constraint {
       tip = rotateMode == RotateMode.Chain;
     else {
       tip = false;
-      final Bone p = target.bone;
-      offsetRotation *=
-          p.a * p.d - p.b * p.c > 0 ? MathUtils.degRad : -MathUtils.degRad;
+      final Bone p = target!.bone;
+      offsetRotation = offsetRotation *
+          (p.a * p.d - p.b * p.c > 0 ? MathUtils.degRad : -MathUtils.degRad);
     }
     for (int i = 0, p = 3; i < boneCount; i++, p += 3) {
       final Bone bone = bones[i];
       bone
-        ..worldX += (boneX - bone.worldX) * translateMix
-        ..worldY += (boneY - bone.worldY) * translateMix;
+        ..worldX += (boneX! - bone.worldX) * translateMix
+        ..worldY += (boneY! - bone.worldY) * translateMix;
       final double x = positions[p],
           y = positions[p + 1],
           dx = x - boneX,
@@ -183,28 +183,31 @@ class PathConstraint extends Constraint {
 
   Float32List computeWorldPositions(PathAttachment path, int spacesCount,
       bool tangents, bool percentPosition, bool percentSpacing) {
-    final Slot target = this.target;
-    double position = this.position;
-    final Float32List spaces = this.spaces,
-        out = ArrayUtils.setArraySize(positions, spacesCount * 3 + 2, 0.0);
+    final Slot? target = this.target;
+    double? position = this.position;
+    final Float32List spaces = this.spaces;
+    final Float32List out =
+        ArrayUtils.copyWithNewArraySize(positions, spacesCount * 3 + 2, double.infinity)
+            as Float32List;
     Float32List world;
-    final bool closed = path.closed;
+    final bool? closed = path.closed;
     int verticesLength = path.worldVerticesLength,
         curveCount = verticesLength ~/ 6,
         prevCurve = PathConstraint.none;
 
     if (!path.constantSpeed) {
       final Float32List lengths = path.lengths;
-      curveCount -= closed ? 1 : 2;
+      curveCount -= closed! ? 1 : 2;
       final double pathLength = lengths[curveCount];
-      if (percentPosition) position *= pathLength;
+      if (percentPosition) position = position * pathLength;
       if (percentSpacing) {
         for (int i = 0; i < spacesCount; i++) spaces[i] *= pathLength;
       }
-      world = ArrayUtils.setArraySize(this.world, 8, 0.0);
+      world = ArrayUtils.copyWithNewArraySize(this.world, 8, double.infinity)
+          as Float32List;
       for (int i = 0, o = 0, curve = 0; i < spacesCount; i++, o += 3) {
         final double space = spaces[i];
-        position += space;
+        position = position! + space;
         double p = position;
 
         if (closed) {
@@ -214,7 +217,7 @@ class PathConstraint extends Constraint {
         } else if (p < 0) {
           if (prevCurve != PathConstraint.before) {
             prevCurve = PathConstraint.before;
-            path.computeWorldVertices(target, 2, 4, world, 0, 2);
+            path.computeWorldVertices(target!, 2, 4, world, 0, 2);
           }
           addBeforePosition(p, world, 0, out, o);
           continue;
@@ -222,7 +225,7 @@ class PathConstraint extends Constraint {
           if (prevCurve != PathConstraint.after) {
             prevCurve = PathConstraint.after;
             path.computeWorldVertices(
-                target, verticesLength - 6, 4, world, 0, 2);
+                target!, verticesLength - 6, 4, world, 0, 2);
           }
           addAfterPosition(p - pathLength, world, 0, out, o);
           continue;
@@ -244,10 +247,10 @@ class PathConstraint extends Constraint {
           prevCurve = curve;
           if (closed && curve == curveCount) {
             path
-              ..computeWorldVertices(target, verticesLength - 4, 4, world, 0, 2)
+              ..computeWorldVertices(target!, verticesLength - 4, 4, world, 0, 2)
               ..computeWorldVertices(target, 0, 4, world, 4, 2);
           } else
-            path.computeWorldVertices(target, curve * 6 + 2, 8, world, 0, 2);
+            path.computeWorldVertices(target!, curve * 6 + 2, 8, world, 0, 2);
         }
         addCurvePosition(
             p,
@@ -267,24 +270,27 @@ class PathConstraint extends Constraint {
     }
 
     // World vertices.
-    if (closed) {
+    if (closed!) {
       verticesLength += 2;
-      world = ArrayUtils.setArraySize(this.world, verticesLength, 0.0);
+      world = ArrayUtils.copyWithNewArraySize(this.world, verticesLength, double.infinity)
+          as Float32List;
       path
-        ..computeWorldVertices(target, 2, verticesLength - 4, world, 0, 2)
+        ..computeWorldVertices(target!, 2, verticesLength - 4, world, 0, 2)
         ..computeWorldVertices(target, 0, 2, world, verticesLength - 4, 2);
       world[verticesLength - 2] = world[0];
       world[verticesLength - 1] = world[1];
     } else {
       curveCount--;
       verticesLength -= 4;
-      world = ArrayUtils.setArraySize(this.world, verticesLength, 0.0);
-      path.computeWorldVertices(target, 2, verticesLength, world, 0, 2);
+      world = ArrayUtils.copyWithNewArraySize(this.world, verticesLength, double.infinity)
+          as Float32List;
+      path.computeWorldVertices(target!, 2, verticesLength, world, 0, 2);
     }
 
     // Curve lengths.
     final Float32List curves =
-        ArrayUtils.setArraySize(this.curves, curveCount, 0.0);
+        ArrayUtils.copyWithNewArraySize(this.curves, curveCount, double.infinity)
+            as Float32List;
     double pathLength = 0.0;
     double x1 = world[0],
         y1 = world[1],
@@ -333,7 +339,7 @@ class PathConstraint extends Constraint {
       x1 = x2;
       y1 = y2;
     }
-    if (percentPosition) position *= pathLength;
+    if (percentPosition) position = position * pathLength;
     if (percentSpacing) {
       for (int i = 0; i < spacesCount; i++) spaces[i] *= pathLength;
     }
@@ -344,7 +350,7 @@ class PathConstraint extends Constraint {
         i < spacesCount;
         i++, o += 3) {
       final double space = spaces[i];
-      position += space;
+      position = position! + space;
       double p = position;
 
       if (closed) {

@@ -134,7 +134,7 @@ class MathUtils {
   static int toInt(double x) => x > 0 ? x.floor() : x.ceil();
 
   static double cbrt(double x) {
-    final double y = math.pow(x.abs(), 1 / 3);
+    final double y = math.pow(x.abs(), 1 / 3) as double;
     return x < 0 ? -y : y;
   }
 
@@ -150,15 +150,17 @@ class MathUtils {
 }
 
 abstract class Interpolation {
+  const Interpolation();
+
   double applyInternal(double a);
   double apply(double start, double end, double a) =>
       start + (end - start) * applyInternal(a);
 }
 
 class Pow extends Interpolation {
-  double power = 2.0;
+  final double power;
 
-  Pow(this.power);
+  const Pow(double power): power = 2.0;
 
   @override
   double applyInternal(double a) {
@@ -168,7 +170,7 @@ class Pow extends Interpolation {
 }
 
 class PowOut extends Pow {
-  PowOut(double power) : super(power);
+  const PowOut(double power) : super(power);
 
   @override
   double applyInternal(double a) =>
@@ -176,36 +178,42 @@ class PowOut extends Pow {
 }
 
 class ArrayUtils {
-  static void arrayCopy<T>(List<T> source, int sourceStart, List<T> dest,
-      int destStart, int numElements) {
+  static List<T> arrayCopyWithGrowth<T>(List<T> source, int sourceStart,
+      List<T> dest, int destStart, int numElements, T defaultValue) {
+    List<T> r = List<T>.of(dest);
     for (int i = sourceStart, j = destStart;
         i < sourceStart + numElements;
         i++, j++) {
-      setArrayValue(dest, j, source[i]);
+      r = setArrayValueWithGrowth(r, j, source[i], defaultValue);
     }
+    return r;
   }
 
-  static void setArrayValue<T>(List<T> array, int index, T value) {
+  static List<T> setArrayValueWithGrowth<T>(
+      List<T> array, int index, T value, T defaultValue) {
     if (index + 1 > array.length) {
-      array.length = index + 1;
+      array = ensureArrayCapacity(array, index + 1, defaultValue);
     }
     array[index] = value;
-  }
-
-  static List<T> setArraySize<T>(List<T> array, int size, T value) {
-    final int oldSize = array.length;
-    if (oldSize == size) return array;
-    array.length = size;
-    if (oldSize < size && value != null) {
-      for (int i = oldSize; i < size; i++) setArrayValue(array, i, value);
-    }
     return array;
   }
 
-  static List<T> ensureArrayCapacity<T>(List<T> array, int size, T value) {
-    if (array.length >= size) return array;
-    return ArrayUtils.setArraySize(array, size, value);
+  static List<T> copyWithNewArraySize<T>(
+      List<T> array, int size, T defaultValue) {
+    final int oldSize = array.length;
+    return oldSize == size
+        ? array
+        : <T>[
+            ...array.take(size),
+            for (int i = oldSize; i < size; i++) defaultValue
+          ];
   }
+
+  static List<T> ensureArrayCapacity<T>(
+          List<T> array, int size, T defaultValue) =>
+      array.length >= size
+          ? array
+          : ArrayUtils.copyWithNewArraySize(array, size, defaultValue);
 }
 
 typedef T Instantiator<T>();
@@ -255,8 +263,8 @@ class Vector2 {
   void normalize() {
     final double len = length();
     if (len != 0) {
-      x /= len;
-      y /= len;
+      x = x / len;
+      y = y / len;
     }
   }
 }
@@ -265,7 +273,7 @@ class Bounds {
   final Vector2 offset;
   final Vector2 size;
 
-  Bounds(this.offset, this.size);
+  const Bounds(this.offset, this.size);
 }
 
 class TimeKeeper {

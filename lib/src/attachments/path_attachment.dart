@@ -33,8 +33,9 @@ part of spine_core;
 class PathAttachment extends VertexAttachment {
   final Color color = Color(1.0, 1.0, 1.0, 1.0);
 
-  Float32List lengths;
-  bool closed = false, constantSpeed = false;
+  late Float32List lengths;
+  bool closed = false;
+  bool constantSpeed = false;
 
   PathAttachment(String name) : super(name);
 }

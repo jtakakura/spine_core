@@ -34,7 +34,7 @@ class TransformConstraintData {
   final String name;
   final List<BoneData> bones = <BoneData>[];
   int order = 0;
-  BoneData target;
+  BoneData? target;
   double rotateMix = 0.0, translateMix = 0.0, scaleMix = 0.0, shearMix = 0.0;
   double offsetRotation = 0.0,
       offsetX = 0.0,
@@ -45,7 +45,5 @@ class TransformConstraintData {
   bool relative = false;
   bool local = false;
 
-  TransformConstraintData(this.name) {
-    if (name == null) throw ArgumentError('name cannot be null.');
-  }
+  TransformConstraintData(this.name);
 }

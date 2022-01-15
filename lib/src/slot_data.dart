@@ -35,13 +35,14 @@ class SlotData {
   final String name;
   final BoneData boneData;
   Color color = Color(1.0, 1.0, 1.0, 1.0);
-  Color darkColor;
-  String attachmentName;
-  BlendMode blendMode;
+  Color? darkColor;
+  String? attachmentName;
+  BlendMode? blendMode;
 
   SlotData(this.index, this.name, this.boneData) {
-    if (index < 0) throw ArgumentError('index must be >= 0.');
-    if (name == null) throw ArgumentError('name cannot be null.');
-    if (boneData == null) throw ArgumentError('boneData cannot be null.');
+    if (index < 0 && name.isNotEmpty)
+      throw ArgumentError('index must be >= 0.');
   }
+
+  factory SlotData.empty() => SlotData(-1, '', BoneData.empty());
 }

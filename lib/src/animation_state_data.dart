@@ -35,29 +35,24 @@ class AnimationStateData {
   final Map<String, double> animationToMixTime = <String, double>{};
   double defaultMix = 0.0;
 
-  AnimationStateData(this.skeletonData) {
-    if (skeletonData == null)
-      throw ArgumentError('skeletonData cannot be null.');
-  }
+  AnimationStateData(this.skeletonData);
 
   void setMix(String fromName, String toName, double duration) {
-    final Animation from = skeletonData.findAnimation(fromName);
+    final Animation? from = skeletonData.findAnimation(fromName);
     if (from == null) throw StateError('Animation not found: $fromName');
-    final Animation to = skeletonData.findAnimation(toName);
+    final Animation? to = skeletonData.findAnimation(toName);
     if (to == null) throw StateError('Animation not found: $toName');
     setMixWith(from, to, duration);
   }
 
   void setMixWith(Animation from, Animation to, double duration) {
-    if (from == null) throw ArgumentError('from cannot be null.');
-    if (to == null) throw ArgumentError('to cannot be null.');
     final String key = from.name + '.' + to.name;
     animationToMixTime[key] = duration;
   }
 
   double getMix(Animation from, Animation to) {
     final String key = from.name + '.' + to.name;
-    final double value = animationToMixTime[key];
+    final double? value = animationToMixTime[key];
     return value == null ? defaultMix : value;
   }
 }

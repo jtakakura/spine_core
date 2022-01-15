@@ -34,15 +34,15 @@ class MeshAttachment extends VertexAttachment {
   final Color color = Color(1.0, 1.0, 1.0, 1.0);
   final Color tempColor = Color(0.0, 0.0, 0.0, 0.0);
 
-  TextureRegion region;
-  String path;
-  Float32List regionUVs, uvs;
-  Int16List triangles;
-  int hullLength;
-  MeshAttachment _parentMesh;
-  bool inheritDeform = false;
+  TextureRegion? region;
+  String? path;
+  Float32List? regionUVs, uvs;
+  Int16List? triangles;
+  int? hullLength;
+  MeshAttachment? _parentMesh;
+  bool? inheritDeform = false;
 
-  MeshAttachment(String name) : super(name);
+  MeshAttachment(String? name) : super(name);
 
   void updateUVs() {
     double u = 0.0, v = 0.0, width = 0.0, height = 0.0;
@@ -50,23 +50,23 @@ class MeshAttachment extends VertexAttachment {
       u = v = 0.0;
       width = height = 1.0;
     } else {
-      u = region.u;
-      v = region.v;
-      width = region.u2 - u;
-      height = region.v2 - v;
+      u = region!.u;
+      v = region!.v;
+      width = region!.u2 - u;
+      height = region!.v2 - v;
     }
-    final Float32List regionUVs = this.regionUVs;
-    if (this.uvs == null || this.uvs.length != regionUVs.length)
-      this.uvs = Float32List(regionUVs.length);
-    final Float32List uvs = this.uvs;
-    if (region.rotate) {
-      final int n = uvs.length;
+    final Float32List? regionUVs = this.regionUVs;
+    if (this.uvs == null || this.uvs!.length != regionUVs!.length)
+      this.uvs = Float32List(regionUVs!.length);
+    final Float32List? uvs = this.uvs;
+    if (region!.rotate) {
+      final int n = uvs!.length;
       for (int i = 0; i < n; i += 2) {
         uvs[i] = u + regionUVs[i + 1] * width;
         uvs[i + 1] = v + height - regionUVs[i] * height;
       }
     } else {
-      final int n = uvs.length;
+      final int n = uvs!.length;
       for (int i = 0; i < n; i += 2) {
         uvs[i] = u + regionUVs[i] * width;
         uvs[i + 1] = v + regionUVs[i + 1] * height;
@@ -75,12 +75,12 @@ class MeshAttachment extends VertexAttachment {
   }
 
   @override
-  bool applyDeform(VertexAttachment sourceAttachment) =>
+  bool applyDeform(VertexAttachment? sourceAttachment) =>
       this == sourceAttachment ||
-      (inheritDeform && _parentMesh == sourceAttachment);
+      (inheritDeform! && _parentMesh == sourceAttachment);
 
-  MeshAttachment get parentMesh => _parentMesh;
-  set parentMesh(MeshAttachment value) {
+  MeshAttachment? get parentMesh => _parentMesh;
+  set parentMesh(MeshAttachment? value) {
     _parentMesh = value;
     if (value != null) {
       bones = value.bones;
