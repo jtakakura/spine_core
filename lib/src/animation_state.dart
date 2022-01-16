@@ -229,7 +229,8 @@ class AnimationState {
       if (mix > 1) mix = 1.0;
     }
 
-    final List<Event?> events = mix < from.eventThreshold ? this.events : <Event?>[];
+    final List<Event?> events =
+        mix < from.eventThreshold ? this.events : <Event?>[];
     final bool attachments = mix < from.attachmentThreshold;
     final bool drawOrder = mix < from.drawOrderThreshold;
     final double animationLast = from.animationLast;
@@ -307,7 +308,8 @@ class AnimationState {
     if (firstFrame) timelinesRotation[i] = 0.0;
 
     if (alpha == 1) {
-      timeline.apply(skeleton, 0.0, time, <Event?>[], 1.0, pose, MixDirection.In);
+      timeline.apply(
+          skeleton, 0.0, time, <Event?>[], 1.0, pose, MixDirection.In);
       return;
     }
 
@@ -464,7 +466,8 @@ class AnimationState {
 
       // Store the interrupted mix percentage.
       if (from.mixingFrom != null && from.mixDuration > 0)
-        current!.interruptAlpha = current.interruptAlpha * math.min(1, from.mixTime / from.mixDuration);
+        current!.interruptAlpha = current.interruptAlpha *
+            math.min(1, from.mixTime / from.mixDuration);
 
       // Reset rotation for mixing out, in case entry was mixed in.
       from.timelinesRotation.length = 0;
@@ -575,8 +578,8 @@ class AnimationState {
 
   TrackEntry? expandToIndex(int index) {
     if (index < tracks.length) return tracks[index];
-    tracks = ArrayUtils.ensureArrayCapacity(
-        tracks, index - tracks.length + 1, null);
+    tracks =
+        ArrayUtils.ensureArrayCapacity(tracks, index - tracks.length + 1, null);
     tracks.length = index + 1;
     return null;
   }
@@ -827,29 +830,42 @@ class EventQueue {
   EventQueue(this.animState);
 
   void start(TrackEntry? entry) {
-    objects..add(EventType.Start)..add(entry);
+    objects
+      ..add(EventType.Start)
+      ..add(entry);
     animState.animationsChanged = true;
   }
 
   void interrupt(TrackEntry entry) {
-    objects..add(EventType.Interrupt)..add(entry);
+    objects
+      ..add(EventType.Interrupt)
+      ..add(entry);
   }
 
   void end(TrackEntry entry) {
-    objects..add(EventType.End)..add(entry);
+    objects
+      ..add(EventType.End)
+      ..add(entry);
     animState.animationsChanged = true;
   }
 
   void dispose(TrackEntry entry) {
-    objects..add(EventType.Dispose)..add(entry);
+    objects
+      ..add(EventType.Dispose)
+      ..add(entry);
   }
 
   void complete(TrackEntry entry) {
-    objects..add(EventType.Complete)..add(entry);
+    objects
+      ..add(EventType.Complete)
+      ..add(entry);
   }
 
   void event(TrackEntry entry, Event? event) {
-    objects..add(EventType.Event)..add(entry)..add(event);
+    objects
+      ..add(EventType.Event)
+      ..add(entry)
+      ..add(event);
   }
 
   void drain() {
@@ -898,7 +914,8 @@ class EventQueue {
           animState.trackEntryPool.free(entry);
           break;
         case EventType.Complete:
-          if (entry!.onCompleteCallback != null) entry.onCompleteCallback!(entry);
+          if (entry!.onCompleteCallback != null)
+            entry.onCompleteCallback!(entry);
           onCompleteCallbacks
               .forEach((TrackEntryCallback callback) => callback(entry));
           break;
