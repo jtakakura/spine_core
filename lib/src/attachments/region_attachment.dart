@@ -82,37 +82,36 @@ class RegionAttachment extends VertexAttachment {
   final Float32List offset = Float32List(8);
   final Float32List uvs = Float32List(8);
 
-  double? x = 0.0,
+  double x = 0.0,
       y = 0.0,
       scaleX = 1.0,
       scaleY = 1.0,
       rotation = 0.0,
       width = 0.0,
       height = 0.0;
-  String? path;
+  String path = '';
   dynamic rendererObject;
   late TextureRegion region;
 
-  RegionAttachment(String? name) : super(name);
+  RegionAttachment(String name) : super(name);
 
   void updateOffset() {
-    final double regionScaleX = width! / region.originalWidth * scaleX!;
-    final double regionScaleY = height! / region.originalHeight * scaleY!;
-    final double localX = -width! / 2 * scaleX! + region.offsetX * regionScaleX;
-    final double localY =
-        -height! / 2 * scaleY! + region.offsetY * regionScaleY;
+    final double regionScaleX = width / region.originalWidth * scaleX;
+    final double regionScaleY = height / region.originalHeight * scaleY;
+    final double localX = -width / 2 * scaleX + region.offsetX * regionScaleX;
+    final double localY = -height / 2 * scaleY + region.offsetY * regionScaleY;
     final double localX2 = localX + region.width * regionScaleX;
     final double localY2 = localY + region.height * regionScaleY;
-    final double radians = rotation! * math.pi / 180;
+    final double radians = rotation * math.pi / 180;
     final double cos = math.cos(radians);
     final double sin = math.sin(radians);
-    final double localXCos = localX * cos + x!;
+    final double localXCos = localX * cos + x;
     final double localXSin = localX * sin;
-    final double localYCos = localY * cos + y!;
+    final double localYCos = localY * cos + y;
     final double localYSin = localY * sin;
-    final double localX2Cos = localX2 * cos + x!;
+    final double localX2Cos = localX2 * cos + x;
     final double localX2Sin = localX2 * sin;
-    final double localY2Cos = localY2 * cos + y!;
+    final double localY2Cos = localY2 * cos + y;
     final double localY2Sin = localY2 * sin;
     final Float32List offset = this.offset;
     offset[RegionAttachment.ox1] = localXCos - localYSin;

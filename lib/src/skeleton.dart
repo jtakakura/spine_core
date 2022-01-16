@@ -94,7 +94,7 @@ class Skeleton {
     updateCache();
   }
 
-  factory Skeleton.empty() => Skeleton(SkeletonData());
+  factory Skeleton.empty() => Skeleton(SkeletonData(''));
 
   void updateCache() {
     _updateCache.length = 0;
@@ -345,8 +345,8 @@ class Skeleton {
     return -1;
   }
 
-  Slot? findSlot(String? slotName) {
-    if (slotName == null) throw ArgumentError('slotName cannot be null.');
+  Slot? findSlot(String slotName) {
+    if (slotName.isEmpty) throw ArgumentError('slotName cannot be empty.');
     final List<Slot> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) {
@@ -392,16 +392,14 @@ class Skeleton {
   Attachment? getAttachmentByName(String slotName, String attachmentName) =>
       getAttachment(data.findSlotIndex(slotName), attachmentName);
 
-  Attachment? getAttachment(int? slotIndex, String? attachmentName) {
-    if (attachmentName == null)
-      throw ArgumentError('attachmentName cannot be null.');
+  Attachment? getAttachment(int slotIndex, String attachmentName) {
     if (skin != null) {
       final Attachment? attachment =
-          skin!.getAttachment(slotIndex!, attachmentName);
+          skin!.getAttachment(slotIndex, attachmentName);
       if (attachment != null) return attachment;
     }
     if (data.defaultSkin != null)
-      return data.defaultSkin!.getAttachment(slotIndex!, attachmentName);
+      return data.defaultSkin!.getAttachment(slotIndex, attachmentName);
     return null;
   }
 

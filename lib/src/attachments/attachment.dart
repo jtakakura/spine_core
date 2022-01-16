@@ -31,10 +31,10 @@
 part of spine_core;
 
 abstract class Attachment {
-  final String? name;
+  final String name;
 
   Attachment(this.name) {
-    if (name == null) throw ArgumentError('name cannot be null.');
+    if (name.isEmpty) throw ArgumentError('name cannot be empty.');
   }
 }
 
@@ -46,7 +46,7 @@ abstract class VertexAttachment extends Attachment {
   Float32List? vertices;
   int worldVerticesLength = 0;
 
-  VertexAttachment(String? name) : super(name);
+  VertexAttachment(String name) : super(name);
 
   void computeWorldVertices(Slot slot, int start, int count,
       Float32List worldVertices, int offset, int stride) {

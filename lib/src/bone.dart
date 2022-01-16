@@ -278,9 +278,9 @@ class Bone implements Updatable {
   }
 
   Vector2 localToWorld(Vector2 local) {
-    final double? x = local.x, y = local.y;
+    final double x = local.x, y = local.y;
     local
-      ..x = x! * a + y! * b + worldX
+      ..x = x * a + y * b + worldX
       ..y = x * c + y * d + worldY;
     return local;
   }

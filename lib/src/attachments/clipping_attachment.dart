@@ -36,5 +36,5 @@ class ClippingAttachment extends VertexAttachment {
 
   SlotData? endSlot;
 
-  ClippingAttachment(String? name) : super(name);
+  ClippingAttachment(String name) : super(name);
 }

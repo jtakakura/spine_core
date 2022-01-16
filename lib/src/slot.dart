@@ -69,7 +69,7 @@ class Slot {
     else {
       attachment = null;
       setAttachment(
-          bone.skeleton.getAttachment(data.index, data.attachmentName));
+          bone.skeleton.getAttachment(data.index, data.attachmentName!));
     }
   }
 }

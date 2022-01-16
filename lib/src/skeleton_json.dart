@@ -39,7 +39,7 @@ class SkeletonJson {
 
   SkeletonData readSkeletonData(Object object) {
     final double scale = this.scale;
-    final SkeletonData skeletonData = SkeletonData();
+    final SkeletonData skeletonData = SkeletonData('');
 
     dynamic root;
 
@@ -259,7 +259,7 @@ class SkeletonJson {
     final int n = linkedMeshes.length;
     for (int i = 0; i < n; i++) {
       final LinkedMesh linkedMesh = linkedMeshes[i];
-      final Skin? skin = linkedMesh.skin == null
+      final Skin? skin = linkedMesh.skin.isEmpty
           ? skeletonData.defaultSkin
           : skeletonData.findSkin(linkedMesh.skin);
       if (skin == null) throw StateError('Skin not found: $linkedMesh.skin');
@@ -462,7 +462,7 @@ class SkeletonJson {
           final dynamic timelineMap = slotMap[timelineName];
           if (timelineName == 'attachment') {
             final AttachmentTimeline timeline =
-                AttachmentTimeline(timelineMap.length)..slotIndex = slotIndex;
+                AttachmentTimeline(timelineMap.length, slotIndex);
 
             int frameIndex = 0;
             for (int i = 0; i < timelineMap.length; i++) {
@@ -563,10 +563,10 @@ class SkeletonJson {
             int frameIndex = 0;
             for (int i = 0; i < timelineMap.length; i++) {
               final dynamic valueMap = timelineMap[i];
-              final double? x = _getDouble(valueMap, 'x', 0.0),
-                  y = _getDouble(valueMap, 'y', 0.0);
+              final double x = _getDouble(valueMap, 'x', 0.0);
+              final double y = _getDouble(valueMap, 'y', 0.0);
               timeline.setFrame(frameIndex, _getDouble(valueMap, 'time'),
-                  x! * timelineScale, y! * timelineScale);
+                  x * timelineScale, y * timelineScale);
               readCurve(valueMap, timeline, frameIndex);
               frameIndex++;
             }
@@ -726,9 +726,8 @@ class SkeletonJson {
             final int deformLength =
                 weighted ? vertices!.length ~/ 3 * 2 : vertices!.length;
 
-            final DeformTimeline timeline = DeformTimeline(timelineMap.length)
-              ..slotIndex = slotIndex
-              ..attachment = attachment;
+            final DeformTimeline timeline =
+                DeformTimeline(timelineMap.length, slotIndex, attachment);
 
             int frameIndex = 0;
             for (int j = 0; j < timelineMap.length; j++) {
@@ -936,9 +935,10 @@ class SkeletonJson {
 }
 
 class LinkedMesh {
-  String? parent, skin;
-  int slotIndex;
-  MeshAttachment mesh;
+  final MeshAttachment mesh;
+  final String skin;
+  final int slotIndex;
+  final String parent;
 
-  LinkedMesh(this.mesh, this.skin, this.slotIndex, this.parent);
+  const LinkedMesh(this.mesh, this.skin, this.slotIndex, this.parent);
 }

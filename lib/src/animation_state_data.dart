@@ -52,7 +52,6 @@ class AnimationStateData {
 
   double getMix(Animation from, Animation to) {
     final String key = from.name + '.' + to.name;
-    final double? value = animationToMixTime[key];
-    return value == null ? defaultMix : value;
+    return animationToMixTime[key] ?? defaultMix;
   }
 }

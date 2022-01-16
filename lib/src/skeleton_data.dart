@@ -41,14 +41,16 @@ class SkeletonData {
       <TransformConstraintData?>[];
   final List<PathConstraintData> pathConstraints = <PathConstraintData>[];
 
-  String? name;
+  final String name;
   Skin? defaultSkin;
-  double? width, height;
-  String? version, hash;
+  double width = 0.0, height = 0.0;
+  String version = '', hash = '';
 
   // Nonessential
   double fps = 0.0;
   String? imagesPath;
+
+  SkeletonData(this.name);
 
   BoneData? findBone(String boneName) {
     final List<BoneData> bones = this.bones;
@@ -64,33 +66,33 @@ class SkeletonData {
     return -1;
   }
 
-  SlotData? findSlot(String? slotName) {
-    if (slotName == null) throw ArgumentError('slotName cannot be null.');
+  SlotData? findSlot(String slotName) {
+    if (slotName.isEmpty) throw ArgumentError('slotName cannot be empty.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) if (slots[i].name == slotName) return slots[i];
     return null;
   }
 
-  int findSlotIndex(String? slotName) {
-    if (slotName == null) throw ArgumentError('slotName cannot be null.');
+  int findSlotIndex(String slotName) {
+    if (slotName.isEmpty) throw ArgumentError('slotName cannot be empty.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
     for (int i = 0; i < n; i++) if (slots[i].name == slotName) return i;
     return -1;
   }
 
-  Skin? findSkin(String? skinName) {
-    if (skinName == null) throw ArgumentError('skinName cannot be null.');
+  Skin? findSkin(String skinName) {
+    if (skinName.isEmpty) throw ArgumentError('skinName cannot be empty.');
     final List<Skin> skins = this.skins;
     final int n = skins.length;
     for (int i = 0; i < n; i++) if (skins[i].name == skinName) return skins[i];
     return null;
   }
 
-  EventData? findEvent(String? eventDataName) {
-    if (eventDataName == null)
-      throw ArgumentError('eventDataName cannot be null.');
+  EventData? findEvent(String eventDataName) {
+    if (eventDataName.isEmpty)
+      throw ArgumentError('eventDataName cannot be empty.');
     final List<EventData> events = this.events;
     final int n = events.length;
     for (int i = 0; i < n; i++)
