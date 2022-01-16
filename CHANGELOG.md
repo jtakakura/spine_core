@@ -8,4 +8,8 @@
 
 ## 0.3.0
 
-- Nullsafety support
+- Nullsafety support(thanks to @signmotion)
+
+## 0.3.1
+
+- More support for null safety(thanks to @signmotion)

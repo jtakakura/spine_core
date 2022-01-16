@@ -2,7 +2,7 @@
 
 name: spine_core
 description: The spine-core runtime provides functionality to load and manipulate Spine skeletal animation data using Dart.
-version: 0.3.0
+version: 0.3.1
 homepage: https://github.com/jtakakura/spine_core/
 
 environment:
