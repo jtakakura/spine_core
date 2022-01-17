@@ -219,7 +219,7 @@ class TextureAtlasPage {
   int width = 0;
   int height = 0;
 
-  TextureAtlasPage(this.name): assert(name.isNotEmpty);
+  TextureAtlasPage(this.name) : assert(name.isNotEmpty);
 }
 
 class TextureAtlasRegion extends TextureRegion {
@@ -231,5 +231,5 @@ class TextureAtlasRegion extends TextureRegion {
   int index = -1;
   Texture? texture;
 
-  TextureAtlasRegion(this.name): assert(name.isNotEmpty);
+  TextureAtlasRegion(this.name) : assert(name.isNotEmpty);
 }

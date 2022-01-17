@@ -285,7 +285,8 @@ class TransformConstraint extends Constraint {
 
       double rotation = bone.arotation;
       if (rotateMix != 0)
-        rotation = rotation + (target.arotation + data.offsetRotation) * rotateMix;
+        rotation =
+            rotation + (target.arotation + data.offsetRotation) * rotateMix;
 
       double x = bone.ax, y = bone.ay;
       if (translateMix != 0) {
