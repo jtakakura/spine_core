@@ -28,6 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ******************************************************************************
 
+import 'dart:typed_data';
+
 import 'package:spine_core/spine_core.dart';
 import 'package:test/test.dart';
 
@@ -49,6 +51,34 @@ void main() {
           ArrayUtils.arrayCopyWithGrowth(source, 1, dest, 1, 2, null);
 
       expect(r, <int>[4, 1, 2, 7, 8]);
+    });
+
+    test('arrayCopy Test with Float32List', () async {
+      final Float32List source =
+          Float32List.fromList(<double>[0.0, 1.1, 2.2, 3.3]);
+      final Float32List dest =
+          Float32List.fromList(<double>[4.4, 5.5, 6.6, 7.7, 8.8]);
+
+      final Float32List expected =
+          Float32List.fromList(<double>[4.4, 1.1, 2.2, 7.7, 8.8]);
+
+      // we can call [arrayCopyWithGrowth] with [Float32List], but
+      // direct cast `result as Float32List` throws exception
+      try {
+        final Float32List result = ArrayUtils.arrayCopyWithGrowth(
+            source, 1, dest, 1, 2, double.infinity) as Float32List;
+        // we won't get here in the Dart 2.15.1
+        expect(result, expected);
+        // ignore: avoid_catches_without_on_clauses
+      } catch (ex) {
+        // it's confuse, but OK
+      }
+
+      // how to use with [Float32List] without cast exception?
+      final Float32List result = Float32List.fromList(
+          ArrayUtils.arrayCopyWithGrowth(
+              source, 1, dest, 1, 2, double.infinity));
+      expect(result, expected);
     });
 
     test('setArrayValue Test1', () {
