@@ -180,7 +180,7 @@ class AnimationState {
           timelines[ii].apply(skeleton, animationLast, animationTime, events,
               1.0, MixPose.Setup, MixDirection.In);
       } else {
-        final Int32List timelineData = current.timelineData as Int32List;
+        final Int32List timelineData = Int32List.fromList(current.timelineData);
 
         final bool firstFrame = current.timelinesRotation.isEmpty;
         if (firstFrame)
