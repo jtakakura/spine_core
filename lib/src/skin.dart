@@ -46,7 +46,7 @@ class Skin {
 
   Attachment? getAttachment(int slotIndex, String name) {
     if (slotIndex >= attachments.length) return null;
-    return attachments[slotIndex]![name];
+    return attachments[slotIndex]?[name];
   }
 
   void attachAll(Skeleton skeleton, Skin? oldSkin) {
