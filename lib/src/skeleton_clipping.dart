@@ -94,7 +94,8 @@ class SkeletonClipping {
       bool twoColor) {
     final Float32List clipOutput = this.clipOutput as Float32List,
         clippedVertices = this.clippedVertices as Float32List;
-    final Int16List clippedTriangles = Int16List.fromList(this.clippedTriangles);
+    final Int16List clippedTriangles =
+        Int16List.fromList(this.clippedTriangles);
     final List<Float32List>? polygons = clippingPolygons;
     final int polygonsCount = clippingPolygons!.length;
     final int vertexSize = twoColor ? 12 : 8;

@@ -740,9 +740,13 @@ class SkeletonJson {
               else {
                 deform = Float32List(deformLength);
                 final int start = _getInt(valueMap, 'offset', 0);
-                deform = Float32List.fromList(
-                    ArrayUtils.arrayCopyWithGrowth(verticesValue, 0,
-                        deform, start, verticesValue.length, 0.0));
+                deform = Float32List.fromList(ArrayUtils.arrayCopyWithGrowth(
+                    verticesValue,
+                    0,
+                    deform,
+                    start,
+                    verticesValue.length,
+                    0.0));
                 if (scale != 1) {
                   for (int i = start; i < i + verticesValue.length; i++)
                     deform[i] *= scale;
