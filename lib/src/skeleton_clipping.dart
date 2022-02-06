@@ -94,7 +94,8 @@ class SkeletonClipping {
       bool twoColor) {
     final Float32List clipOutput = this.clipOutput as Float32List,
         clippedVertices = this.clippedVertices as Float32List;
-    final Int16List clippedTriangles = this.clippedTriangles as Int16List;
+    final Int16List clippedTriangles =
+        Int16List.fromList(this.clippedTriangles);
     final List<Float32List>? polygons = clippingPolygons;
     final int polygonsCount = clippingPolygons!.length;
     final int vertexSize = twoColor ? 12 : 8;
@@ -155,10 +156,9 @@ class SkeletonClipping {
           }
 
           s = clippedTriangles.length;
-          final Int16List clippedTrianglesItems =
+          final Int16List clippedTrianglesItems = Int16List.fromList(
               ArrayUtils.copyWithNewArraySize(
-                      clippedTriangles, s + 3 * (clipOutputCount - 2), -1)
-                  as Int16List;
+                  clippedTriangles, s + 3 * (clipOutputCount - 2), -1));
           clipOutputCount--;
           for (int ii = 1; ii < clipOutputCount; ii++) {
             clippedTrianglesItems[s] = index;
@@ -235,9 +235,8 @@ class SkeletonClipping {
           }
 
           s = clippedTriangles.length;
-          final Int16List clippedTrianglesItems =
-              ArrayUtils.copyWithNewArraySize(clippedTriangles, s + 3, -1)
-                  as Int16List;
+          final Int16List clippedTrianglesItems = Int16List.fromList(
+              ArrayUtils.copyWithNewArraySize(clippedTriangles, s + 3, -1));
           clippedTrianglesItems[s] = index;
           clippedTrianglesItems[s + 1] = (index + 1);
           clippedTrianglesItems[s + 2] = (index + 2);

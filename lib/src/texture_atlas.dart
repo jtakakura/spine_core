@@ -87,7 +87,7 @@ class TextureAtlas implements Disposable {
       } else {
         final TextureAtlasRegion region = TextureAtlasRegion(line)
           ..page = page
-          ..rotate = reader.readValue() == 'true';
+          ..rotate = _detectRotate(reader.readValue()) != 0;
 
         tuple = reader.readTuple(tuple);
         final int x = int.parse(tuple[0]);
@@ -153,6 +153,20 @@ class TextureAtlas implements Disposable {
   void dispose() {
     for (int i = 0; i < pages.length; i++) {
       pages[i].texture!.dispose();
+    }
+  }
+
+  /// \todo Rotate in degrees. Look at nice solution: https://github.com/EsotericSoftware/spine-runtimes/blob/3.8/spine-ts/
+  int _detectRotate(String value) {
+    switch (value) {
+      case 'false':
+        return 0;
+
+      case 'true':
+        return 270;
+
+      default:
+        throw ArgumentError('unsupported value `$value` for rotate.');
     }
   }
 }

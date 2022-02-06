@@ -156,6 +156,7 @@ abstract class Interpolation {
   const Interpolation();
 
   double applyInternal(double a);
+
   double apply(double start, double end, double a) =>
       start + (end - start) * applyInternal(a);
 }
@@ -180,6 +181,7 @@ class PowOut extends Pow {
       math.pow(a - 1, power) * (power % 2 == 0 ? -1 : 1) + 1;
 }
 
+/// \see test/utils_test.dart for how to use.
 class ArrayUtils {
   static List<T> arrayCopyWithGrowth<T>(List<T> source, int sourceStart,
       List<T> dest, int destStart, int numElements, T defaultValue) {

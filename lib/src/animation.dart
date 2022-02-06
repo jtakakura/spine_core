@@ -796,9 +796,8 @@ class DeformTimeline extends CurveTimeline {
       // Time is after last frame.
       final Float32List lastVertices = frameVertices[frames.length - 1]!;
       if (alpha == 1) {
-        vertices = ArrayUtils.arrayCopyWithGrowth(
-                lastVertices, 0, vertices, 0, vertexCount, double.infinity)
-            as Float32List;
+        vertices = Float32List.fromList(ArrayUtils.arrayCopyWithGrowth(
+            lastVertices, 0, vertices, 0, vertexCount, double.infinity));
       } else if (pose == MixPose.Setup) {
         if (vertexAttachment.bones == null) {
           // Unweighted vertex positions, with alpha.

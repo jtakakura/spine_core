@@ -52,7 +52,7 @@ class Triangulator {
     final int n = vertexCount;
     for (int i = 0; i < n; ++i)
       isConcave[i] = Triangulator._isConcave(
-          i, vertexCount, vertices, indices as Int16List);
+          i, vertexCount, vertices, Int16List.fromList(indices));
 
     final List<int> triangles = this.triangles..length = 0;
 
@@ -109,9 +109,9 @@ class Triangulator {
       final int previousIndex = (vertexCount + i - 1) % vertexCount;
       final int nextIndex = i == vertexCount ? 0 : i;
       isConcave[previousIndex] = Triangulator._isConcave(
-          previousIndex, vertexCount, vertices, indices as Int16List);
-      isConcave[nextIndex] =
-          Triangulator._isConcave(nextIndex, vertexCount, vertices, indices);
+          previousIndex, vertexCount, vertices, Int16List.fromList(indices));
+      isConcave[nextIndex] = Triangulator._isConcave(
+          nextIndex, vertexCount, vertices, Int16List.fromList(indices));
     }
 
     if (vertexCount == 3) {
@@ -121,7 +121,7 @@ class Triangulator {
         ..add(indices[1]);
     }
 
-    return triangles as Int16List;
+    return Int16List.fromList(triangles);
   }
 
   List<Float32List> decompose(Float32List verticesArray, Int16List triangles) {
@@ -169,8 +169,8 @@ class Triangulator {
       // Otherwise make this triangle the new base.
       if (!merged) {
         if (polygon.isEmpty) {
-          convexPolygons.add(polygon as Float32List);
-          convexPolygonsIndices.add(polygonIndices as Int16List);
+          convexPolygons.add(Float32List.fromList(polygon));
+          convexPolygonsIndices.add(Int16List.fromList(polygonIndices));
         } else {
           polygonPool.free(polygon);
           polygonIndicesPool.free(polygonIndices);
@@ -194,8 +194,8 @@ class Triangulator {
     }
 
     if (polygon.isNotEmpty) {
-      convexPolygons.add(polygon as Float32List);
-      convexPolygonsIndices.add(polygonIndices as Int16List);
+      convexPolygons.add(Float32List.fromList(polygon));
+      convexPolygonsIndices.add(Int16List.fromList(polygonIndices));
     }
 
     final int nn = convexPolygons.length;
