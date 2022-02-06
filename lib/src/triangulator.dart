@@ -46,13 +46,16 @@ class Triangulator {
     int vertexCount = verticesArray.length >> 1;
 
     final List<int> indices = indicesArray..length = 0;
-    for (int i = 0; i < vertexCount; i++) indices[i] = i;
+    for (int i = 0; i < vertexCount; i++) {
+      indices[i] = i;
+    }
 
     final List<bool> isConcave = isConcaveArray..length = 0;
     final int n = vertexCount;
-    for (int i = 0; i < n; ++i)
+    for (int i = 0; i < n; ++i) {
       isConcave[i] = Triangulator._isConcave(
           i, vertexCount, vertices, Int16List.fromList(indices));
+    }
 
     final List<int> triangles = this.triangles..length = 0;
 
@@ -76,8 +79,9 @@ class Triangulator {
             final double vx = vertices[v], vy = vertices[v + 1];
             if (Triangulator.positiveArea(p3x, p3y, p1x, p1y, vx, vy)) {
               if (Triangulator.positiveArea(p1x, p1y, p2x, p2y, vx, vy)) {
-                if (Triangulator.positiveArea(p2x, p2y, p3x, p3y, vx, vy))
+                if (Triangulator.positiveArea(p2x, p2y, p3x, p3y, vx, vy)) {
                   break outer;
+                }
               }
             }
           }
@@ -227,8 +231,9 @@ class Triangulator {
         final double x3 = otherPoly[otherPoly.length - 2],
             y3 = otherPoly[otherPoly.length - 1];
 
-        if (otherFirstIndex != firstIndex || otherSecondIndex != lastIndex)
+        if (otherFirstIndex != firstIndex || otherSecondIndex != lastIndex) {
           continue;
+        }
         final int winding1 =
             Triangulator.winding(prevPrevX, prevPrevY, prevX, prevY, x3, y3);
         final int winding2 =

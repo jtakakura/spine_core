@@ -39,8 +39,9 @@ class Skin {
 
   void addAttachment(int slotIndex, String name, Attachment attachment) {
     if (slotIndex >= attachments.length) attachments.length = slotIndex + 1;
-    if (attachments[slotIndex] == null)
+    if (attachments[slotIndex] == null) {
       attachments[slotIndex] = <String, Attachment>{};
+    }
     attachments[slotIndex]![name] = attachment;
   }
 

@@ -42,20 +42,21 @@ class BoneData {
       scaleY = 1.0,
       shearX = 0.0,
       shearY = 0.0;
-  TransformMode transformMode = TransformMode.Normal;
+  TransformMode transformMode = TransformMode.normal;
 
   BoneData(this.index, this.name, this.parent) {
-    if (index < 0 && name.isNotEmpty)
+    if (index < 0 && name.isNotEmpty) {
       throw ArgumentError('index must be >= 0.');
+    }
   }
 
   factory BoneData.empty() => BoneData(-1, '', null);
 }
 
 enum TransformMode {
-  Normal,
-  OnlyTranslation,
-  NoRotationOrReflection,
-  NoScale,
-  NoScaleOrReflection
+  normal,
+  onlyTranslation,
+  noRotationOrReflection,
+  noScale,
+  noScaleOrReflection
 }

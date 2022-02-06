@@ -45,9 +45,10 @@ class Animation {
     }
 
     final int n = timelines.length;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
       timelines[i]
           .apply(skeleton, lastTime, time, events, alpha, pose, direction);
+    }
   }
 
   static int binarySearch(List<double> values, double target, [int step = 1]) {
@@ -56,18 +57,20 @@ class Animation {
     if (high == 0) return step;
     int current = high >> 1;
     for (;;) {
-      if (values[(current + 1) * step] <= target)
+      if (values[(current + 1) * step] <= target) {
         low = current + 1;
-      else
+      } else {
         high = current;
+      }
       if (low == high) return (low + 1) * step;
       current = (low + high) >> 1;
     }
   }
 
   static int linearSearch(List<double> values, double target, [int step = 1]) {
-    for (int i = 0; i <= values.length - step; i += step)
+    for (int i = 0; i <= values.length - step; i += step) {
       if (values[i] > target) return i;
+    }
     return -1;
   }
 }
@@ -78,26 +81,26 @@ abstract class Timeline {
   int getPropertyId();
 }
 
-enum MixPose { Setup, Current, CurrentLayered }
+enum MixPose { setup, current, currentLayered }
 
-enum MixDirection { In, Out }
+enum MixDirection { mixIn, mixOut }
 
 enum TimelineType {
-  Rotate,
-  Translate,
-  Scale,
-  Shear,
-  Attachment,
-  Color,
-  Deform,
-  Event,
-  DrawOrder,
-  IkConstraint,
-  TransformConstraint,
-  PathConstraintPosition,
-  PathConstraintSpacing,
-  PathConstraintMix,
-  TwoColor
+  rotate,
+  translate,
+  scale,
+  shear,
+  attachment,
+  color,
+  deform,
+  event,
+  drawOrder,
+  ikConstraint,
+  transformConstraint,
+  pathConstraintPosition,
+  pathConstraintSpacing,
+  pathConstraintMix,
+  twoColor
 }
 
 abstract class CurveTimeline implements Timeline {
@@ -108,8 +111,9 @@ abstract class CurveTimeline implements Timeline {
 
   CurveTimeline(int frameCount)
       : curves = Float32List((frameCount - 1) * CurveTimeline.bezierSize) {
-    if (frameCount <= 0)
+    if (frameCount <= 0) {
       throw ArgumentError('frameCount must be > 0: $frameCount');
+    }
   }
 
   int getFrameCount() => curves.length ~/ CurveTimeline.bezierSize + 1;
@@ -199,7 +203,7 @@ class RotateTimeline extends CurveTimeline {
         super(frameCount);
 
   @override
-  int getPropertyId() => TimelineType.Rotate.index << 24 + boneIndex;
+  int getPropertyId() => TimelineType.rotate.index << 24 + boneIndex;
 
   void setFrame(int frameIndex, double time, double degrees) {
     frameIndex <<= 1;
@@ -213,9 +217,9 @@ class RotateTimeline extends CurveTimeline {
     final Bone bone = skeleton.bones[boneIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         bone.rotation = bone.data.rotation;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         double r = bone.data.rotation - bone.rotation;
         r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
         bone.rotation = bone.rotation + r * alpha;
@@ -225,7 +229,7 @@ class RotateTimeline extends CurveTimeline {
 
     if (time >= frames[frames.length - RotateTimeline.entries]) {
       // Time is after last frame.
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         bone.rotation = bone.data.rotation +
             frames[frames.length + RotateTimeline.prevRotation] * alpha;
       } else {
@@ -252,7 +256,7 @@ class RotateTimeline extends CurveTimeline {
     double r = frames[frame + RotateTimeline.rotation] - prevRotation;
     r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
     r = prevRotation + r * percent;
-    if (pose == MixPose.Setup) {
+    if (pose == MixPose.setup) {
       r -= (16384 - (16384.499999999996 - r / 360).toInt()) * 360;
       bone.rotation = bone.data.rotation + r * alpha;
     } else {
@@ -276,7 +280,7 @@ class TranslateTimeline extends CurveTimeline {
         super(frameCount);
 
   @override
-  int getPropertyId() => (TimelineType.Translate.index << 24) + boneIndex;
+  int getPropertyId() => (TimelineType.translate.index << 24) + boneIndex;
 
   void setFrame(int frameIndex, double time, double x, double y) {
     frameIndex *= TranslateTimeline.entries;
@@ -291,11 +295,11 @@ class TranslateTimeline extends CurveTimeline {
     final Bone bone = skeleton.bones[boneIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         bone
           ..x = bone.data.x
           ..y = bone.data.y;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         bone
           ..x += (bone.data.x - bone.x) * alpha
           ..y += (bone.data.y - bone.y) * alpha;
@@ -324,7 +328,7 @@ class TranslateTimeline extends CurveTimeline {
       x += (frames[frame + TranslateTimeline.x] - x) * percent;
       y += (frames[frame + TranslateTimeline.y] - y) * percent;
     }
-    if (pose == MixPose.Setup) {
+    if (pose == MixPose.setup) {
       bone
         ..x = bone.data.x + x * alpha
         ..y = bone.data.y + y * alpha;
@@ -340,7 +344,7 @@ class ScaleTimeline extends TranslateTimeline {
   ScaleTimeline(int frameCount) : super(frameCount);
 
   @override
-  int getPropertyId() => (TimelineType.Scale.index << 24) + boneIndex;
+  int getPropertyId() => (TimelineType.scale.index << 24) + boneIndex;
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
@@ -348,11 +352,11 @@ class ScaleTimeline extends TranslateTimeline {
     final Bone bone = skeleton.bones[boneIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         bone
           ..scaleX = bone.data.scaleX
           ..scaleY = bone.data.scaleY;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         bone
           ..scaleX += (bone.data.scaleX - bone.scaleX) * alpha
           ..scaleY += (bone.data.scaleY - bone.scaleY) * alpha;
@@ -389,7 +393,7 @@ class ScaleTimeline extends TranslateTimeline {
         ..scaleY = y;
     } else {
       double bx = 0.0, by = 0.0;
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         bx = bone.data.scaleX;
         by = bone.data.scaleY;
       } else {
@@ -397,7 +401,7 @@ class ScaleTimeline extends TranslateTimeline {
         by = bone.scaleY;
       }
       // Mixing out uses sign of setup or current pose, else use sign of key.
-      if (direction == MixDirection.Out) {
+      if (direction == MixDirection.mixOut) {
         x = x.abs() * MathUtils.signum(bx);
         y = y.abs() * MathUtils.signum(by);
       } else {
@@ -415,7 +419,7 @@ class ShearTimeline extends TranslateTimeline {
   ShearTimeline(int frameCount) : super(frameCount);
 
   @override
-  int getPropertyId() => (TimelineType.Shear.index << 24) + boneIndex;
+  int getPropertyId() => (TimelineType.shear.index << 24) + boneIndex;
 
   @override
   void apply(Skeleton skeleton, double lastTime, double time,
@@ -423,11 +427,11 @@ class ShearTimeline extends TranslateTimeline {
     final Bone bone = skeleton.bones[boneIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         bone
           ..shearX = bone.data.shearX
           ..shearY = bone.data.shearY;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         bone
           ..shearX += (bone.data.shearX - bone.shearX) * alpha
           ..shearY += (bone.data.shearY - bone.shearY) * alpha;
@@ -456,7 +460,7 @@ class ShearTimeline extends TranslateTimeline {
       x = x + (frames[frame + TranslateTimeline.x] - x) * percent;
       y = y + (frames[frame + TranslateTimeline.y] - y) * percent;
     }
-    if (pose == MixPose.Setup) {
+    if (pose == MixPose.setup) {
       bone
         ..shearX = bone.data.shearX + x * alpha
         ..shearY = bone.data.shearY + y * alpha;
@@ -485,7 +489,7 @@ class ColorTimeline extends CurveTimeline {
         super(frameCount);
 
   @override
-  int getPropertyId() => (TimelineType.Color.index << 24) + slotIndex;
+  int getPropertyId() => (TimelineType.color.index << 24) + slotIndex;
 
   void setFrame(
       int frameIndex, double time, double r, double g, double b, double a) {
@@ -503,9 +507,9 @@ class ColorTimeline extends CurveTimeline {
     final Slot slot = skeleton.slots[slotIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         slot.color.setFromColor(slot.data.color);
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         final Color? color = slot.color, setup = slot.data.color;
         color!.add((setup!.r - color.r) * alpha, (setup.g - color.g) * alpha,
             (setup.b - color.b) * alpha, (setup.a - color.a) * alpha);
@@ -541,11 +545,11 @@ class ColorTimeline extends CurveTimeline {
       b += (frames[frame + ColorTimeline.b] - b) * percent;
       a += (frames[frame + ColorTimeline.a] - a) * percent;
     }
-    if (alpha == 1)
+    if (alpha == 1) {
       slot.color.set(r, g, b, a);
-    else {
+    } else {
       final Color color = slot.color;
-      if (pose == MixPose.Setup) color.setFromColor(slot.data.color);
+      if (pose == MixPose.setup) color.setFromColor(slot.data.color);
       color.add((r - color.r) * alpha, (g - color.g) * alpha,
           (b - color.b) * alpha, (a - color.a) * alpha);
     }
@@ -570,7 +574,7 @@ class TwoColorTimeline extends CurveTimeline {
         super(frameCount);
 
   @override
-  int getPropertyId() => (TimelineType.TwoColor.index << 24) + slotIndex;
+  int getPropertyId() => (TimelineType.twoColor.index << 24) + slotIndex;
 
   void setFrame(int frameIndex, double time, double r, double g, double b,
       double a, double r2, double g2, double b2) {
@@ -591,10 +595,10 @@ class TwoColorTimeline extends CurveTimeline {
     final Slot slot = skeleton.slots[slotIndex];
     final Float32List frames = this.frames;
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         slot.color.setFromColor(slot.data.color);
         slot.darkColor!.setFromColor(slot.data.darkColor!);
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         final Color? light = slot.color,
             dark = slot.darkColor,
             setupLight = slot.data.color,
@@ -655,7 +659,7 @@ class TwoColorTimeline extends CurveTimeline {
       slot.darkColor!.set(r2, g2, b2, 1.0);
     } else {
       final Color? light = slot.color, dark = slot.darkColor;
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         light!.setFromColor(slot.data.color);
         dark!.setFromColor(slot.data.darkColor!);
       }
@@ -679,7 +683,7 @@ class AttachmentTimeline implements Timeline {
             List<String?>.filled(frameCount, null, growable: false);
 
   @override
-  int getPropertyId() => (TimelineType.Attachment.index << 24) + slotIndex;
+  int getPropertyId() => (TimelineType.attachment.index << 24) + slotIndex;
 
   int getFrameCount() => frames.length;
 
@@ -692,7 +696,7 @@ class AttachmentTimeline implements Timeline {
   void apply(Skeleton skeleton, double lastTime, double time,
       List<Event?> events, double alpha, MixPose pose, MixDirection direction) {
     final Slot slot = skeleton.slots[slotIndex];
-    if (direction == MixDirection.Out && pose == MixPose.Setup) {
+    if (direction == MixDirection.mixOut && pose == MixPose.setup) {
       final String? attachmentName = slot.data.attachmentName;
       slot.setAttachment(attachmentName == null
           ? null
@@ -702,7 +706,7 @@ class AttachmentTimeline implements Timeline {
 
     final Float32List frames = this.frames;
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         final String? attachmentName = slot.data.attachmentName;
         slot.setAttachment(attachmentName == null
             ? null
@@ -712,10 +716,11 @@ class AttachmentTimeline implements Timeline {
     }
 
     int frameIndex = 0;
-    if (time >= frames[frames.length - 1]) // Time is after last frame.
+    if (time >= frames[frames.length - 1]) {
       frameIndex = frames.length - 1;
-    else
+    } else {
       frameIndex = Animation.binarySearch(frames, time, 1) - 1;
+    }
 
     final String? attachmentName = attachmentNames[frameIndex];
     skeleton.slots[slotIndex].setAttachment(attachmentName == null
@@ -739,7 +744,7 @@ class DeformTimeline extends CurveTimeline {
 
   @override
   int getPropertyId() =>
-      (TimelineType.Deform.index << 27) + attachment.id + slotIndex;
+      (TimelineType.deform.index << 27) + attachment.id + slotIndex;
 
   void setFrame(int frameIndex, double time, Float32List? vertices) {
     frames[frameIndex] = time;
@@ -766,9 +771,9 @@ class DeformTimeline extends CurveTimeline {
 
     final Float32List frames = this.frames;
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         verticesArray.length = 0;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         if (alpha == 1) {
           verticesArray.length = 0;
           return;
@@ -779,12 +784,15 @@ class DeformTimeline extends CurveTimeline {
         if (vertexAttachment.bones == null) {
           // Unweighted vertex positions.
           final Float32List setupVertices = vertexAttachment.vertices!;
-          for (int i = 0; i < vertexCount; i++)
+          for (int i = 0; i < vertexCount; i++) {
             vertices[i] += (setupVertices[i] - vertices[i]) * alpha;
+          }
         } else {
           // Weighted deform offsets.
           alpha = 1 - alpha;
-          for (int i = 0; i < vertexCount; i++) vertices[i] *= alpha;
+          for (int i = 0; i < vertexCount; i++) {
+            vertices[i] *= alpha;
+          }
         }
       }
       return;
@@ -798,7 +806,7 @@ class DeformTimeline extends CurveTimeline {
       if (alpha == 1) {
         vertices = Float32List.fromList(ArrayUtils.arrayCopyWithGrowth(
             lastVertices, 0, vertices, 0, vertexCount, double.infinity));
-      } else if (pose == MixPose.Setup) {
+      } else if (pose == MixPose.setup) {
         if (vertexAttachment.bones == null) {
           // Unweighted vertex positions, with alpha.
           final Float32List setupVertices = vertexAttachment.vertices!;
@@ -808,12 +816,14 @@ class DeformTimeline extends CurveTimeline {
           }
         } else {
           // Weighted deform offsets, with alpha.
-          for (int i = 0; i < vertexCount; i++)
+          for (int i = 0; i < vertexCount; i++) {
             vertices[i] = lastVertices[i] * alpha;
+          }
         }
       } else {
-        for (int i = 0; i < vertexCount; i++)
+        for (int i = 0; i < vertexCount; i++) {
           vertices[i] += (lastVertices[i] - vertices[i]) * alpha;
+        }
       }
       return;
     }
@@ -831,7 +841,7 @@ class DeformTimeline extends CurveTimeline {
         final double prev = prevVertices![i];
         vertices[i] = prev + (nextVertices![i] - prev) * percent;
       }
-    } else if (pose == MixPose.Setup) {
+    } else if (pose == MixPose.setup) {
       if (vertexAttachment.bones == null) {
         // Unweighted vertex positions, with alpha.
         final Float32List? setupVertices = vertexAttachment.vertices;
@@ -867,7 +877,7 @@ class EventTimeline extends Timeline {
         events = List<Event?>.filled(frameCount, null, growable: false);
 
   @override
-  int getPropertyId() => TimelineType.Event.index << 24;
+  int getPropertyId() => TimelineType.event.index << 24;
 
   int getFrameCount() => frames.length;
 
@@ -881,6 +891,7 @@ class EventTimeline extends Timeline {
       Skeleton skeleton,
       double lastTime,
       double time,
+      // ignore: avoid_renaming_method_parameters
       List<Event?> firedEvents,
       double alpha,
       MixPose pose,
@@ -894,14 +905,14 @@ class EventTimeline extends Timeline {
       apply(skeleton, lastTime, double.maxFinite, firedEvents, alpha, pose,
           direction);
       lastTime = -1.0;
-    } else if (lastTime >= frames[frameCount - 1])
-      // Last time is after last frame.
+    } else if (lastTime >= frames[frameCount - 1]) {
       return;
+    }
     if (time < frames[0]) return; // Time is before first frame.
     int frame = 0;
-    if (lastTime < frames[0])
+    if (lastTime < frames[0]) {
       frame = 0;
-    else {
+    } else {
       frame = Animation.binarySearch(frames, lastTime);
       final double frameTime = frames[frame];
       while (frame > 0) {
@@ -910,8 +921,9 @@ class EventTimeline extends Timeline {
         frame--;
       }
     }
-    for (; frame < frameCount && time >= frames[frame]; frame++)
+    for (; frame < frameCount && time >= frames[frame]; frame++) {
       firedEvents.add(events[frame]);
+    }
   }
 }
 
@@ -924,7 +936,7 @@ class DrawOrderTimeline implements Timeline {
         drawOrders = List<Int32List?>.filled(frameCount, null, growable: false);
 
   @override
-  int getPropertyId() => TimelineType.DrawOrder.index << 24;
+  int getPropertyId() => TimelineType.drawOrder.index << 24;
 
   int getFrameCount() => frames.length;
 
@@ -944,7 +956,7 @@ class DrawOrderTimeline implements Timeline {
       MixDirection direction) {
     List<Slot> drawOrder = skeleton.drawOrder;
     final List<Slot> slots = skeleton.slots;
-    if (direction == MixDirection.Out && pose == MixPose.Setup) {
+    if (direction == MixDirection.mixOut && pose == MixPose.setup) {
       skeleton.drawOrder = ArrayUtils.arrayCopyWithGrowth(skeleton.slots, 0,
           skeleton.drawOrder, 0, skeleton.slots.length, Slot.empty());
       return;
@@ -952,26 +964,29 @@ class DrawOrderTimeline implements Timeline {
 
     final Float32List frames = this.frames;
     if (time < frames[0]) {
-      if (pose == MixPose.Setup)
+      if (pose == MixPose.setup) {
         skeleton.drawOrder = ArrayUtils.arrayCopyWithGrowth(skeleton.slots, 0,
             skeleton.drawOrder, 0, skeleton.slots.length, Slot.empty());
+      }
       return;
     }
 
     int frame = 0;
-    if (time >= frames[frames.length - 1]) // Time is after last frame.
+    if (time >= frames[frames.length - 1]) {
       frame = frames.length - 1;
-    else
+    } else {
       frame = Animation.binarySearch(frames, time) - 1;
+    }
 
     final Int32List? drawOrderToSetupIndex = drawOrders[frame];
-    if (drawOrderToSetupIndex == null)
+    if (drawOrderToSetupIndex == null) {
       drawOrder = ArrayUtils.arrayCopyWithGrowth(
           slots, 0, drawOrder, 0, slots.length, Slot.empty());
-    else {
+    } else {
       final int n = drawOrderToSetupIndex.length;
-      for (int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++) {
         drawOrder[i] = slots[drawOrderToSetupIndex[i]];
+      }
     }
   }
 }
@@ -990,7 +1005,7 @@ class IkConstraintTimeline extends CurveTimeline {
 
   @override
   int getPropertyId() =>
-      (TimelineType.IkConstraint.index << 24) + ikConstraintIndex;
+      (TimelineType.ikConstraint.index << 24) + ikConstraintIndex;
 
   void setFrame(int frameIndex, double time, double mix, int bendDirection) {
     frameIndex *= IkConstraintTimeline.entries;
@@ -1012,11 +1027,11 @@ class IkConstraintTimeline extends CurveTimeline {
     final Float32List frames = this.frames;
     final IkConstraint constraint = skeleton.ikConstraints[ikConstraintIndex];
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         constraint
           ..mix = constraint.data.mix
           ..bendDirection = constraint.data.bendDirection;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         constraint
           ..mix += (constraint.data.mix - constraint.mix) * alpha
           ..bendDirection = constraint.data.bendDirection;
@@ -1026,13 +1041,13 @@ class IkConstraintTimeline extends CurveTimeline {
 
     if (time >= frames[frames.length - IkConstraintTimeline.entries]) {
       // Time is after last frame.
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         constraint
           ..mix = constraint.data.mix +
               (frames[frames.length + IkConstraintTimeline.prevMix] -
                       constraint.data.mix) *
                   alpha
-          ..bendDirection = direction == MixDirection.Out
+          ..bendDirection = direction == MixDirection.mixOut
               ? constraint.data.bendDirection
               : frames[frames.length + IkConstraintTimeline.prevBendDirection]
                   as int;
@@ -1041,10 +1056,11 @@ class IkConstraintTimeline extends CurveTimeline {
             (frames[frames.length + IkConstraintTimeline.prevMix] -
                     constraint.mix) *
                 alpha;
-        if (direction == MixDirection.In)
+        if (direction == MixDirection.mixIn) {
           constraint.bendDirection =
               frames[frames.length + IkConstraintTimeline.prevBendDirection]
                   .toInt();
+        }
       }
       return;
     }
@@ -1060,14 +1076,14 @@ class IkConstraintTimeline extends CurveTimeline {
             (time - frameTime) /
                 (frames[frame + IkConstraintTimeline.prevTime] - frameTime));
 
-    if (pose == MixPose.Setup) {
+    if (pose == MixPose.setup) {
       constraint
         ..mix = constraint.data.mix +
             (mix +
                     (frames[frame + IkConstraintTimeline.mix] - mix) * percent -
                     constraint.data.mix) *
                 alpha
-        ..bendDirection = direction == MixDirection.Out
+        ..bendDirection = direction == MixDirection.mixOut
             ? constraint.data.bendDirection
             : frames[frame + IkConstraintTimeline.prevBendDirection] as int;
     } else {
@@ -1076,9 +1092,10 @@ class IkConstraintTimeline extends CurveTimeline {
                   (frames[frame + IkConstraintTimeline.mix] - mix) * percent -
                   constraint.mix) *
               alpha;
-      if (direction == MixDirection.In)
+      if (direction == MixDirection.mixIn) {
         constraint.bendDirection =
             frames[frame + IkConstraintTimeline.prevBendDirection].toInt();
+      }
     }
   }
 }
@@ -1101,7 +1118,7 @@ class TransformConstraintTimeline extends CurveTimeline {
 
   @override
   int getPropertyId() =>
-      (TimelineType.TransformConstraint.index << 24) + transformConstraintIndex;
+      (TimelineType.transformConstraint.index << 24) + transformConstraintIndex;
 
   void setFrame(int frameIndex, double time, double rotateMix,
       double translateMix, double scaleMix, double shearMix) {
@@ -1129,13 +1146,13 @@ class TransformConstraintTimeline extends CurveTimeline {
 
     if (time < frames[0]) {
       final TransformConstraintData data = constraint.data;
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         constraint
           ..rotateMix = data.rotateMix
           ..translateMix = data.translateMix
           ..scaleMix = data.scaleMix
           ..shearMix = data.shearMix;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         constraint
           ..rotateMix += (data.rotateMix - constraint.rotateMix) * alpha
           ..translateMix +=
@@ -1180,7 +1197,7 @@ class TransformConstraintTimeline extends CurveTimeline {
       shear +=
           (frames[frame + TransformConstraintTimeline.shear] - shear) * percent;
     }
-    if (pose == MixPose.Setup) {
+    if (pose == MixPose.setup) {
       final TransformConstraintData data = constraint.data;
       constraint
         ..rotateMix = data.rotateMix + (rotate - data.rotateMix) * alpha
@@ -1213,7 +1230,7 @@ class PathConstraintPositionTimeline extends CurveTimeline {
 
   @override
   int getPropertyId() =>
-      (TimelineType.PathConstraintPosition.index << 24) + pathConstraintIndex;
+      (TimelineType.pathConstraintPosition.index << 24) + pathConstraintIndex;
 
   void setFrame(int frameIndex, double time, double value) {
     frameIndex *= PathConstraintPositionTimeline.entries;
@@ -1234,9 +1251,9 @@ class PathConstraintPositionTimeline extends CurveTimeline {
     final PathConstraint constraint =
         skeleton.pathConstraints[pathConstraintIndex];
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         constraint.position = constraint.data.position;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         constraint.position = constraint.position +
             (constraint.data.position - constraint.position) * alpha;
       }
@@ -1244,10 +1261,11 @@ class PathConstraintPositionTimeline extends CurveTimeline {
     }
 
     double position = 0.0;
-    if (time >= frames[frames.length - PathConstraintPositionTimeline.entries])
+    if (time >=
+        frames[frames.length - PathConstraintPositionTimeline.entries]) {
       position =
           frames[frames.length + PathConstraintPositionTimeline.prevValue];
-    else {
+    } else {
       // Interpolate between the previous frame and the current frame.
       final int frame = Animation.binarySearch(
           frames, time, PathConstraintPositionTimeline.entries);
@@ -1264,12 +1282,13 @@ class PathConstraintPositionTimeline extends CurveTimeline {
           (frames[frame + PathConstraintPositionTimeline.value] - position) *
               percent;
     }
-    if (pose == MixPose.Setup)
+    if (pose == MixPose.setup) {
       constraint.position = constraint.data.position +
           (position - constraint.data.position) * alpha;
-    else
+    } else {
       constraint.position =
           constraint.position + (position - constraint.position) * alpha;
+    }
   }
 }
 
@@ -1278,7 +1297,7 @@ class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
 
   @override
   int getPropertyId() =>
-      (TimelineType.PathConstraintSpacing.index << 24) + pathConstraintIndex;
+      (TimelineType.pathConstraintSpacing.index << 24) + pathConstraintIndex;
 
   @override
   void apply(
@@ -1293,9 +1312,9 @@ class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
     final PathConstraint constraint =
         skeleton.pathConstraints[pathConstraintIndex];
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         constraint.spacing = constraint.data.spacing;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         constraint.spacing = constraint.spacing +
             (constraint.data.spacing - constraint.spacing) * alpha;
       }
@@ -1303,10 +1322,11 @@ class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
     }
 
     double spacing = 0.0;
-    if (time >= frames[frames.length - PathConstraintPositionTimeline.entries])
+    if (time >=
+        frames[frames.length - PathConstraintPositionTimeline.entries]) {
       spacing =
           frames[frames.length + PathConstraintPositionTimeline.prevValue];
-    else {
+    } else {
       // Interpolate between the previous frame and the current frame.
       final int frame = Animation.binarySearch(
           frames, time, PathConstraintPositionTimeline.entries);
@@ -1324,12 +1344,13 @@ class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
               percent;
     }
 
-    if (pose == MixPose.Setup)
+    if (pose == MixPose.setup) {
       constraint.spacing =
           constraint.data.spacing + (spacing - constraint.data.spacing) * alpha;
-    else
+    } else {
       constraint.spacing =
           constraint.spacing + (spacing - constraint.spacing) * alpha;
+    }
   }
 }
 
@@ -1347,7 +1368,7 @@ class PathConstraintMixTimeline extends CurveTimeline {
 
   @override
   int getPropertyId() =>
-      (TimelineType.PathConstraintMix.index << 24) + pathConstraintIndex;
+      (TimelineType.pathConstraintMix.index << 24) + pathConstraintIndex;
 
   void setFrame(
       int frameIndex, double time, double rotateMix, double translateMix) {
@@ -1371,11 +1392,11 @@ class PathConstraintMixTimeline extends CurveTimeline {
         skeleton.pathConstraints[pathConstraintIndex];
 
     if (time < frames[0]) {
-      if (pose == MixPose.Setup) {
+      if (pose == MixPose.setup) {
         constraint
           ..rotateMix = constraint.data.rotateMix
           ..translateMix = constraint.data.translateMix;
-      } else if (pose == MixPose.Current) {
+      } else if (pose == MixPose.current) {
         constraint
           ..rotateMix +=
               (constraint.data.rotateMix - constraint.rotateMix) * alpha
@@ -1412,7 +1433,7 @@ class PathConstraintMixTimeline extends CurveTimeline {
               percent;
     }
 
-    if (pose == MixPose.Setup) {
+    if (pose == MixPose.setup) {
       constraint
         ..rotateMix = constraint.data.rotateMix +
             (rotate - constraint.data.rotateMix) * alpha

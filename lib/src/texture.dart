@@ -42,19 +42,19 @@ abstract class Texture {
   static TextureFilter filterFromString(String text) {
     switch (text.toLowerCase()) {
       case 'nearest':
-        return TextureFilter.Nearest;
+        return TextureFilter.nearest;
       case 'linear':
-        return TextureFilter.Linear;
+        return TextureFilter.linear;
       case 'mipmap':
-        return TextureFilter.MipMap;
+        return TextureFilter.mipMap;
       case 'mipmapnearestnearest':
-        return TextureFilter.MipMapNearestNearest;
+        return TextureFilter.mipMapNearestNearest;
       case 'mipmaplinearnearest':
-        return TextureFilter.MipMapLinearNearest;
+        return TextureFilter.mipMapLinearNearest;
       case 'mipmapnearestlinear':
-        return TextureFilter.MipMapNearestLinear;
+        return TextureFilter.mipMapNearestLinear;
       case 'mipmaplinearlinear':
-        return TextureFilter.MipMapLinearLinear;
+        return TextureFilter.mipMapLinearLinear;
       default:
         throw ArgumentError('Unknown texture filter $text');
     }
@@ -63,11 +63,11 @@ abstract class Texture {
   static TextureWrap wrapFromString(String text) {
     switch (text.toLowerCase()) {
       case 'mirroredtepeat':
-        return TextureWrap.MirroredRepeat;
+        return TextureWrap.mirroredRepeat;
       case 'clamptoedge':
-        return TextureWrap.ClampToEdge;
+        return TextureWrap.clampToEdge;
       case 'repeat':
-        return TextureWrap.Repeat;
+        return TextureWrap.repeat;
       default:
         throw ArgumentError('Unknown texture wrap $text');
     }
@@ -77,21 +77,21 @@ abstract class Texture {
 class TextureFilter extends Enum<int> {
   const TextureFilter(int value) : super(value);
 
-  static const TextureFilter Nearest = TextureFilter(9728);
-  static const TextureFilter Linear = TextureFilter(9729);
-  static const TextureFilter MipMap = TextureFilter(9987);
-  static const TextureFilter MipMapNearestNearest = TextureFilter(9984);
-  static const TextureFilter MipMapLinearNearest = TextureFilter(9985);
-  static const TextureFilter MipMapNearestLinear = TextureFilter(9986);
-  static const TextureFilter MipMapLinearLinear = TextureFilter(9987);
+  static const TextureFilter nearest = TextureFilter(9728);
+  static const TextureFilter linear = TextureFilter(9729);
+  static const TextureFilter mipMap = TextureFilter(9987);
+  static const TextureFilter mipMapNearestNearest = TextureFilter(9984);
+  static const TextureFilter mipMapLinearNearest = TextureFilter(9985);
+  static const TextureFilter mipMapNearestLinear = TextureFilter(9986);
+  static const TextureFilter mipMapLinearLinear = TextureFilter(9987);
 }
 
 class TextureWrap extends Enum<int> {
   const TextureWrap(int value) : super(value);
 
-  static const TextureWrap MirroredRepeat = TextureWrap(33648);
-  static const TextureWrap ClampToEdge = TextureWrap(33071);
-  static const TextureWrap Repeat = TextureWrap(10497);
+  static const TextureWrap mirroredRepeat = TextureWrap(33648);
+  static const TextureWrap clampToEdge = TextureWrap(33071);
+  static const TextureWrap repeat = TextureWrap(10497);
 }
 
 class TextureRegion {

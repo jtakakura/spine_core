@@ -30,4 +30,4 @@
 
 part of spine_core;
 
-enum BlendMode { Normal, Additive, Multiply, Screen }
+enum BlendMode { normal, additive, multiply, screen }

@@ -51,9 +51,9 @@ class Skeleton {
     for (int i = 0; i < data.bones.length; i++) {
       final BoneData boneData = data.bones[i];
       Bone bone;
-      if (boneData.parent == null)
+      if (boneData.parent == null) {
         bone = Bone(boneData, this, null);
-      else {
+      } else {
         final Bone parent = bones[boneData.parent!.index];
         bone = Bone(boneData, this, parent);
         parent.children.add(bone);
@@ -102,7 +102,9 @@ class Skeleton {
 
     final List<Bone> bones = this.bones;
     final int n = bones.length;
-    for (int i = 0; i < n; i++) bones[i].sorted = false;
+    for (int i = 0; i < n; i++) {
+      bones[i].sorted = false;
+    }
 
     // IK first, lowest hierarchy depth first.
     final List<IkConstraint> ikConstraints = this.ikConstraints;
@@ -140,7 +142,9 @@ class Skeleton {
     }
 
     final int nn = bones.length;
-    for (int i = 0; i < nn; i++) sortBone(bones[i]);
+    for (int i = 0; i < nn; i++) {
+      sortBone(bones[i]);
+    }
   }
 
   void sortIkConstraint(IkConstraint constraint) {
@@ -167,24 +171,33 @@ class Skeleton {
     final int slotIndex = slot.data.index;
     final Bone slotBone = slot.bone;
     if (skin != null) sortPathConstraintAttachment(skin!, slotIndex, slotBone);
-    if (data.defaultSkin != null && data.defaultSkin != skin)
+    if (data.defaultSkin != null && data.defaultSkin != skin) {
       sortPathConstraintAttachment(data.defaultSkin!, slotIndex, slotBone);
+    }
     final int n = data.skins.length;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
       sortPathConstraintAttachment(data.skins[i], slotIndex, slotBone);
+    }
 
     final Attachment? attachment = slot.getAttachment();
-    if (attachment is PathAttachment)
+    if (attachment is PathAttachment) {
       sortPathConstraintAttachmentWith(attachment, slotBone);
+    }
 
     final List<Bone> constrained = constraint.bones;
     final int boneCount = constrained.length;
-    for (int i = 0; i < boneCount; i++) sortBone(constrained[i]);
+    for (int i = 0; i < boneCount; i++) {
+      sortBone(constrained[i]);
+    }
 
     _updateCache.add(constraint);
 
-    for (int i = 0; i < boneCount; i++) sortReset(constrained[i].children);
-    for (int i = 0; i < boneCount; i++) constrained[i].sorted = true;
+    for (int i = 0; i < boneCount; i++) {
+      sortReset(constrained[i].children);
+    }
+    for (int i = 0; i < boneCount; i++) {
+      constrained[i].sorted = true;
+    }
   }
 
   void sortTransformConstraint(TransformConstraint constraint) {
@@ -206,8 +219,12 @@ class Skeleton {
 
     _updateCache.add(constraint);
 
-    for (int ii = 0; ii < boneCount; ii++) sortReset(constrained[ii].children);
-    for (int ii = 0; ii < boneCount; ii++) constrained[ii].sorted = true;
+    for (int ii = 0; ii < boneCount; ii++) {
+      sortReset(constrained[ii].children);
+    }
+    for (int ii = 0; ii < boneCount; ii++) {
+      constrained[ii].sorted = true;
+    }
   }
 
   void sortPathConstraintAttachment(Skin skin, int slotIndex, Bone slotBone) {
@@ -220,9 +237,9 @@ class Skeleton {
     if (attachment is! PathAttachment) return;
     final PathAttachment pathAttachment = attachment;
     final Int32List? pathBones = pathAttachment.bones;
-    if (pathBones == null)
+    if (pathBones == null) {
       sortBone(slotBone);
-    else {
+    } else {
       final List<Bone> bones = this.bones;
       int i = 0;
       while (i < pathBones.length) {
@@ -270,7 +287,9 @@ class Skeleton {
     }
     final List<Updatable> updateCache = _updateCache;
     final int nn = updateCache.length;
-    for (int i = 0; i < nn; i++) updateCache[i].update();
+    for (int i = 0; i < nn; i++) {
+      updateCache[i].update();
+    }
   }
 
   void setToSetupPose() {
@@ -281,7 +300,9 @@ class Skeleton {
   void setBonesToSetupPose() {
     final List<Bone> bones = this.bones;
     final int n = bones.length;
-    for (int i = 0; i < n; i++) bones[i].setToSetupPose();
+    for (int i = 0; i < n; i++) {
+      bones[i].setToSetupPose();
+    }
 
     final List<IkConstraint> ikConstraints = this.ikConstraints;
     final int nn = ikConstraints.length;
@@ -323,7 +344,9 @@ class Skeleton {
     drawOrder = ArrayUtils.arrayCopyWithGrowth(
         slots, 0, drawOrder, 0, slots.length, Slot.empty());
     final int n = slots.length;
-    for (int i = 0; i < n; i++) slots[i].setToSetupPose();
+    for (int i = 0; i < n; i++) {
+      slots[i].setToSetupPose();
+    }
   }
 
   Bone? getRootBone() => bones.isEmpty ? null : bones[0];
@@ -341,7 +364,9 @@ class Skeleton {
   int findBoneIndex(String boneName) {
     final List<Bone> bones = this.bones;
     final int n = bones.length;
-    for (int i = 0; i < n; i++) if (bones[i].data.name == boneName) return i;
+    for (int i = 0; i < n; i++) {
+      if (bones[i].data.name == boneName) return i;
+    }
     return -1;
   }
 
@@ -359,7 +384,9 @@ class Skeleton {
   int findSlotIndex(String slotName) {
     final List<Slot> slots = this.slots;
     final int n = slots.length;
-    for (int i = 0; i < n; i++) if (slots[i].data.name == slotName) return i;
+    for (int i = 0; i < n; i++) {
+      if (slots[i].data.name == slotName) return i;
+    }
     return -1;
   }
 
@@ -371,9 +398,9 @@ class Skeleton {
 
   void setSkin(Skin? newSkin) {
     if (newSkin != null) {
-      if (skin != null)
+      if (skin != null) {
         newSkin.attachAll(this, skin);
-      else {
+      } else {
         final List<Slot> slots = this.slots;
         final int n = slots.length;
         for (int i = 0; i < n; i++) {
@@ -398,8 +425,9 @@ class Skeleton {
           skin!.getAttachment(slotIndex, attachmentName);
       if (attachment != null) return attachment;
     }
-    if (data.defaultSkin != null)
+    if (data.defaultSkin != null) {
       return data.defaultSkin!.getAttachment(slotIndex, attachmentName);
+    }
     return null;
   }
 
@@ -412,9 +440,10 @@ class Skeleton {
         Attachment? attachment;
         if (attachmentName.isNotEmpty) {
           attachment = getAttachment(i, attachmentName);
-          if (attachment == null)
+          if (attachment == null) {
             throw StateError(
                 'Attachment not found: $attachmentName, for slot: $slotName');
+          }
         }
         slot.setAttachment(attachment);
         return;

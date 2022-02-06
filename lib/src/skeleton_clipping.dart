@@ -68,8 +68,9 @@ class SkeletonClipping {
   }
 
   void clipEndWithSlot(Slot slot) {
-    if (clipAttachment != null && clipAttachment!.endSlot == slot.data)
+    if (clipAttachment != null && clipAttachment!.endSlot == slot.data) {
       clipEnd();
+    }
   }
 
   void clipEnd() {
@@ -257,8 +258,9 @@ class SkeletonClipping {
     if (clippingArea.length % 4 >= 2) {
       input = output;
       output = scratch as Float32List;
-    } else
+    } else {
       input = scratch as Float32List;
+    }
 
     input
       ..length = 0
@@ -337,9 +339,12 @@ class SkeletonClipping {
     if (originalOutput != output) {
       originalOutput.length = 0;
       final int n = output.length - 2;
-      for (int i = 0; i < n; i++) originalOutput[i] = output[i];
-    } else
+      for (int i = 0; i < n; i++) {
+        originalOutput[i] = output[i];
+      }
+    } else {
       originalOutput.length = originalOutput.length - 2;
+    }
 
     return clipped;
   }

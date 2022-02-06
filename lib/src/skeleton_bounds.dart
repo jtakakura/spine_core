@@ -134,8 +134,9 @@ class SkeletonBounds {
   BoundingBoxAttachment? containsPoint(double x, double y) {
     final List<Float32List> polygons = this.polygons;
     final int n = polygons.length;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
       if (containsPointPolygon(polygons[i], x, y)) return boundingBoxes[i];
+    }
     return null;
   }
 
@@ -165,9 +166,11 @@ class SkeletonBounds {
       double x1, double y1, double x2, double y2) {
     final List<Float32List> polygons = this.polygons;
     final int n = polygons.length;
-    for (int i = 0; i < n; i++)
-      if (intersectsSegmentPolygon(polygons[i], x1, y1, x2, y2))
+    for (int i = 0; i < n; i++) {
+      if (intersectsSegmentPolygon(polygons[i], x1, y1, x2, y2)) {
         return boundingBoxes[i];
+      }
+    }
     return null;
   }
 
@@ -197,7 +200,7 @@ class SkeletonBounds {
     return false;
   }
 
-  Float32List? AnimationStateData(BoundingBoxAttachment boundingBox) {
+  Float32List? animationStateData(BoundingBoxAttachment boundingBox) {
     final int index = boundingBoxes.indexOf(boundingBox);
     return index == -1 ? null : polygons[index];
   }

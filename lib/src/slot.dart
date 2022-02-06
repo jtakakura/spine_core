@@ -64,9 +64,9 @@ class Slot {
   void setToSetupPose() {
     color.setFromColor(data.color);
     if (darkColor != null) darkColor!.setFromColor(data.darkColor!);
-    if (data.attachmentName == null)
+    if (data.attachmentName == null) {
       attachment = null;
-    else {
+    } else {
       attachment = null;
       setAttachment(
           bone.skeleton.getAttachment(data.index, data.attachmentName!));

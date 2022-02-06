@@ -51,11 +51,11 @@ abstract class Enum<T> {
 }
 
 class Color {
-  static final Color WHITE = Color(1.0, 1.0, 1.0, 1.0);
-  static final Color RED = Color(1.0, 0.0, 0.0, 1.0);
-  static final Color GREEN = Color(0.0, 1.0, 0.0, 1.0);
-  static final Color BLUE = Color(0.0, 0.0, 1.0, 1.0);
-  static final Color MAGENTA = Color(1.0, 0.0, 1.0, 1.0);
+  static final Color white = Color(1.0, 1.0, 1.0, 1.0);
+  static final Color red = Color(1.0, 0.0, 0.0, 1.0);
+  static final Color green = Color(0.0, 1.0, 0.0, 1.0);
+  static final Color blue = Color(0.0, 0.0, 1.0, 1.0);
+  static final Color magenta = Color(1.0, 0.0, 1.0, 1.0);
 
   double r, g, b, a;
 
@@ -94,21 +94,29 @@ class Color {
   }
 
   void clamp() {
-    if (r < 0.0)
+    if (r < 0.0) {
       r = 0.0;
-    else if (r > 1) r = 1.0;
+    } else if (r > 1) {
+      r = 1.0;
+    }
 
-    if (g < 0.0)
+    if (g < 0.0) {
       g = 0.0;
-    else if (g > 1) g = 1.0;
+    } else if (g > 1) {
+      g = 1.0;
+    }
 
-    if (b < 0.0)
+    if (b < 0.0) {
       b = 0.0;
-    else if (b > 1) b = 1.0;
+    } else if (b > 1) {
+      b = 1.0;
+    }
 
-    if (a < 0.0)
+    if (a < 0.0) {
       a = 0.0;
-    else if (a > 1) a = 1.0;
+    } else if (a > 1) {
+      a = 1.0;
+    }
   }
 }
 
@@ -221,7 +229,7 @@ class ArrayUtils {
           : ArrayUtils.copyWithNewArraySize(array, size, defaultValue);
 }
 
-typedef T Instantiator<T>();
+typedef Instantiator<T> = T Function();
 
 class Pool<T> {
   final List<T> items = <T>[];

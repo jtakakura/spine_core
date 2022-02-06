@@ -30,4 +30,4 @@
 
 part of spine_core;
 
-enum AttachmentType { Region, BoundingBox, Mesh, LinkedMesh, Path, Point }
+enum AttachmentType { region, boundingBox, mesh, linkedMesh, path, point }

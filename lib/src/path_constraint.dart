@@ -47,8 +47,9 @@ class PathConstraint extends Constraint {
 
   PathConstraint(this.data, Skeleton skeleton) {
     final int n = data.bones.length;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
       bones.add(skeleton.findBone(data.bones[i].name)!);
+    }
     target = skeleton.findSlot(data.target!.name);
     position = data.position;
     spacing = data.spacing;
@@ -71,10 +72,10 @@ class PathConstraint extends Constraint {
 
     final PathConstraintData data = this.data;
     final SpacingMode? spacingMode = data.spacingMode;
-    final bool lengthSpacing = spacingMode == SpacingMode.Length;
+    final bool lengthSpacing = spacingMode == SpacingMode.length;
     final RotateMode? rotateMode = data.rotateMode;
-    final bool tangents = rotateMode == RotateMode.Tangent,
-        scale = rotateMode == RotateMode.ChainScale;
+    final bool tangents = rotateMode == RotateMode.tangent,
+        scale = rotateMode == RotateMode.chainScale;
     final int boneCount = this.bones.length,
         spacesCount = tangents ? boneCount : boneCount + 1;
     final List<Bone> bones = this.bones;
@@ -83,9 +84,10 @@ class PathConstraint extends Constraint {
     late Float32List lengths;
     final double spacing = this.spacing;
     if (scale || lengthSpacing) {
-      if (scale)
+      if (scale) {
         lengths = ArrayUtils.copyWithNewArraySize(
             this.lengths, boneCount, double.infinity) as Float32List;
+      }
       final int n = spacesCount - 1;
       for (int i = 0; i < n;) {
         final Bone bone = bones[i];
@@ -103,22 +105,24 @@ class PathConstraint extends Constraint {
         }
       }
     } else {
-      for (int i = 1; i < spacesCount; i++) spaces[i] = spacing;
+      for (int i = 1; i < spacesCount; i++) {
+        spaces[i] = spacing;
+      }
     }
 
     final Float32List positions = computeWorldPositions(
         attachment,
         spacesCount,
         tangents,
-        data.positionMode == PositionMode.Percent,
-        spacingMode == SpacingMode.Percent);
+        data.positionMode == PositionMode.percent,
+        spacingMode == SpacingMode.percent);
     double boneX = positions[0],
         boneY = positions[1],
         offsetRotation = data.offsetRotation;
     bool tip = false;
-    if (offsetRotation == 0)
-      tip = rotateMode == RotateMode.Chain;
-    else {
+    if (offsetRotation == 0) {
+      tip = rotateMode == RotateMode.chain;
+    } else {
       tip = false;
       final Bone p = target!.bone;
       offsetRotation = offsetRotation *
@@ -148,12 +152,13 @@ class PathConstraint extends Constraint {
       if (rotate) {
         final double a = bone.a, b = bone.b, c = bone.c, d = bone.d;
         double r = 0.0, cos = 0.0, sin = 0.0;
-        if (tangents)
+        if (tangents) {
           r = positions[p - 1];
-        else if (spaces[i + 1] == 0)
+        } else if (spaces[i + 1] == 0) {
           r = positions[p + 2];
-        else
+        } else {
           r = math.atan2(dy, dx);
+        }
         r -= math.atan2(c, a);
         if (tip) {
           cos = math.cos(r);
@@ -164,9 +169,11 @@ class PathConstraint extends Constraint {
         } else {
           r += offsetRotation;
         }
-        if (r > math.pi)
+        if (r > math.pi) {
           r -= math.pi * 2;
-        else if (r < -math.pi) r += math.pi * 2;
+        } else if (r < -math.pi) {
+          r += math.pi * 2;
+        }
         r *= rotateMix;
         cos = math.cos(r);
         sin = math.sin(r);
@@ -199,7 +206,9 @@ class PathConstraint extends Constraint {
       final double pathLength = lengths[curveCount];
       if (percentPosition) position = position * pathLength;
       if (percentSpacing) {
-        for (int i = 0; i < spacesCount; i++) spaces[i] *= pathLength;
+        for (int i = 0; i < spacesCount; i++) {
+          spaces[i] *= pathLength;
+        }
       }
       world = ArrayUtils.copyWithNewArraySize(this.world, 8, double.infinity)
           as Float32List;
@@ -233,9 +242,9 @@ class PathConstraint extends Constraint {
         for (;; curve++) {
           final double length = lengths[curve];
           if (p > length) continue;
-          if (curve == 0)
+          if (curve == 0) {
             p /= length;
-          else {
+          } else {
             final double prev = lengths[curve - 1];
             p = (p - prev) / (length - prev);
           }
@@ -248,8 +257,9 @@ class PathConstraint extends Constraint {
               ..computeWorldVertices(
                   target!, verticesLength - 4, 4, world, 0, 2)
               ..computeWorldVertices(target, 0, 4, world, 4, 2);
-          } else
+          } else {
             path.computeWorldVertices(target!, curve * 6 + 2, 8, world, 0, 2);
+          }
         }
         addCurvePosition(
             p,
@@ -339,7 +349,9 @@ class PathConstraint extends Constraint {
     }
     if (percentPosition) position = position * pathLength;
     if (percentSpacing) {
-      for (int i = 0; i < spacesCount; i++) spaces[i] *= pathLength;
+      for (int i = 0; i < spacesCount; i++) {
+        spaces[i] *= pathLength;
+      }
     }
 
     final Float32List segments = this.segments;
@@ -367,9 +379,9 @@ class PathConstraint extends Constraint {
       for (;; curve++) {
         final double length = curves[curve];
         if (p > length) continue;
-        if (curve == 0)
+        if (curve == 0) {
           p /= length;
-        else {
+        } else {
           final double prev = curves[curve - 1];
           p = (p - prev) / (length - prev);
         }
@@ -422,9 +434,9 @@ class PathConstraint extends Constraint {
       for (;; segment++) {
         final double length = segments[segment];
         if (p > length) continue;
-        if (segment == 0)
+        if (segment == 0) {
           p /= length;
-        else {
+        } else {
           final double prev = segments[segment - 1];
           p = segment + (p - prev) / (length - prev);
         }
@@ -480,9 +492,10 @@ class PathConstraint extends Constraint {
         y = y1 * uuu + cy1 * uut3 + cy2 * utt3 + y2 * ttt;
     out[o] = x;
     out[o + 1] = y;
-    if (tangents)
+    if (tangents) {
       out[o + 2] = math.atan2(y - (y1 * uu + cy1 * ut * 2 + cy2 * tt),
           x - (x1 * uu + cx1 * ut * 2 + cx2 * tt));
+    }
   }
 
   @override

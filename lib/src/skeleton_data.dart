@@ -55,14 +55,18 @@ class SkeletonData {
   BoneData? findBone(String boneName) {
     final List<BoneData> bones = this.bones;
     final int n = bones.length;
-    for (int i = 0; i < n; i++) if (bones[i].name == boneName) return bones[i];
+    for (int i = 0; i < n; i++) {
+      if (bones[i].name == boneName) return bones[i];
+    }
     return null;
   }
 
   int findBoneIndex(String boneName) {
     final List<BoneData> bones = this.bones;
     final int n = bones.length;
-    for (int i = 0; i < n; i++) if (bones[i].name == boneName) return i;
+    for (int i = 0; i < n; i++) {
+      if (bones[i].name == boneName) return i;
+    }
     return -1;
   }
 
@@ -70,7 +74,9 @@ class SkeletonData {
     if (slotName.isEmpty) throw ArgumentError('slotName cannot be empty.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
-    for (int i = 0; i < n; i++) if (slots[i].name == slotName) return slots[i];
+    for (int i = 0; i < n; i++) {
+      if (slots[i].name == slotName) return slots[i];
+    }
     return null;
   }
 
@@ -78,7 +84,9 @@ class SkeletonData {
     if (slotName.isEmpty) throw ArgumentError('slotName cannot be empty.');
     final List<SlotData> slots = this.slots;
     final int n = slots.length;
-    for (int i = 0; i < n; i++) if (slots[i].name == slotName) return i;
+    for (int i = 0; i < n; i++) {
+      if (slots[i].name == slotName) return i;
+    }
     return -1;
   }
 
@@ -86,33 +94,39 @@ class SkeletonData {
     if (skinName.isEmpty) throw ArgumentError('skinName cannot be empty.');
     final List<Skin> skins = this.skins;
     final int n = skins.length;
-    for (int i = 0; i < n; i++) if (skins[i].name == skinName) return skins[i];
+    for (int i = 0; i < n; i++) {
+      if (skins[i].name == skinName) return skins[i];
+    }
     return null;
   }
 
   EventData? findEvent(String eventDataName) {
-    if (eventDataName.isEmpty)
+    if (eventDataName.isEmpty) {
       throw ArgumentError('eventDataName cannot be empty.');
+    }
     final List<EventData> events = this.events;
     final int n = events.length;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
       if (events[i].name == eventDataName) return events[i];
+    }
     return null;
   }
 
   Animation? findAnimation(String animationName) {
     final List<Animation> animations = this.animations;
     final int n = animations.length;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
       if (animations[i].name == animationName) return animations[i];
+    }
     return null;
   }
 
   IkConstraintData? findIkConstraint(String constraintName) {
     final List<IkConstraintData?> ikConstraints = this.ikConstraints;
     final int n = ikConstraints.length;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
       if (ikConstraints[i]!.name == constraintName) return ikConstraints[i];
+    }
     return null;
   }
 
@@ -120,25 +134,29 @@ class SkeletonData {
     final List<TransformConstraintData?> transformConstraints =
         this.transformConstraints;
     final int n = transformConstraints.length;
-    for (int i = 0; i < n; i++)
-      if (transformConstraints[i]!.name == constraintName)
+    for (int i = 0; i < n; i++) {
+      if (transformConstraints[i]!.name == constraintName) {
         return transformConstraints[i];
+      }
+    }
     return null;
   }
 
   PathConstraintData? findPathConstraint(String constraintName) {
     final List<PathConstraintData> pathConstraints = this.pathConstraints;
     final int n = pathConstraints.length;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
       if (pathConstraints[i].name == constraintName) return pathConstraints[i];
+    }
     return null;
   }
 
   int findPathConstraintIndex(String pathConstraintName) {
     final List<PathConstraintData> pathConstraints = this.pathConstraints;
     final int n = pathConstraints.length;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
       if (pathConstraints[i].name == pathConstraintName) return i;
+    }
     return -1;
   }
 }

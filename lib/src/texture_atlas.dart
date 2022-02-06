@@ -30,7 +30,7 @@
 
 part of spine_core;
 
-typedef Texture TextureLoader(String path);
+typedef TextureLoader = Texture Function(String path);
 
 class TextureAtlas implements Disposable {
   List<TextureAtlasPage> pages = <TextureAtlasPage>[];
@@ -48,9 +48,9 @@ class TextureAtlas implements Disposable {
       String? line = reader.readLine();
       if (line == null) break;
       line = line.trim();
-      if (line.isEmpty)
+      if (line.isEmpty) {
         page = null;
-      else if (page == null) {
+      } else if (page == null) {
         page = TextureAtlasPage(line);
 
         tuple = reader.readTuple(tuple);
@@ -68,14 +68,15 @@ class TextureAtlas implements Disposable {
 
         final String direction = reader.readValue();
         page
-          ..uWrap = TextureWrap.ClampToEdge
-          ..vWrap = TextureWrap.ClampToEdge;
-        if (direction == 'x')
-          page.uWrap = TextureWrap.Repeat;
-        else if (direction == 'y')
-          page.vWrap = TextureWrap.Repeat;
-        else if (direction == 'xy')
-          page.uWrap = page.vWrap = TextureWrap.Repeat;
+          ..uWrap = TextureWrap.clampToEdge
+          ..vWrap = TextureWrap.clampToEdge;
+        if (direction == 'x') {
+          page.uWrap = TextureWrap.repeat;
+        } else if (direction == 'y') {
+          page.vWrap = TextureWrap.repeat;
+        } else if (direction == 'xy') {
+          page.uWrap = page.vWrap = TextureWrap.repeat;
+        }
 
         page
           ..texture = textureLoader(line)
@@ -211,10 +212,10 @@ class TextureAtlasReader {
 class TextureAtlasPage {
   final String name;
 
-  TextureFilter minFilter = TextureFilter.Linear;
-  TextureFilter magFilter = TextureFilter.Linear;
-  TextureWrap uWrap = TextureWrap.ClampToEdge;
-  TextureWrap vWrap = TextureWrap.ClampToEdge;
+  TextureFilter minFilter = TextureFilter.linear;
+  TextureFilter magFilter = TextureFilter.linear;
+  TextureWrap uWrap = TextureWrap.clampToEdge;
+  TextureWrap vWrap = TextureWrap.clampToEdge;
   Texture? texture;
   int width = 0;
   int height = 0;

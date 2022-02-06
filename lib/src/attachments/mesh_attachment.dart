@@ -56,8 +56,9 @@ class MeshAttachment extends VertexAttachment {
       height = region!.v2 - v;
     }
     final Float32List? regionUVs = this.regionUVs;
-    if (this.uvs == null || this.uvs!.length != regionUVs!.length)
+    if (this.uvs == null || this.uvs!.length != regionUVs!.length) {
       this.uvs = Float32List(regionUVs!.length);
+    }
     final Float32List? uvs = this.uvs;
     if (region!.rotate) {
       final int n = uvs!.length;

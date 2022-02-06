@@ -38,9 +38,10 @@ class AtlasAttachmentLoader implements AttachmentLoader {
   @override
   RegionAttachment newRegionAttachment(Skin skin, String name, String path) {
     final TextureAtlasRegion? region = atlas.findRegion(path);
-    if (region == null)
+    if (region == null) {
       throw StateError(
           'Region not found in atlas: $path (region attachment: $name)');
+    }
     region.renderObject = region;
     final RegionAttachment attachment = RegionAttachment(name)
       ..setRegion(region);
@@ -50,9 +51,10 @@ class AtlasAttachmentLoader implements AttachmentLoader {
   @override
   MeshAttachment newMeshAttachment(Skin skin, String name, String path) {
     final TextureAtlasRegion? region = atlas.findRegion(path);
-    if (region == null)
+    if (region == null) {
       throw StateError(
           'Region not found in atlas: $path (mesh attachment: $name)');
+    }
     region.renderObject = region;
     final MeshAttachment attachment = MeshAttachment(name)..region = region;
     return attachment;

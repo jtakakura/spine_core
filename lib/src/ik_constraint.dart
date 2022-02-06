@@ -41,8 +41,9 @@ class IkConstraint extends Constraint {
     mix = data.mix;
     bendDirection = data.bendDirection;
 
-    for (int i = 0; i < data.bones.length; i++)
+    for (int i = 0; i < data.bones.length; i++) {
       bones.add(skeleton.findBone(data.bones[i].name)!);
+    }
     target = skeleton.findBone(data.target!.name);
   }
 
@@ -78,9 +79,11 @@ class IkConstraint extends Constraint {
     double rotationIK =
         math.atan2(ty, tx) * MathUtils.radDeg - bone.ashearX - bone.arotation;
     if (bone.ascaleX < 0) rotationIK += 180;
-    if (rotationIK > 180)
+    if (rotationIK > 180) {
       rotationIK -= 360;
-    else if (rotationIK < -180) rotationIK += 360;
+    } else if (rotationIK < -180) {
+      rotationIK += 360;
+    }
     bone.updateWorldTransformWith(
         bone.ax,
         bone.ay,
@@ -117,8 +120,9 @@ class IkConstraint extends Constraint {
     if (csx < 0) {
       csx = -csx;
       os2 = 180;
-    } else
+    } else {
       os2 = 0;
+    }
     final double cx = child.ax;
     double cy = 0.0,
         cwx = 0.0,
@@ -154,9 +158,11 @@ class IkConstraint extends Constraint {
     if (u) {
       l2 *= psx;
       double cos = (tx * tx + ty * ty - l1 * l1 - l2 * l2) / (2 * l1 * l2);
-      if (cos < -1)
+      if (cos < -1) {
         cos = -1.0;
-      else if (cos > 1) cos = 1.0;
+      } else if (cos > 1) {
+        cos = 1.0;
+      }
       a2 = math.acos(cos) * bendDir;
       a = l1 + l2 * cos;
       b = l2 * math.sin(a2);
@@ -219,16 +225,20 @@ class IkConstraint extends Constraint {
     final double os = math.atan2(cy, cx) * s2;
     double rotation = parent.arotation;
     a1 = (a1 - os) * MathUtils.radDeg + os1 - rotation;
-    if (a1 > 180)
+    if (a1 > 180) {
       a1 -= 360;
-    else if (a1 < -180) a1 += 360;
+    } else if (a1 < -180) {
+      a1 += 360;
+    }
     parent.updateWorldTransformWith(px, py, rotation + a1 * alpha,
         parent.ascaleX, parent.ascaleY, 0.0, 0.0);
     rotation = child.arotation;
     a2 = ((a2 + os) * MathUtils.radDeg - child.ashearX) * s2 + os2 - rotation;
-    if (a2 > 180)
+    if (a2 > 180) {
       a2 -= 360;
-    else if (a2 < -180) a2 += 360;
+    } else if (a2 < -180) {
+      a2 += 360;
+    }
     child.updateWorldTransformWith(cx, cy, rotation + a2 * alpha, child.ascaleX,
         child.ascaleY, child.ashearX, child.ashearY);
   }
