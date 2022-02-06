@@ -13,3 +13,9 @@
 ## 0.3.1
 
 - More support for null safety(thanks to @signmotion)
+
+## 0.3.2
+
+- Fixed getAttachment null(thanks to @phamconganh)
+- Fixed exception when load animation plus some nullsafety(thanks to @signmotion)
+- Fixed lint issues
