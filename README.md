@@ -1,5 +1,7 @@
 # spine_core
 
+[![pub package](https://img.shields.io/pub/v/spine_core.svg)](https://pub.dev/packages/spine_core)
+
 The spine_core runtime provides functionality to load and manipulate [Spine](https://esotericsoftware.com) skeletal animation data using [Dart](https://www.dartlang.org/). It does not perform rendering but can be extended to enable Spine animations for other Dart-based projects.
 
 ## Spine License
