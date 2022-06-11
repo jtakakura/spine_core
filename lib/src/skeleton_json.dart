@@ -28,6 +28,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ******************************************************************************
 
+// ignore_for_file: always_specify_types
+
 part of spine_core;
 
 class SkeletonJson {
@@ -245,8 +247,16 @@ class SkeletonJson {
 
     // // Skins.
     if (root.containsKey('skins')) {
-      for (String skinName in root['skins'].keys) {
-        final dynamic skinMap = root['skins'][skinName];
+      dynamic skins = {};
+      if(root['skins'] is List) {
+        for(dynamic skin in root['skins']) {
+          skins[skin['name']] = skin['attachments'];
+        }
+      } else {
+        skins = root['skins'];
+      }
+      for (String skinName in skins.keys) {
+        final dynamic skinMap = skins[skinName];
         final Skin skin = Skin(skinName);
         for (String slotName in skinMap.keys) {
           final int slotIndex = skeletonData.findSlotIndex(slotName);
