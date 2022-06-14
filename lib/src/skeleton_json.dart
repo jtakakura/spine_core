@@ -248,8 +248,8 @@ class SkeletonJson {
     // // Skins.
     if (root.containsKey('skins')) {
       dynamic skins = {};
-      if(root['skins'] is List) {
-        for(dynamic skin in root['skins']) {
+      if (root['skins'] is List) {
+        for (dynamic skin in root['skins']) {
           skins[skin['name']] = skin['attachments'];
         }
       } else {
