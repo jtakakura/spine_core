@@ -19,3 +19,7 @@
 - Fixed getAttachment null(thanks to @phamconganh)
 - Fixed exception when load animation plus some nullsafety(thanks to @signmotion)
 - Fixed lint issues
+
+## 0.3.3
+
+- Adding support for formats exported by (maybe?) old version of spine(thanks to @ code-monad)
