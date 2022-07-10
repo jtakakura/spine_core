@@ -22,4 +22,8 @@
 
 ## 0.3.3
 
-- Adding support for formats exported by (maybe?) old version of spine(thanks to @ code-monad)
+- Adding support for formats exported by (maybe?) old version of spine(thanks to @code-monad)
+
+## 0.3.4
+- Update the minimum SDK version
+- Fix a warning for code formatting
