@@ -1049,7 +1049,8 @@ class IkConstraintTimeline extends CurveTimeline {
                   alpha
           ..bendDirection = direction == MixDirection.mixOut
               ? constraint.data.bendDirection
-              : frames[frames.length + IkConstraintTimeline.prevBendDirection].toInt();
+              : frames[frames.length + IkConstraintTimeline.prevBendDirection]
+                  .toInt();
       } else {
         constraint.mix = constraint.mix +
             (frames[frames.length + IkConstraintTimeline.prevMix] -
