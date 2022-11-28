@@ -27,3 +27,7 @@
 ## 0.3.4
 - Update the minimum SDK version
 - Fix a warning for code formatting
+
+## 0.3.5
+- Remove deprecated experimental invariant_booleans lint rule
+- Fixed cast exception to Int into animation(thanks to @hautvfami)
